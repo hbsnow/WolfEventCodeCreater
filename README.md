@@ -1,6 +1,6 @@
 # WolfEventCodeCreater
 
-ウディタのコモンのイベントコードをテキストファイルで出力するツール。
+ウディタのコモンのイベントコードをテキストファイルで出力するツール。このツールにはウディタツール開発用ライブラリである[WodiKs](http://alphastella07ks.blog.shinobi.jp/wodiks/wodiks-release_alpha-version)が使用されています。
 
 私的利用目的なので例外処理は適当だし、機能追加も気まぐれで、テストもない。
 
