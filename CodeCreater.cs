@@ -53,7 +53,16 @@ namespace WolfEventCodeCreater
                     continue;
                 }
 
-                WriteFile(CommonEvent, Utils.File.format(commonName) + ".common.txt");
+                string filepath = Dirpath + Utils.File.format(commonName) + ".common.md";
+                List<string> mdList = new List<string>();
+
+                // イベントコード
+                mdList.Add("```");
+                mdList = PushEventCode(mdList, CommonEvent);
+                mdList.Add("```");
+
+                File.WriteAllLines(filepath, mdList);
+
                 count++;
             }
 
@@ -61,13 +70,14 @@ namespace WolfEventCodeCreater
         }
 
         /// <summary>
-        /// コモンイベントをファイルに書き込む
+        /// コモンイベントをListに追加する
         /// </summary>
+        /// <param name="eventCode"></param>
         /// <param name="CommonEvent"></param>
-        /// <param name="filename"></param>
-        private void WriteFile(CommonEvent CommonEvent, string filename)
+        /// <returns></returns>
+        private List<string> PushEventCode(List<string> eventCode, CommonEvent CommonEvent)
         {
-            List<string> eventCode = new List<string>();
+            eventCode.Add("WoditorEvCOMMAND_START");
 
             for (int i = 0; i < CommonEvent.NumEventCommand; i++)
             {
@@ -75,8 +85,10 @@ namespace WolfEventCodeCreater
 
                 eventCode.Add(EventCommand.GetEventCode());
             }
-            
-            File.WriteAllLines(Dirpath + filename, eventCode.ToArray());
+
+            eventCode.Add("WoditorEvCOMMAND_END");
+
+            return eventCode;
         }
     }
 }
