@@ -45,7 +45,7 @@ namespace WolfEventCodeCreater
                 CommonEvent CommonEvent = CommonEventManager.CommonEvents[i];
 
                 // コモン名のトリミング
-                String commonName = CommonEvent.CommonEventName.TrimEnd('\0').Trim();
+                String commonName = Utils.String.Trim(CommonEvent.CommonEventName);
 
                 // コマンド数2未満、あるいはコモン名の入力がないもの、コメントアウトのものは除外
                 if (CommonEvent.NumEventCommand < 2 || commonName == "" || commonName.IndexOf("//") == 1)
@@ -53,11 +53,33 @@ namespace WolfEventCodeCreater
                     continue;
                 }
 
-                string filepath = Dirpath + Utils.File.format(commonName) + ".common.md";
+                string filepath = Dirpath + Utils.File.Format(commonName) + ".common.md";
                 List<string> mdList = new List<string>();
 
+                mdList.Add($"# {commonName}\n");
+
+                mdList.Add($"{Utils.String.Trim(CommonEvent.Memo)}\n");
+
+                mdList.Add("## 引数\n");
+
+                mdList.Add("引数   | セルフ変数名");
+                mdList.Add(" ----- | ----- ");
+                // このへんはメソッドにする
+                mdList.Add($"\\cself[0] | {Utils.String.Trim(CommonEvent.CommonSelfNames[0])}");
+                mdList.Add($"\\cself[1] | {Utils.String.Trim(CommonEvent.CommonSelfNames[1])}");
+                mdList.Add($"\\cself[2] | {Utils.String.Trim(CommonEvent.CommonSelfNames[2])}");
+                mdList.Add($"\\cself[3] | {Utils.String.Trim(CommonEvent.CommonSelfNames[3])}");
+                mdList.Add($"\\cself[5] | {Utils.String.Trim(CommonEvent.CommonSelfNames[5])}");
+                mdList.Add($"\\cself[6] | {Utils.String.Trim(CommonEvent.CommonSelfNames[6])}");
+                mdList.Add($"\\cself[7] | {Utils.String.Trim(CommonEvent.CommonSelfNames[7])}");
+                mdList.Add($"\\cself[8] | {Utils.String.Trim(CommonEvent.CommonSelfNames[8])}\n");
+
+
+                // {CommonEvent.Color.ToString()}
+
+
                 // イベントコード
-                mdList.Add("```");
+                mdList.Add("\n```");
                 mdList = PushEventCode(mdList, CommonEvent);
                 mdList.Add("```");
 
@@ -66,7 +88,7 @@ namespace WolfEventCodeCreater
                 count++;
             }
 
-            return count + "件のコモンをテキストに変換しました。";
+            return $"{count}件のコモンをMarkdownに変換しました。";
         }
 
         /// <summary>

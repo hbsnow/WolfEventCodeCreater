@@ -9,7 +9,7 @@ namespace WolfEventCodeCreater.Utils
         /// </summary>
         /// <param name="filename"></param>
         /// <returns></returns>
-        public static string format(string filename)
+        public static string Format(string filename)
         {
             // ファイル名に使用できない文字列を'_'に変換
             char[] invaildChars = new char[]
