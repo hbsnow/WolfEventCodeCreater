@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using WodiKs.Ev;
 using WodiKs.Ev.Common;
 using WodiKs.IO;
 
@@ -26,6 +24,10 @@ namespace WolfEventCodeCreater
 
 
 
+        /// <summary>
+        /// Markdownファイルの出力
+        /// </summary>
+        /// <returns></returns>
         public string Write()
         {
             if (CommonEventManager == null)
@@ -58,30 +60,23 @@ namespace WolfEventCodeCreater
 
                 MdList = new List<string>();
 
-                MdList.Add($"# {commonName}\n");
-                MdList.Add($"{Utils.String.Trim(CommonEvent.Memo)}\n");
+                MdList.Add($"# { commonName }\n");
+                MdList.Add($"{ Utils.String.Trim(CommonEvent.Memo) }\n");
 
-                MdList.Add("## 引数\n");
-                MdList.Add(" No | InitialValue | Name ");
-                MdList.Add(" --- | --- | --- ");
-                var config = CommonEvent.Config;
-                // このへんはメソッドにする
-                MdList.Add($"\\cself[0] | {Utils.String.Trim(CommonEvent.CommonSelfNames[0])}");
-                MdList.Add($"\\cself[1] | {Utils.String.Trim(CommonEvent.CommonSelfNames[1])}");
-                MdList.Add($"\\cself[2] | {Utils.String.Trim(CommonEvent.CommonSelfNames[2])}");
-                MdList.Add($"\\cself[3] | {Utils.String.Trim(CommonEvent.CommonSelfNames[3])}");
-                MdList.Add($"\\cself[5] | {Utils.String.Trim(CommonEvent.CommonSelfNames[5])}");
-                MdList.Add($"\\cself[6] | {Utils.String.Trim(CommonEvent.CommonSelfNames[6])}");
-                MdList.Add($"\\cself[7] | {Utils.String.Trim(CommonEvent.CommonSelfNames[7])}");
-                MdList.Add($"\\cself[8] | {Utils.String.Trim(CommonEvent.CommonSelfNames[8])}\n");
-
+                if (CommonEvent.NumInputNumeric + CommonEvent.NumInputString > 0)
+                {
+                    MdList.Add("## 引数\n");
+                    MdList.Add(" Type | Var | InitialValue | Name ");
+                    MdList.Add("--- | --- | --- | --- ");
+                    MdList = PushNumericConfig(MdList, CommonEvent);
+                    MdList = PushStringConfig(MdList, CommonEvent);
+                    MdList.Add("");
+                }
 
                 // {CommonEvent.Color.ToString()}
-                Console.WriteLine(CommonEvent.NumInputNumeric);
-                Console.WriteLine(CommonEvent.NumInputString);
-
 
                 // イベントコード
+                MdList.Add("## イベントコード\n");
                 MdList.Add("```");
                 MdList = PushEventCode(MdList, CommonEvent);
                 MdList.Add("```");
@@ -91,7 +86,7 @@ namespace WolfEventCodeCreater
                 count++;
             }
 
-            return $"{count}件のMarkdownを出力しました。";
+            return $"{ count }件のMarkdownを出力しました。";
         }
 
 
@@ -109,14 +104,37 @@ namespace WolfEventCodeCreater
             for (int i = 0; i < commonEvent.NumInputNumeric; i++)
             {
                 var inputNumericData =  commonEventConfig.InputNumerics[i];
+                var initialValue = inputNumericData.InitialValue.ToString();
+                var name = Utils.String.Trim(inputNumericData.Name);
 
-                list.Add(inputNumericData.InitialValue.ToString());
+                list.Add($"数値 | \\cself[{ i }] | { initialValue } | { name }");
             }
 
             return list;
         }
 
 
+
+        /// <summary>
+        /// 文字列の引数データをListに追加して戻す
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="CommonEvent"></param>
+        /// <returns></returns>
+        private List<string> PushStringConfig(List<string> list, CommonEvent commonEvent)
+        {
+            var commonEventConfig = commonEvent.Config;
+
+            for (int i = 0; i < commonEvent.NumInputString; i++)
+            {
+                var inputStringData = commonEventConfig.InputStrings[i];
+                var name = Utils.String.Trim(inputStringData.Name);
+
+                list.Add($"文字列 | \\cself[{ i + 5 }] | | { name }");
+            }
+
+            return list;
+        }
 
 
 
