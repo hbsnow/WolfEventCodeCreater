@@ -1,28 +1,28 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
+using WodiKs.IO;
 
 namespace WolfEventCodeCreater
 {
     public partial class MainWindow : Form
     {
-        public CodeCreater CodeCreater;
+        private Config Config;
 
-        public MainWindow(CodeCreater Creater)
+        public MainWindow()
         {
             InitializeComponent();
-            CodeCreater = Creater;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            var fbd = new FolderBrowserDialog();
             fbd.Description = "フォルダを選択してください。";
             fbd.ShowNewFolderButton = false;
 
             if (fbd.ShowDialog(this) == DialogResult.OK)
             {
-                CodeCreater.Rootpath = fbd.SelectedPath;
+                Config = new Config(fbd.SelectedPath);
                 textBox1.Text = fbd.SelectedPath;
             }
         }
@@ -31,7 +31,12 @@ namespace WolfEventCodeCreater
         {
             try
             {
-                string message = CodeCreater.Create();
+                var CommonEventReader = new CommonEventDatReader(Config.CommonEventPath);
+
+
+                var CodeCreater = new CodeCreater(Config, CommonEventReader);
+
+                string message = CodeCreater.Write();
                 
                 textBox2.Text = textBox2.Text == "" ? message : message + "\r\n" + textBox2.Text;
 
