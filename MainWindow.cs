@@ -13,20 +13,21 @@ namespace WolfEventCodeCreater
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void selectProject(object sender, EventArgs e)
         {
             var fbd = new FolderBrowserDialog();
-            fbd.Description = "フォルダを選択してください。";
+            fbd.Description = "プロジェクトのルートディレクトリを選択してください。";
             fbd.ShowNewFolderButton = false;
 
             if (fbd.ShowDialog(this) == DialogResult.OK)
             {
                 Config = new Config(fbd.SelectedPath);
                 textBox1.Text = fbd.SelectedPath;
+                button2.Enabled = true;
             }
         }
         
-        private void button2_Click(object sender, EventArgs e)
+        private void create(object sender, EventArgs e)
         {
             try
             {
@@ -44,6 +45,28 @@ namespace WolfEventCodeCreater
             {
                 textBox2.Text = err.ToString();
             }
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show(
+                $"Version { Application.ProductVersion }",
+                "バージョン情報",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.None
+            );
+        }
+
+        private void closeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void setting(object sender, EventArgs e)
+        {
+            var settingWindow = new SettingWindow();
+            settingWindow.ShowDialog(this);
+            settingWindow.Dispose();
         }
     }
 }
