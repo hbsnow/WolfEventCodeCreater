@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows.Forms;
 using WodiKs.IO;
 
@@ -6,12 +7,14 @@ namespace WolfEventCodeCreater
 {
     public partial class MainWindow : Form
     {
-        private Config Config;
+        private Model.Config Config;
 
         public MainWindow()
         {
             InitializeComponent();
         }
+
+
 
         private void selectProject(object sender, EventArgs e)
         {
@@ -21,11 +24,14 @@ namespace WolfEventCodeCreater
 
             if (fbd.ShowDialog(this) == DialogResult.OK)
             {
-                Config = new Config(fbd.SelectedPath);
+                Config = new Model.Config(fbd.SelectedPath);
+
                 textBox1.Text = fbd.SelectedPath;
                 button2.Enabled = true;
             }
         }
+
+
         
         private void create(object sender, EventArgs e)
         {
@@ -47,6 +53,8 @@ namespace WolfEventCodeCreater
             }
         }
 
+
+
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             DialogResult result = MessageBox.Show(
@@ -57,10 +65,14 @@ namespace WolfEventCodeCreater
             );
         }
 
+
+
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Close();
         }
+
+
 
         private void setting(object sender, EventArgs e)
         {

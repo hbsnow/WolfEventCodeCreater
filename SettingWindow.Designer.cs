@@ -95,6 +95,7 @@
             this.button1.TabIndex = 7;
             this.button1.Text = "決定";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.submit);
             // 
             // button2
             // 
@@ -104,6 +105,7 @@
             this.button2.TabIndex = 8;
             this.button2.Text = "キャンセル";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.cancel);
             // 
             // SettingWindow
             // 

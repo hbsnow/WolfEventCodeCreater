@@ -10,13 +10,13 @@ namespace WolfEventCodeCreater
     /// </summary>
     public class CodeCreater
     {
-        private Config Config;
+        private Model.Config Config;
         private CommonEventManager CommonEventManager;
         private List<string> MdList;
 
 
 
-        public CodeCreater(Config config, CommonEventDatReader commonEventDatReader)
+        public CodeCreater(Model.Config config, CommonEventDatReader commonEventDatReader)
         {
             Config = config;
             CommonEventManager = commonEventDatReader.GetReadData();
