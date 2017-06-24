@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Forms;
-using WolfEventCodeCreater;
 
 namespace WolfEventCodeCreater
 {
@@ -15,8 +14,7 @@ namespace WolfEventCodeCreater
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            var CodeCreater = new CodeCreater();
-            Application.Run(new MainWindow(CodeCreater));
+            Application.Run(new MainWindow());
         }
     }
 }

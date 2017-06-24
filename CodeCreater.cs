@@ -1,51 +1,56 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using WodiKs.Ev;
+using System.Collections.Generic;
 using WodiKs.Ev.Common;
 using WodiKs.IO;
 
 namespace WolfEventCodeCreater
 {
+    /// <summary>
+    /// Markdown生成
+    /// </summary>
     public class CodeCreater
     {
-        /// <summary>
-        /// プロジェクトのルートパス
-        /// </summary>
-        public string Rootpath { get; set; }
-
-        /// <summary>
-        /// ファイル出力するディレクトリのパス
-        /// </summary>
-        private string Dirpath { get; set; }
+        private Model.Config Config;
+        private CommonEventManager CommonEventManager;
+        private List<string> MdList;
 
 
-        public string Create()
+
+        public CodeCreater(Model.Config config, CommonEventDatReader commonEventDatReader)
         {
-            var commonFilepath = Rootpath + @"\Data\BasicData\CommonEvent.dat";
-            var CommonEventReader = new CommonEventDatReader(commonFilepath);
-            var CommonEventManager = CommonEventReader.GetReadData();
+            Config = config;
+            CommonEventManager = commonEventDatReader.GetReadData();
+        }
 
+
+
+        /// <summary>
+        /// Markdownファイルの出力
+        /// </summary>
+        /// <returns></returns>
+        public string Write()
+        {
             if (CommonEventManager == null)
             {
                 return "ファイルがみつからない、あるいは使用中のため出力に失敗しました。";
             }
 
             // ファイル出力するディレクトリの作成
-            Dirpath = Path.Combine(Rootpath, "Dump\\");
-
-            if (!Directory.Exists(Dirpath))
+            if (!Directory.Exists(Config.DumpDir))
             {
-                Directory.CreateDirectory(Dirpath);
+                Directory.CreateDirectory(Config.DumpDir);
             }
+
+            Console.WriteLine(Config.DumpDir);
 
             int count = 0;
             for (int i = 0; i < CommonEventManager.NumCommonEvent; i++)
             {
-                CommonEvent CommonEvent = CommonEventManager.CommonEvents[i];
+                var CommonEvent = CommonEventManager.CommonEvents[i];
 
                 // コモン名のトリミング
-                String commonName = CommonEvent.CommonEventName.TrimEnd('\0').Trim();
+                var commonName = Utils.String.Trim(CommonEvent.CommonEventName);
 
                 // コマンド数2未満、あるいはコモン名の入力がないもの、コメントアウトのものは除外
                 if (CommonEvent.NumEventCommand < 2 || commonName == "" || commonName.IndexOf("//") == 1)
@@ -53,42 +58,106 @@ namespace WolfEventCodeCreater
                     continue;
                 }
 
-                string filepath = Dirpath + Utils.File.format(commonName) + ".common.md";
-                List<string> mdList = new List<string>();
+                var filepath = Path.Combine(Config.DumpDir, $"{ Utils.String.FormatFilename(commonName) }.common.md");
 
+                MdList = new List<string>();
+
+                MdList.Add($"# { commonName }\n");
+                MdList.Add($"{ Utils.String.Trim(CommonEvent.Memo) }\n");
+
+                if (CommonEvent.NumInputNumeric + CommonEvent.NumInputString > 0)
+                {
+                    MdList.Add("## 引数\n");
+                    MdList.Add(" Type | Var | InitialValue | Name ");
+                    MdList.Add("--- | --- | --- | --- ");
+                    MdList = PushNumericConfig(MdList, CommonEvent);
+                    MdList = PushStringConfig(MdList, CommonEvent);
+                    MdList.Add("");
+                }
+                
                 // イベントコード
-                mdList.Add("```");
-                mdList = PushEventCode(mdList, CommonEvent);
-                mdList.Add("```");
+                MdList.Add("## イベントコード\n");
+                MdList.Add("```");
+                MdList = PushEventCode(MdList, CommonEvent);
+                MdList.Add("```");
 
-                File.WriteAllLines(filepath, mdList);
+                File.WriteAllLines(filepath, MdList);
 
                 count++;
             }
 
-            return count + "件のコモンをテキストに変換しました。";
+            return $"{ count }件のMarkdownを出力しました。";
         }
 
+
+
         /// <summary>
-        /// コモンイベントをListに追加する
+        /// 数値の引数データをListに追加して戻す
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="CommonEvent"></param>
+        /// <returns></returns>
+        private List<string> PushNumericConfig(List<string> list, CommonEvent commonEvent)
+        {
+            var commonEventConfig = commonEvent.Config;
+
+            for (int i = 0; i < commonEvent.NumInputNumeric; i++)
+            {
+                var inputNumericData =  commonEventConfig.InputNumerics[i];
+                var initialValue = inputNumericData.InitialValue.ToString();
+                var name = Utils.String.Trim(inputNumericData.Name);
+
+                list.Add($"数値 | \\cself[{ i }] | { initialValue } | { name }");
+            }
+
+            return list;
+        }
+
+
+
+        /// <summary>
+        /// 文字列の引数データをListに追加して戻す
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="CommonEvent"></param>
+        /// <returns></returns>
+        private List<string> PushStringConfig(List<string> list, CommonEvent commonEvent)
+        {
+            var commonEventConfig = commonEvent.Config;
+
+            for (int i = 0; i < commonEvent.NumInputString; i++)
+            {
+                var inputStringData = commonEventConfig.InputStrings[i];
+                var name = Utils.String.Trim(inputStringData.Name);
+
+                list.Add($"文字列 | \\cself[{ i + 5 }] | | { name }");
+            }
+
+            return list;
+        }
+
+
+
+        /// <summary>
+        /// コモンイベントをListに追加して戻す
         /// </summary>
         /// <param name="eventCode"></param>
         /// <param name="CommonEvent"></param>
         /// <returns></returns>
-        private List<string> PushEventCode(List<string> eventCode, CommonEvent CommonEvent)
+        private List<string> PushEventCode(List<string> list, CommonEvent commonEvent)
         {
-            eventCode.Add("WoditorEvCOMMAND_START");
+            list.Add("WoditorEvCOMMAND_START");
 
-            for (int i = 0; i < CommonEvent.NumEventCommand; i++)
+            for (int i = 0; i < commonEvent.NumEventCommand; i++)
             {
-                EventCommand EventCommand = CommonEvent.EventCommandList[i];
+                var eventCommand = commonEvent.EventCommandList[i];
 
-                eventCode.Add(EventCommand.GetEventCode());
+                list.Add(eventCommand.GetEventCode());
             }
 
-            eventCode.Add("WoditorEvCOMMAND_END");
+            list.Add("WoditorEvCOMMAND_END");
 
-            return eventCode;
+            return list;
         }
     }
 }

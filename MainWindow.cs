@@ -1,37 +1,48 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
+using WodiKs.IO;
 
 namespace WolfEventCodeCreater
 {
     public partial class MainWindow : Form
     {
-        public CodeCreater CodeCreater;
+        private Model.Config Config;
 
-        public MainWindow(CodeCreater Creater)
+        public MainWindow()
         {
             InitializeComponent();
-            CodeCreater = Creater;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+
+
+        private void selectProject(object sender, EventArgs e)
         {
-            FolderBrowserDialog fbd = new FolderBrowserDialog();
-            fbd.Description = "フォルダを選択してください。";
+            var fbd = new FolderBrowserDialog();
+            fbd.Description = "プロジェクトのルートディレクトリを選択してください。";
             fbd.ShowNewFolderButton = false;
 
             if (fbd.ShowDialog(this) == DialogResult.OK)
             {
-                CodeCreater.Rootpath = fbd.SelectedPath;
+                Config = new Model.Config(fbd.SelectedPath, Utils.File.LoadUserSetting());
+
                 textBox1.Text = fbd.SelectedPath;
+                button2.Enabled = true;
             }
         }
+
+
         
-        private void button2_Click(object sender, EventArgs e)
+        private void create(object sender, EventArgs e)
         {
             try
             {
-                string message = CodeCreater.Create();
+                var CommonEventReader = new CommonEventDatReader(Config.CommonEventPath);
+
+
+                var CodeCreater = new CodeCreater(Config, CommonEventReader);
+
+                var message = CodeCreater.Write();
                 
                 textBox2.Text = textBox2.Text == "" ? message : message + "\r\n" + textBox2.Text;
 
@@ -40,6 +51,34 @@ namespace WolfEventCodeCreater
             {
                 textBox2.Text = err.ToString();
             }
+        }
+
+
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show(
+                $"Version { Application.ProductVersion }",
+                "バージョン情報",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.None
+            );
+        }
+
+
+
+        private void closeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+
+
+        private void setting(object sender, EventArgs e)
+        {
+            var settingWindow = new SettingWindow();
+            settingWindow.ShowDialog(this);
+            settingWindow.Dispose();
         }
     }
 }

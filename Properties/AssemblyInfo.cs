@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("WolfEventCodeCreater")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("UNITCOM PC")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("WolfEventCodeCreater")]
-[assembly: AssemblyCopyright("Copyright © UNITCOM PC 2017")]
+[assembly: AssemblyCopyright("Copyright © hbsnow 2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
