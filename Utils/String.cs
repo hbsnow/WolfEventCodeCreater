@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 
 namespace WolfEventCodeCreater.Utils
 {
@@ -27,10 +28,7 @@ namespace WolfEventCodeCreater.Utils
         public static string FormatFilename(string filename)
         {
             // ファイル名に使用できない文字列を'_'に変換
-            char[] invaildChars = new char[]
-            {
-                    '\\', '/', ':', ',', ';', '*', '?', '<', '>', '|', ' '
-            };
+            char[] invaildChars = Path.GetInvalidFileNameChars();
 
             return invaildChars.Aggregate(
                 filename, (s, c) => s.Replace(c.ToString(), "_")

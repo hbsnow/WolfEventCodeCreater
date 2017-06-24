@@ -24,7 +24,7 @@ namespace WolfEventCodeCreater
 
             if (fbd.ShowDialog(this) == DialogResult.OK)
             {
-                Config = new Model.Config(fbd.SelectedPath);
+                Config = new Model.Config(fbd.SelectedPath, Utils.File.LoadUserSetting());
 
                 textBox1.Text = fbd.SelectedPath;
                 button2.Enabled = true;
@@ -42,7 +42,7 @@ namespace WolfEventCodeCreater
 
                 var CodeCreater = new CodeCreater(Config, CommonEventReader);
 
-                string message = CodeCreater.Write();
+                var message = CodeCreater.Write();
                 
                 textBox2.Text = textBox2.Text == "" ? message : message + "\r\n" + textBox2.Text;
 

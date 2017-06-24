@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.IO;
+using System.Collections.Generic;
 using WodiKs.Ev.Common;
 using WodiKs.IO;
 
@@ -36,11 +37,12 @@ namespace WolfEventCodeCreater
             }
 
             // ファイル出力するディレクトリの作成
-
             if (!Directory.Exists(Config.DumpDir))
             {
                 Directory.CreateDirectory(Config.DumpDir);
             }
+
+            Console.WriteLine(Config.DumpDir);
 
             int count = 0;
             for (int i = 0; i < CommonEventManager.NumCommonEvent; i++)
@@ -48,7 +50,7 @@ namespace WolfEventCodeCreater
                 var CommonEvent = CommonEventManager.CommonEvents[i];
 
                 // コモン名のトリミング
-                string commonName = Utils.String.Trim(CommonEvent.CommonEventName);
+                var commonName = Utils.String.Trim(CommonEvent.CommonEventName);
 
                 // コマンド数2未満、あるいはコモン名の入力がないもの、コメントアウトのものは除外
                 if (CommonEvent.NumEventCommand < 2 || commonName == "" || commonName.IndexOf("//") == 1)
@@ -56,7 +58,7 @@ namespace WolfEventCodeCreater
                     continue;
                 }
 
-                string filepath = Path.Combine(Config.DumpDir, $"{ Utils.String.FormatFilename(commonName) }.common.md");
+                var filepath = Path.Combine(Config.DumpDir, $"{ Utils.String.FormatFilename(commonName) }.common.md");
 
                 MdList = new List<string>();
 
@@ -72,9 +74,7 @@ namespace WolfEventCodeCreater
                     MdList = PushStringConfig(MdList, CommonEvent);
                     MdList.Add("");
                 }
-
-                // {CommonEvent.Color.ToString()}
-
+                
                 // イベントコード
                 MdList.Add("## イベントコード\n");
                 MdList.Add("```");

@@ -13,22 +13,12 @@ namespace WolfEventCodeCreater.Model
 
 
 
-        public Config(string root)
+        public Config(string root, UserSetting userSetting)
         {
-            SetPath(root);
+            ProjectRoot = root;
+            DumpDir = Path.Combine(root, Utils.String.FormatFilename(userSetting.OutputDirName));
+            CommonEventPath = Path.Combine(root, @"Data\BasicData\CommonEvent.dat");
         }
-
         
-        
-        /// <summary>
-        /// パスの一括設定
-        /// </summary>
-        /// <param name="value"></param>
-        private void SetPath(string value)
-        {
-            ProjectRoot = value;
-            DumpDir = Path.Combine(value, "Dump");
-            CommonEventPath = Path.Combine(value, @"Data\BasicData\CommonEvent.dat");
-        }
     }
 }

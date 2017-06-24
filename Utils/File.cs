@@ -14,7 +14,7 @@ namespace WolfEventCodeCreater.Utils
         /// </summary>
         public static Model.UserSetting LoadUserSetting()
         {
-            string settingFile = Path.Combine(Directory.GetCurrentDirectory(), SettingsFileName);
+            var settingFile = Path.Combine(Directory.GetCurrentDirectory(), SettingsFileName);
             
             // ユーザー設定ファイルがない場合にはデフォルト設定ファイルを出力
             if (!System.IO.File.Exists(settingFile))
@@ -40,7 +40,7 @@ namespace WolfEventCodeCreater.Utils
         /// </summary>
         public static void WriteUserSetting(Model.UserSetting userSetting)
         {
-            string settingFile = Path.Combine(Directory.GetCurrentDirectory(), SettingsFileName);
+            var settingFile = Path.Combine(Directory.GetCurrentDirectory(), SettingsFileName);
 
             using (var streamWriter = new StreamWriter(settingFile, false, new UTF8Encoding(false)))
             {
