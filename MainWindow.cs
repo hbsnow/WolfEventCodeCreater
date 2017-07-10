@@ -80,5 +80,10 @@ namespace WolfEventCodeCreater
             settingWindow.ShowDialog(this);
             settingWindow.Dispose();
         }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            button2.Enabled = true;
+        }
     }
 }
