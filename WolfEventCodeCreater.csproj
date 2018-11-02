@@ -63,7 +63,8 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="WodiKs">
-      <HintPath>..\..\..\..\Downloads\WodiKs-Ver0.40[α版]\WodiKs.dll</HintPath>
+      <HintPath>.\WodiKs.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -86,6 +87,7 @@
     <Compile Include="Model\UserSetting.cs" />
     <Compile Include="Utils\File.cs" />
     <Compile Include="Utils\String.cs" />
+    <Compile Include="Utils\WodiKs.cs" />
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -138,6 +140,7 @@ del /q *dll
 del /q tmp.exe</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>del /q *.*</PreBuildEvent>
+    <PreBuildEvent>del /q *.*
+copy /y ..\..\*.dll %25CD%25</PreBuildEvent>
   </PropertyGroup>
 </Project>
