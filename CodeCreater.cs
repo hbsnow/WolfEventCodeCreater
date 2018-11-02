@@ -87,6 +87,22 @@ namespace WolfEventCodeCreater
                     MdList.Add("");
                 }
 
+				// 返り値
+				MdList.Add("## 返り値\n");
+				int returnVar = CommonEvent.Config.ReturnVariable;
+				if (returnVar == -1)
+				{
+					MdList.Add($"結果を返さない\n");
+				}
+				else
+				{
+					var returnValueName = Utils.String.Trim(CommonEvent.Config.ReturnValueName);
+					var cselfVal = returnVar % 100;
+					MdList.Add(" Name | Var ");
+					MdList.Add("--- | --- ");
+					MdList.Add($"{ returnValueName } | \\cself[{ cselfVal.ToString() }]");
+				}
+
 				// イベントコード
 				MdList.Add("## イベントコード\n");
 				MdList.Add("```");
