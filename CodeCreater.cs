@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using WodiKs.Ev.Common;
 using WodiKs.IO;
+using WolfEventCodeCreater.StrFormat;
 
 namespace WolfEventCodeCreater
 {
@@ -61,50 +62,53 @@ namespace WolfEventCodeCreater
                 var filepath = Path.Combine(Config.DumpDir, $"{ Utils.String.FormatFilename(commonName) }.common.md");
 
                 MdList = new List<string>();
+				MdFormat mf = new MdFormat();
 
-                MdList.Add($"# { commonName }\n");
-                MdList.Add($"{ Utils.String.Trim(CommonEvent.Memo) }\n");
+				MdList = mf.FormatHeadline(MdList , commonName , 1);
+				MdList = mf.FormatSimpleSentence(MdList , Utils.String.Trim(CommonEvent.Memo));
 
 				// コモンイベント色
-				MdList.Add("## コモンイベント色\n");
-				MdList.Add($"{ Utils.WodiKs.ConvertCommonEventColorToName(CommonEvent.Color) }\n");
+				MdList = mf.FormatHeadline(MdList , "コモンイベント色" , 2);
+				MdList = mf.FormatSimpleSentence(MdList , Utils.WodiKs.ConvertCommonEventColorToName(CommonEvent.Color));
 
 				// 起動条件
-				MdList.Add("## 起動条件\n");
-				MdList.Add(" Type | Var | ComparisonValue | ComparisonMethod ");
-				MdList.Add("--- | --- | --- | --- ");
-				MdList = PushTriggerConditions(MdList , CommonEvent);
-				MdList.Add("");
+				MdList = mf.FormatHeadline(MdList , "起動条件" , 2);
+				List<string> headerTriggerConditions = new List<string> { "Type", "Var", "ComparisonValue", "ComparisonMethod"};
+				List<List<string>> dataTriggerConditions = new List<List<string>>() {PushTriggerConditions(CommonEvent) };
+				MdList = mf.FormatTable(MdList , headerTriggerConditions , dataTriggerConditions , "TriggerConditions");
 
 				// 引数
 				if (CommonEvent.NumInputNumeric + CommonEvent.NumInputString > 0)
                 {
-					MdList.Add("## 引数\n");
-					MdList.Add(" Type | Var | InitialValue | Name ");
-                    MdList.Add("--- | --- | --- | --- ");
-                    MdList = PushNumericConfig(MdList, CommonEvent);
-                    MdList = PushStringConfig(MdList, CommonEvent);
-                    MdList.Add("");
-                }
+					MdList = mf.FormatHeadline(MdList , "引数" , 2);
+
+					List<string> headerArgs = new List<string> { "Type" , "Var" , "InitialValue" , "Name" };
+					List<List<string>> dataArgs = new List<List<string>>() { };
+					dataArgs = PushNumericConfig(dataArgs , CommonEvent);
+					dataArgs = PushStringConfig(dataArgs , CommonEvent);
+					MdList = mf.FormatTable(MdList , headerArgs , dataArgs , "Args");
+				}
 
 				// 返り値
-				MdList.Add("## 返り値\n");
+				MdList = mf.FormatHeadline(MdList , "返り値" , 2);
 				int returnVar = CommonEvent.Config.ReturnVariable;
 				if (returnVar == -1)
 				{
-					MdList.Add($"結果を返さない\n");
+					MdList = mf.FormatSimpleSentence(MdList , "結果を返さない");
 				}
 				else
 				{
 					var returnValueName = Utils.String.Trim(CommonEvent.Config.ReturnValueName);
 					var cselfVal = returnVar % 100;
-					MdList.Add(" Name | Var ");
-					MdList.Add("--- | --- ");
-					MdList.Add($"{ returnValueName } | \\cself[{ cselfVal.ToString() }]");
+
+					List<string> headerReturn = new List<string>() {"Name","Var"};
+					List<string> recordReturn = new List<string>() { returnValueName , $"\\cself[{ cselfVal.ToString() }]" };
+					List<List<string>> dataReturn = new List<List<string>>() { recordReturn };
+					MdList = mf.FormatTable(MdList , headerReturn , dataReturn , "Return");
 				}
 
 				// イベントコード
-				MdList.Add("## イベントコード\n");
+				MdList = mf.FormatHeadline(MdList , "イベントコード" , 2);
 				MdList.Add("```");
                 MdList = PushEventCode(MdList, CommonEvent);
                 MdList.Add("```");
@@ -122,19 +126,19 @@ namespace WolfEventCodeCreater
 		/// <summary>
 		/// 起動条件データをListに追加して戻す
 		/// </summary>
-		/// <param name="list"></param>
 		/// <param name="CommonEvent"></param>
 		/// <returns></returns>
-		private List<string> PushTriggerConditions(List<string> list , CommonEvent commonEvent) {
+		private List<string> PushTriggerConditions(CommonEvent commonEvent) {
 				
 			var triggerConditionsType = Utils.WodiKs.ConvertTriggerConditionsToName(commonEvent.TriggerConditionsType);
 			var triggerVariable = commonEvent.TriggerVariable.ToString();
 			var comparisonValue = commonEvent.ComparisonValue.ToString();
 			var comparisonMethodType = Utils.WodiKs.ConvertComparisonMethodToName(commonEvent.ComparisonMethodType);
 
-			list.Add($"{ triggerConditionsType } | { triggerVariable } | { comparisonValue } | { comparisonMethodType }");
+			List<string> recordTriggerConditions =
+				new List<string>() { triggerConditionsType, triggerVariable, comparisonValue, comparisonMethodType };
 
-			return list;
+			return recordTriggerConditions;
 		}
 
 
@@ -145,7 +149,7 @@ namespace WolfEventCodeCreater
 		/// <param name="list"></param>
 		/// <param name="CommonEvent"></param>
 		/// <returns></returns>
-		private List<string> PushNumericConfig(List<string> list, CommonEvent commonEvent)
+		private List<List<string>> PushNumericConfig(List<List<string>> list, CommonEvent commonEvent)
         {
             var commonEventConfig = commonEvent.Config;
 
@@ -155,7 +159,9 @@ namespace WolfEventCodeCreater
                 var initialValue = inputNumericData.InitialValue.ToString();
                 var name = Utils.String.Trim(inputNumericData.Name);
 
-                list.Add($"数値 | \\cself[{ i }] | { initialValue } | { name }");
+                //list.Add($"数値 | \\cself[{ i }] | { initialValue } | { name }");
+				List<string> recordNumericArgs = new List<string>() { "数値", $"\\cself[{ i }]", initialValue , name };
+				list.Add(recordNumericArgs);
             }
 
             return list;
@@ -163,13 +169,13 @@ namespace WolfEventCodeCreater
 
 
 
-        /// <summary>
-        /// 文字列の引数データをListに追加して戻す
-        /// </summary>
-        /// <param name="list"></param>
-        /// <param name="CommonEvent"></param>
-        /// <returns></returns>
-        private List<string> PushStringConfig(List<string> list, CommonEvent commonEvent)
+		/// <summary>
+		/// 文字列の引数データをListに追加して戻す
+		/// </summary>
+		/// <param name="list"></param>
+		/// <param name="CommonEvent"></param>
+		/// <returns></returns>
+		private List<List<string>> PushStringConfig(List<List<string>> list, CommonEvent commonEvent)
         {
             var commonEventConfig = commonEvent.Config;
 
@@ -178,8 +184,10 @@ namespace WolfEventCodeCreater
                 var inputStringData = commonEventConfig.InputStrings[i];
                 var name = Utils.String.Trim(inputStringData.Name);
 
-                list.Add($"文字列 | \\cself[{ i + 5 }] | | { name }");
-            }
+                //list.Add($"文字列 | \\cself[{ i + 5 }] | | { name }");
+				List<string> recordStringArgs = new List<string>() { "文字列", $"\\cself[{ i + 5 }]", "", name };
+				list.Add(recordStringArgs);
+			}
 
             return list;
         }
@@ -207,19 +215,5 @@ namespace WolfEventCodeCreater
 
             return list;
         }
-
-
-		/* 現在は未使用
-		/// <summary>
-		/// テキスト出力用の文字列に整形する
-		/// </summary>
-		/// <param name="entryName"></param>
-		/// <param name="data"></param>
-		/// <returns></returns>
-		private string FormatOutputTxtStr(string entryName , string data)
-		{
-			return $"## { entryName } :{ data }";
-		}
-		*/
 	}
 }
