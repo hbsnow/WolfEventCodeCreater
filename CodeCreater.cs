@@ -107,6 +107,19 @@ namespace WolfEventCodeCreater
 					MdList = mf.FormatTable(MdList , headerReturn , dataReturn , "Return");
 				}
 
+				// コモンセルフ変数
+				MdList = mf.FormatHeadline(MdList , "コモンセルフ変数" , 2);
+
+				List<string> headerCSelf = new List<string>() {
+					"Cself[0~19]" , "Name[0~19]" , "    ",
+					"Cself[20~39]" , "Name[20~39]" , "  　" ,
+					"Cself[40~59]" , "Name[40~59]" , "　  " ,
+					"Cself[60~79]" , "Name[60~79]" , "　　" ,
+					"Cself[80~99]" , "Name[80~99]" };
+				List<List<string>> dataCSelf = new List<List<string>>() { };
+				dataCSelf = PushCommonSelfNames(dataCSelf , CommonEvent);
+				MdList = mf.FormatTable(MdList , headerCSelf , dataCSelf , "CSelf");
+
 				// イベントコード
 				MdList = mf.FormatHeadline(MdList , "イベントコード" , 2);
 				MdList.Add("```");
@@ -191,6 +204,34 @@ namespace WolfEventCodeCreater
 
             return list;
         }
+
+
+
+		/// <summary>
+		/// コモンセルフ変数名データをListに追加して戻す
+		/// </summary>
+		/// <param name="list"></param>
+		/// <param name="CommonEvent"></param>
+		/// <returns></returns>
+		private List<List<string>> PushCommonSelfNames(List<List<string>> list , CommonEvent commonEvent)
+		{
+			string separator = "";
+			int divideNum = commonEvent.CommonSelfNames.Length / 5;
+
+			for (int i = 0; i < divideNum; i++)
+			{
+				List<string> recordCommonSelfNames = new List<string>() {
+					$"cself[{(divideNum * 0 + i).ToString() }]", Utils.String.Trim(commonEvent.CommonSelfNames[divideNum * 0 + i]), separator ,
+					$"cself[{(divideNum * 1 + i).ToString() }]", Utils.String.Trim(commonEvent.CommonSelfNames[divideNum * 1 + i]), separator ,
+					$"cself[{(divideNum * 2 + i).ToString() }]", Utils.String.Trim(commonEvent.CommonSelfNames[divideNum * 2 + i]), separator ,
+					$"cself[{(divideNum * 3 + i).ToString() }]", Utils.String.Trim(commonEvent.CommonSelfNames[divideNum * 3 + i]), separator ,
+					$"cself[{(divideNum * 4 + i).ToString() }]", Utils.String.Trim(commonEvent.CommonSelfNames[divideNum * 4 + i])};
+
+				list.Add(recordCommonSelfNames);
+			}
+
+			return list;
+		}
 
 
 
