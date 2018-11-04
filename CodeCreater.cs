@@ -5,6 +5,7 @@ using System.Linq;
 using WodiKs.Ev.Common;
 using WodiKs.IO;
 using WolfEventCodeCreater.StrFormat;
+using WodiKs.Ev;
 
 namespace WolfEventCodeCreater
 {
@@ -161,7 +162,6 @@ namespace WolfEventCodeCreater
 
 				// コモンセルフ変数
 				MdList = mf.FormatHeadline(MdList , "コモンセルフ変数" , 2);
-
 				List<string> headerCSelf = new List<string>() {
 					"Cself[0~19]" , "Name[0~19]" , "    ",
 					"Cself[20~39]" , "Name[20~39]" , "  　" ,
@@ -172,15 +172,57 @@ namespace WolfEventCodeCreater
 				dataCSelf = PushCommonSelfNames(dataCSelf , CommonEvent);
 				MdList = mf.FormatTable(MdList , headerCSelf , dataCSelf , "CSelf");
 
-				// イベントコード
+				// イベントコード & 動作指定コマンドコード
+				List<int> moveEventCommandLines = new List<int>() { };
 				MdList = mf.FormatHeadline(MdList , "イベントコード" , 2);
 				MdList.Add("```");
-                MdList = PushEventCode(MdList, CommonEvent);
+                MdList = PushEventCode(MdList, moveEventCommandLines, CommonEvent);
                 MdList.Add("```");
 
-				//TODO:動作指定コマンド
+				// 動作指定コマンドコードを追加
+				if(0 < moveEventCommandLines.Count)
+				{
+					MdList = mf.FormatHeadline(MdList , "動作指定コマンドコード" , 2);
+					foreach (int line in moveEventCommandLines)
+					{
+						MdList = mf.FormatSimpleSentence(MdList ,$"{ line.ToString() }行目(イベントコード)");
+						// 動作指定機能フラグを取得しテーブル構造に整形
+						EventCommand eventCommand = CommonEvent.EventCommandList[line - 1];
+						byte moveEventFlag = eventCommand.MoveEventFlag;
+						List<string> headerMoveEventFlag = new List<string>() { "動作完了までウェイト" , "動作を繰り返す" , "移動できない場合は飛ばす" };
+						List<List<string>> dataMoveEventFlag = new List<List<string>>() {new List<string>(){
+							Utils.String.ConvertFlagToString((0 < (moveEventFlag & (byte)MoveEventFlags.WaitForFinish)) ? true : false),
+							Utils.String.ConvertFlagToString((0 < (moveEventFlag & (byte)MoveEventFlags.RepeatMovement)) ? true : false),
+							Utils.String.ConvertFlagToString((0 < (moveEventFlag & (byte)MoveEventFlags.SkipImpossibleMoves)) ? true : false)} };
+						MdList = mf.FormatTable(MdList , headerMoveEventFlag , dataMoveEventFlag);
+						// あるイベントコードにおける全ての動作指定コマンドコードの最大数値データ数の取得
+						int maxNumNumericData = 0;			// あるイベントコードにおける全ての動作指定コマンドコードの最大数値データ数
+						maxNumNumericData = GetMaxNumNumericDataOfMoveEventCommandCode(eventCommand);
+						// 動作指定コマンドコードのヘッダ部の作成
+						List<string> headerMoveEventCommands = new List<string>() {"動作ID"};
+						if(0 < maxNumNumericData)
+						{
+							for (int n = 1; n <= maxNumNumericData; n++)
+							{
+								headerMoveEventCommands.Add($"数値{ n }");
+							}
+						}
+						else
+						{
+							headerMoveEventCommands.Add("数値なし");
+							maxNumNumericData = 1;
+						}
+						// 動作指定コマンドコードのデータ部の作成
+						List<List<string>> dataMoveEventCommands = new List<List<string>>() { };
+						dataMoveEventCommands = PushMoveEventCommandCode(
+							dataMoveEventCommands, CommonEvent, line, maxNumNumericData);
+						// 動作指定コマンドコードをテーブル構造に整形
+						MdList = mf.FormatTable(MdList, headerMoveEventCommands, dataMoveEventCommands);
+					}
+				}
 
-                File.WriteAllLines(filepath, MdList);
+				// 全てを出力
+				File.WriteAllLines(filepath, MdList);
 
                 count++;
             }
@@ -193,7 +235,7 @@ namespace WolfEventCodeCreater
 		/// <summary>
 		/// 起動条件データをListに追加して戻す
 		/// </summary>
-		/// <param name="CommonEvent"></param>
+		/// <param name="commonEvent"></param>
 		/// <returns></returns>
 		private List<string> PushTriggerConditions(CommonEvent commonEvent) {
 				
@@ -214,7 +256,7 @@ namespace WolfEventCodeCreater
 		/// 数値の引数データをListに追加して戻す
 		/// </summary>
 		/// <param name="list"></param>
-		/// <param name="CommonEvent"></param>
+		/// <param name="commonEvent"></param>
 		/// <returns></returns>
 		private List<List<string>> PushNumericConfig(List<List<string>> list, CommonEvent commonEvent)
         {
@@ -241,7 +283,7 @@ namespace WolfEventCodeCreater
 		/// 文字列の引数データをListに追加して戻す
 		/// </summary>
 		/// <param name="list"></param>
-		/// <param name="CommonEvent"></param>
+		/// <param name="commonEvent"></param>
 		/// <returns></returns>
 		private List<List<string>> PushStringConfig(List<List<string>> list, CommonEvent commonEvent)
         {
@@ -267,9 +309,9 @@ namespace WolfEventCodeCreater
 		/// コモンセルフ変数名データをListに追加して戻す
 		/// </summary>
 		/// <param name="list"></param>
-		/// <param name="CommonEvent"></param>
+		/// <param name="commonEvent"></param>
 		/// <returns></returns>
-		private List<List<string>> PushCommonSelfNames(List<List<string>> list , CommonEvent commonEvent)
+		private List<List<string>> PushCommonSelfNames(List<List<string>> list, CommonEvent commonEvent)
 		{
 			string separator = "";
 			int divideNum = commonEvent.CommonSelfNames.Length / 5;
@@ -292,12 +334,13 @@ namespace WolfEventCodeCreater
 
 
 		/// <summary>
-		/// コモンイベントをListに追加して戻す
+		/// コモンイベントコードをListに追加して戻す
 		/// </summary>
 		/// <param name="list"></param>
-		/// <param name="CommonEvent"></param>
+		/// <param name="moveEventCommandLineList"></param>
+		/// <param name="commonEvent"></param>
 		/// <returns></returns>
-		private List<string> PushEventCode(List<string> list, CommonEvent commonEvent)
+		private List<string> PushEventCode(List<string> list, List<int> moveEventCommandLineList, CommonEvent commonEvent)
         {
             list.Add("WoditorEvCOMMAND_START");
 
@@ -306,11 +349,79 @@ namespace WolfEventCodeCreater
                 var eventCommand = commonEvent.EventCommandList[i];
 
                 list.Add(eventCommand.GetEventCode());
-            }
+
+				// 動作指定コマンドである行を取得
+				if (eventCommand.IsMoveEvent)
+				{
+					moveEventCommandLineList.Add(i + 1);
+				}
+			}
 
             list.Add("WoditorEvCOMMAND_END");
 
             return list;
         }
+
+
+
+		/// <summary>
+		/// 動作指定コマンドコードをListに追加して戻す
+		/// </summary>
+		/// <param name="list"></param>
+		/// <param name="commonEvent"></param>
+		/// <param name="eventCodeLine"></param>
+		/// <param name="maxNumNumericData"></param>
+		/// <returns></returns>
+		private List<List<string>> PushMoveEventCommandCode(
+			List<List<string>> list , CommonEvent commonEvent , int eventCodeLine, int maxNumNumericData)
+		{
+			EventCommand eventCommand = commonEvent.EventCommandList[eventCodeLine - 1];
+			MoveEventCommand[] moveEventCommands = eventCommand.MoveEventCommandList;
+
+			foreach(MoveEventCommand moveEventCommand in moveEventCommands)
+			{
+				List<string> recordMoveEventCommandCode = new List<string>() { };
+
+				recordMoveEventCommandCode.Add(moveEventCommand.MoveCommandID.ToString());
+				
+				foreach (int numData in moveEventCommand.NumericList)
+				{
+					recordMoveEventCommandCode.Add(numData.ToString());
+				}
+
+				// 最大数値データ数より足りない分を""で埋める
+				int lackNumNumericData = maxNumNumericData - moveEventCommand.NumNumericData;
+				for(int i = 0; i < lackNumNumericData; i++)
+				{
+					recordMoveEventCommandCode.Add("");
+				}
+
+				list.Add(recordMoveEventCommandCode);
+			}
+
+			return list;
+		}
+
+
+
+		/// <summary>
+		/// 動作指定コマンドコードの数値データの最大データ数を取得する
+		/// </summary>
+		/// <param name="eventCommand"></param>
+		/// <returns></returns>
+		private int GetMaxNumNumericDataOfMoveEventCommandCode(EventCommand eventCommand)
+		{
+			int maxNumNumericData = 0;
+			MoveEventCommand[] moveEventCommands = eventCommand.MoveEventCommandList;
+
+			foreach (MoveEventCommand moveEventCommand in moveEventCommands)
+			{
+				if (maxNumNumericData < moveEventCommand.NumNumericData)
+				{
+					maxNumNumericData = moveEventCommand.NumNumericData;
+				}
+			}
+			return maxNumNumericData;
+		}
 	}
 }

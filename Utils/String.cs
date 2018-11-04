@@ -34,5 +34,17 @@ namespace WolfEventCodeCreater.Utils
                 filename, (s, c) => s.Replace(c.ToString(), "_")
             );
         }
-    }
+
+
+
+		/// <summary>
+		/// フラグ値を文字列に変換する
+		/// </summary>
+		/// <param name="isOnFlag"></param>
+		/// <returns></returns>
+		public static string ConvertFlagToString(bool isOnFlag)
+		{
+			return isOnFlag ? "On" : "Off";
+		}
+	}
 }
