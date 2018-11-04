@@ -1,4 +1,5 @@
 ﻿using WodiKs.Ev.Common;
+using WodiKs.DB;
 
 namespace WolfEventCodeCreater.Utils
 {
@@ -68,7 +69,7 @@ namespace WolfEventCodeCreater.Utils
 		/// <summary>
 		/// ComparisonMethod型を起動条件の比較方法名に変換する
 		/// </summary>
-		/// <param name="triggerConditions"></param>
+		/// <param name="comparisonMethod"></param>
 		/// <returns></returns>
 		public static string ConvertComparisonMethodToName(CommonEvent.ComparisonMethod comparisonMethod)
 		{
@@ -95,6 +96,70 @@ namespace WolfEventCodeCreater.Utils
 				case CommonEvent.ComparisonMethod.SatisfyBitOf:
 					return "とのビット積";
 
+				default:
+					return "";
+			}
+		}
+
+
+
+		/// <summary>
+		/// InputNumericData.SpecialSettingType型を数値入力の特殊設定方法名に変換する
+		/// </summary>
+		/// <param name="specialSettingType"></param>
+		/// <returns></returns>
+		public static string ConvertNumericSpecialSettingTypeToName(InputNumericData.SpecialSettingType specialSettingType)
+		{
+			switch (specialSettingType)
+			{
+				case InputNumericData.SpecialSettingType.NotUse:
+					return "特殊な設定方法を使用しない";
+				case InputNumericData.SpecialSettingType.ReferenceDatabase:
+					return "データベース参照（数値）";
+				case InputNumericData.SpecialSettingType.ManuallyGenerateBranch:
+					return "選択肢を手動作成（数値）";
+				default:
+					return "";
+			}
+		}
+
+
+
+		/// <summary>
+		/// InputStringData.SpecialSettingType型を数値入力の特殊設定方法名に変換する
+		/// </summary>
+		/// <param name="specialSettingType"></param>
+		/// <returns></returns>
+		public static string ConvertStringSpecialSettingTypeToName(InputStringData.SpecialSettingType specialSettingType)
+		{
+			switch (specialSettingType)
+			{
+				case InputStringData.SpecialSettingType.NotUse:
+					return "特殊な設定方法を使用しない";
+				default:
+					return "";
+			}
+		}
+
+
+
+		/// <summary>
+		/// DatabaseCategory型をデータベースの種類名に変換する
+		/// </summary>
+		/// <param name="triggerConditions"></param>
+		/// <returns></returns>
+		public static string ConvertDatabaseCategoryToName(Database.DatabaseCategory dbCategory)
+		{
+			switch (dbCategory)
+			{
+				case Database.DatabaseCategory.Changeable:
+					return "可変データベース";
+				case Database.DatabaseCategory.User:
+					return "ユーザーデータベース";
+				case Database.DatabaseCategory.System:
+					return "システムデータベース";
+				case Database.DatabaseCategory.CommonEvent:
+					return "コモンイベント";
 				default:
 					return "";
 			}

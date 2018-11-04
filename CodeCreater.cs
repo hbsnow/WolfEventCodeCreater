@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 using WodiKs.Ev.Common;
 using WodiKs.IO;
 using WolfEventCodeCreater.StrFormat;
@@ -82,11 +83,62 @@ namespace WolfEventCodeCreater
                 {
 					MdList = mf.FormatHeadline(MdList , "引数" , 2);
 
-					List<string> headerArgs = new List<string> { "Type" , "Var" , "InitialValue" , "Name" };
+					List<string> headerArgs = new List<string> { "Type" , "Var" , "InitialValue" , "Name", "SpecialSettingType" };
 					List<List<string>> dataArgs = new List<List<string>>() { };
 					dataArgs = PushNumericConfig(dataArgs , CommonEvent);
 					dataArgs = PushStringConfig(dataArgs , CommonEvent);
 					MdList = mf.FormatTable(MdList , headerArgs , dataArgs , "Args");
+
+					// 数値入力の特殊設定
+					bool isNumericSpecialSettingTypeHeadline = false;
+					for (int x = 0; x < CommonEvent.NumInputNumeric; x++)
+					{
+						InputNumericData inputNumericData = CommonEvent.Config.InputNumerics[x];
+						InputNumericData.SpecialSettingType specialSettingType = inputNumericData.SettingType;
+						if(specialSettingType == InputNumericData.SpecialSettingType.ReferenceDatabase ||
+							specialSettingType == InputNumericData.SpecialSettingType.ManuallyGenerateBranch)
+						{
+							if (!isNumericSpecialSettingTypeHeadline)
+							{
+								MdList = mf.FormatHeadline(MdList , "数値入力の特殊設定" , 4);
+								isNumericSpecialSettingTypeHeadline = true;
+							}
+
+							if (specialSettingType == InputNumericData.SpecialSettingType.ReferenceDatabase)
+							{
+								MdList = mf.FormatSimpleSentence(MdList , 
+									$"cself[{ x }] - {Utils.WodiKs.ConvertNumericSpecialSettingTypeToName(InputNumericData.SpecialSettingType.ReferenceDatabase)}");
+								List<string> headerReferenceDatabase = new List<string> {
+									"DatabaseType" , "TypeID" , "AppendItemEnable" , "-1" , "-2", "-3"};
+								List<List<string>> dataReferenceDatabase = new List<List<string>>() {
+									new List<string>(){
+										Utils.WodiKs.ConvertDatabaseCategoryToName(inputNumericData.DatabaseType),
+										inputNumericData.TypeID.ToString(), inputNumericData.AppendItemEnable.ToString(),
+										Utils.String.Trim(inputNumericData.AppendItemNames[0]),
+										Utils.String.Trim(inputNumericData.AppendItemNames[1]),
+										Utils.String.Trim(inputNumericData.AppendItemNames[2]) } };
+								MdList = mf.FormatTable(MdList , headerReferenceDatabase , dataReferenceDatabase ,
+									$"\\cself[{ x.ToString() }]WithReferenceDatabase");
+							}
+							else
+							{
+								//!? InternalValueを取得できない（すべて0）。WodiKsライブラリのバグ？
+								MdList = mf.FormatSimpleSentence(MdList ,
+									$"cself[{ x }] - {Utils.WodiKs.ConvertNumericSpecialSettingTypeToName(InputNumericData.SpecialSettingType.ManuallyGenerateBranch)}");
+								List<string> headerManuallyGenerateBranch = new List<string> {"InternalValue" , "Name"};
+								List<List<string>> dataManuallyGenerateBranch = new List<List<string>>() { };
+								foreach (ConfigBranch cb in inputNumericData.BranchData)
+								{
+									//System.Diagnostics.Debug.WriteLine(cb.InternalValue , "cb.InternalValue");
+									List<string> recordManuallyGenerateBranch = new List<string>(){
+										cb.InternalValue.ToString(), Utils.String.Trim(cb.DisplayString)};
+									dataManuallyGenerateBranch.Add(recordManuallyGenerateBranch);
+								}
+								MdList = mf.FormatTable(MdList , headerManuallyGenerateBranch , dataManuallyGenerateBranch ,
+									$"\\cself[{ x.ToString() }]WithManuallyGenerateBranch");
+							}
+						}
+					}
 				}
 
 				// 返り値
@@ -125,6 +177,8 @@ namespace WolfEventCodeCreater
 				MdList.Add("```");
                 MdList = PushEventCode(MdList, CommonEvent);
                 MdList.Add("```");
+
+				//TODO:動作指定コマンド
 
                 File.WriteAllLines(filepath, MdList);
 
@@ -171,9 +225,10 @@ namespace WolfEventCodeCreater
                 var inputNumericData = commonEventConfig.InputNumerics[i];
                 var initialValue = inputNumericData.InitialValue.ToString();
                 var name = Utils.String.Trim(inputNumericData.Name);
+				var numericSpecialSettingType = Utils.WodiKs.ConvertNumericSpecialSettingTypeToName(inputNumericData.SettingType);
 
-                //list.Add($"数値 | \\cself[{ i }] | { initialValue } | { name }");
-				List<string> recordNumericArgs = new List<string>() { "数値", $"\\cself[{ i }]", initialValue , name };
+				//list.Add($"数値 | \\cself[{ i }] | { initialValue } | { name }");
+				List<string> recordNumericArgs = new List<string>() { "数値", $"\\cself[{ i }]", initialValue , name, numericSpecialSettingType };
 				list.Add(recordNumericArgs);
             }
 
@@ -196,9 +251,10 @@ namespace WolfEventCodeCreater
             {
                 var inputStringData = commonEventConfig.InputStrings[i];
                 var name = Utils.String.Trim(inputStringData.Name);
+				var stringSpecialSettingType = Utils.WodiKs.ConvertStringSpecialSettingTypeToName(inputStringData.SettingType);
 
-                //list.Add($"文字列 | \\cself[{ i + 5 }] | | { name }");
-				List<string> recordStringArgs = new List<string>() { "文字列", $"\\cself[{ i + 5 }]", "", name };
+				//list.Add($"文字列 | \\cself[{ i + 5 }] | | { name }");
+				List<string> recordStringArgs = new List<string>() { "文字列", $"\\cself[{ i + 5 }]", "", name, stringSpecialSettingType };
 				list.Add(recordStringArgs);
 			}
 
