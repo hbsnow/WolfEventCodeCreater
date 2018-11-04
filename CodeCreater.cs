@@ -54,8 +54,8 @@ namespace WolfEventCodeCreater
                 // コモン名のトリミング
                 var commonName = Utils.String.Trim(CommonEvent.CommonEventName);
 
-                // コマンド数2未満、あるいはコモン名の入力がないもの、コメントアウトのものは除外
-                if (CommonEvent.NumEventCommand < 2 || commonName == "" || commonName.IndexOf("//") == 1)
+				// コマンド数2未満、あるいはコモン名の入力がないもの、コメントアウトのものは除外
+                if (CommonEvent.NumEventCommand < 2 || commonName == "" || commonName.IndexOf(Config.CommentOut_Common) == 1)
                 {
                     continue;
                 }
@@ -167,7 +167,7 @@ namespace WolfEventCodeCreater
 					"Cself[20~39]" , "Name[20~39]" , "  　" ,
 					"Cself[40~59]" , "Name[40~59]" , "　  " ,
 					"Cself[60~79]" , "Name[60~79]" , "　　" ,
-					"Cself[80~99]" , "Name[80~99]" };
+					"Cself[80~99]" , "Name[80~99]" };			// DataTable型のColumsの名前は重複不可
 				List<List<string>> dataCSelf = new List<List<string>>() { };
 				dataCSelf = PushCommonSelfNames(dataCSelf , CommonEvent);
 				MdList = mf.FormatTable(MdList , headerCSelf , dataCSelf , "CSelf");
@@ -291,13 +291,13 @@ namespace WolfEventCodeCreater
 
 
 
-        /// <summary>
-        /// コモンイベントをListに追加して戻す
-        /// </summary>
-        /// <param name="eventCode"></param>
-        /// <param name="CommonEvent"></param>
-        /// <returns></returns>
-        private List<string> PushEventCode(List<string> list, CommonEvent commonEvent)
+		/// <summary>
+		/// コモンイベントをListに追加して戻す
+		/// </summary>
+		/// <param name="list"></param>
+		/// <param name="CommonEvent"></param>
+		/// <returns></returns>
+		private List<string> PushEventCode(List<string> list, CommonEvent commonEvent)
         {
             list.Add("WoditorEvCOMMAND_START");
 
