@@ -348,7 +348,13 @@ namespace WolfEventCodeCreater
             {
                 var eventCommand = commonEvent.EventCommandList[i];
 
-                list.Add(eventCommand.GetEventCode());
+				string eventCode = eventCommand.GetEventCode();
+
+				// コモンイベントコードを出力用に最適化
+				eventCode = Utils.String.RemoveDoubleCRCode(eventCode);
+				eventCode = Utils.String.EncloseCRLFCodeOrSimpleLFCodeInLtAndGt(eventCode);
+
+				list.Add(eventCode);
 
 				// 動作指定コマンドである行を取得
 				if (eventCommand.IsMoveEvent)
