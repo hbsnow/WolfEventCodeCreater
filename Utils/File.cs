@@ -47,7 +47,67 @@ namespace WolfEventCodeCreater.Utils
                 var serializer = new System.Xml.Serialization.XmlSerializer(typeof(Model.UserSetting));
                 serializer.Serialize(streamWriter, userSetting);
             }
-
         }
-    }
+
+
+
+		/// <summary>
+		/// ファイルの存在チェック
+		/// </summary>
+		/// <param name="appMesFileNameWhenNoFileExist">ファイルが存在しない場合にアプリメッセージへ追加するファイル名(""時は追加しない)</param>
+		/// <returns>ファイルが存在する場合はtrue</returns>
+		public static bool CheckFileExist(string filePath, string appMesFileNameWhenNoFileExist = "")
+		{
+			if (!Directory.Exists(filePath))
+			{
+				if(appMesFileNameWhenNoFileExist != "")
+				{
+					AppMesOpp.SetAppMessge($"{appMesFileNameWhenNoFileExist} が\r\n" +
+						$"{filePath} に見つかりません。");
+				}
+				System.Diagnostics.Debug.WriteLine($"{filePath} is No Exist.");
+				return false;
+			}
+			return true;
+		}
+
+
+
+		/// <summary>
+		/// ディレクトリの存在チェック
+		/// </summary>
+		/// <param name="appMesDirectoryNameWhenNoFileExist">ディレクトリが存在しない場合にアプリメッセージへ追加するディレクトリ名(""時は追加しない)</param>
+		/// <param name="isMakeDirectoryWhenNoFileExist">ディレクトリが存在しない場合にディレクトリを作成するか</param>
+		/// <returns>ファイルが存在する場合はtrue</returns>
+		public static bool CheckDirectoryExist(string filePath , string appMesDirectoryNameWhenNoFileExist = "" , bool isMakeDirectoryWhenNoFileExist = false)
+		{
+			if (!Directory.Exists(filePath))
+			{
+				System.Diagnostics.Debug.WriteLine($"{filePath} is No Exist.");
+
+				if (isMakeDirectoryWhenNoFileExist)
+				{
+					Directory.CreateDirectory(filePath);
+					System.Diagnostics.Debug.WriteLine($"{filePath} is created newly because of No Exist.");
+				}
+				if (appMesDirectoryNameWhenNoFileExist != "")
+				{
+					if (isMakeDirectoryWhenNoFileExist)
+					{
+						AppMesOpp.SetAppMessge($"{appMesDirectoryNameWhenNoFileExist} を\r\n" +
+						$"{filePath} に作成しました。");
+					}
+					else
+					{
+						AppMesOpp.SetAppMessge($"{appMesDirectoryNameWhenNoFileExist} が\r\n" +
+						$"{filePath} に見つかりません。");
+					}
+
+					return false;
+				}
+			}
+
+			return true;
+		}
+	}
 }

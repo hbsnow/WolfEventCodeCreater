@@ -40,12 +40,12 @@ namespace WolfEventCodeCreater
             }
 
             // ファイル出力するディレクトリの作成
-            if (!Directory.Exists(Config.DumpDir))
+            if (!Directory.Exists(Config.DumpDirPath))
             {
-                Directory.CreateDirectory(Config.DumpDir);
+                Directory.CreateDirectory(Config.DumpDirPath);
             }
 
-            Console.WriteLine(Config.DumpDir);
+            Console.WriteLine(Config.DumpDirPath);
 
             int count = 0;
             for (int i = 0; i < CommonEventManager.NumCommonEvent; i++)
@@ -61,7 +61,7 @@ namespace WolfEventCodeCreater
                     continue;
                 }
 
-                var filepath = Path.Combine(Config.DumpDir, $"{ Utils.String.FormatFilename(commonName) }.common.md");
+                var filepath = Path.Combine(Config.DumpDirPath, $"{ Utils.String.FormatFilename(commonName) }.common.md");
 
                 MdList = new List<string>();
 				MdFormat mf = new MdFormat();

@@ -146,7 +146,7 @@ namespace WolfEventCodeCreater.Utils
 		/// <summary>
 		/// DatabaseCategory型をデータベースの種類名に変換する
 		/// </summary>
-		/// <param name="triggerConditions"></param>
+		/// <param name="dbCategory"></param>
 		/// <returns></returns>
 		public static string ConvertDatabaseCategoryToName(Database.DatabaseCategory dbCategory)
 		{
@@ -164,5 +164,74 @@ namespace WolfEventCodeCreater.Utils
 					return "";
 			}
 		}
+
+
+
+		/// <summary>
+		/// SettingType型をデータIDの設定方法名に変換する
+		/// </summary>
+		/// <param name="settingType"></param>
+		/// <returns></returns>
+		public static string ConvertSettingTypeToName(TypeConfig.SettingType settingType)
+		{
+			switch (settingType)
+			{
+				case TypeConfig.SettingType.Manuall:
+					return "手動で設定";
+				case TypeConfig.SettingType.FirstStringData:
+					return "最初の文字列データ";
+				case TypeConfig.SettingType.PreviousTypeData:
+					return "1つ前のタイプのデータID";
+				case TypeConfig.SettingType.DesiredDBType:
+					return "指定DBの指定タイプから";
+				default:
+					return "";
+			}
+		}
+
+
+
+		/// <summary>
+		/// ItemConfig.SpecialSettingType型を項目の特殊設定方法名に変換する
+		/// </summary>
+		/// <param name="specialSettingType"></param>
+		/// <returns></returns>
+		public static string ConvertItemConfigSpecialSettingTypeToName(ItemConfig.SpecialSettingType specialSettingType)
+		{
+			switch (specialSettingType)
+			{
+				case ItemConfig.SpecialSettingType.NotUse:
+					return "特殊な設定方法を使用しない";
+				case ItemConfig.SpecialSettingType.ReadFile:
+					return "ファイル読み込み（文字列）";
+				case ItemConfig.SpecialSettingType.ReferenceDatabase:
+					return "データベース参照（数値）";
+				case ItemConfig.SpecialSettingType.ManuallyGenerateBranch:
+					return "選択肢を手動作成（数値）";
+				default:
+					return "";
+			}
+		}
+
+
+
+		/// <summary>
+		/// ItemConfig.ItemType型を項目内容のタイプ名に変換する
+		/// </summary>
+		/// <param name="itemType"></param>
+		/// <returns></returns>
+		public static string ConvertItemTypeToName(ItemConfig.ItemType itemType)
+		{
+			switch (itemType)
+			{
+				case ItemConfig.ItemType.Numeric:
+					return "数値";
+				case ItemConfig.ItemType.String:
+					return "文字列";
+				default:
+					return "";
+			}
+		}
+
 	}
 }

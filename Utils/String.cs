@@ -49,7 +49,7 @@ namespace WolfEventCodeCreater.Utils
 		/// <returns></returns>
 		public static string EncloseCRLFCodeOrSimpleLFCodeInLtAndGt(string val)
 		{
-			val = Regex.Replace(val, "(?<![\r])\n" , "<\\n>");          // 否定的後読みの正規表現
+			val = Regex.Replace(val, "(?<![\r])\n" , "<\\n>");          // 否定的後読みの正規表現。直前が\r以外の\nを置換する。
 			return  val.Replace("\r\n" , "<\\n>");
 		}
 
