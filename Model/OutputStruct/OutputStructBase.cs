@@ -8,14 +8,14 @@ namespace WolfEventCodeCreater.Model.OutputStruct
 {
 	public enum OutputStructType { Sentence, Sentences, Table, Tables, Mix}
 
-	class OutputStructBase
+	public class OutputStructBase
 	{
 		///<summary>項目名</summary>
 		public string EntryName { get; private set; }
 
 		public OutputStructType StructType { get; private set; }
 
-		protected OutputStructBase(string entryName, OutputStructType outputStructTypeout)
+		public OutputStructBase(string entryName, OutputStructType outputStructTypeout)
 		{
 			EntryName = entryName;
 			StructType = outputStructTypeout;

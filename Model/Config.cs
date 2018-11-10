@@ -77,11 +77,17 @@ namespace WolfEventCodeCreater.Model
 		/// </summary>
 		public string CommentOut_Common;
 
+		/// <summary>
+		/// 出力のときファイル名にコモン番号をつけるかどうか
+		/// </summary>
+		public bool IsOutputCommonNumber;
 
 
-        public Config(string root, UserSetting userSetting)
+
+		public Config(string root, UserSetting userSetting)
         {
-			ProjectRoot = Utils.String.FormatFilename(root);
+			ProjectRoot =root;
+			System.Diagnostics.Debug.WriteLine(ProjectRoot , "ProjectRoot");
 			DumpDirPath = RootPathCombine(userSetting.OutputDirName);
 			CEvDumpDirPath = Path.Combine(DumpDirPath , "CEv");
 			CDBDumpDirPath = Path.Combine(DumpDirPath , "CDB");
@@ -95,11 +101,13 @@ namespace WolfEventCodeCreater.Model
 			SDBProjrctFilePath = RootPathCombine(userSetting.SDBProjrctFilePath);
 			SDBDatFilePath = RootPathCombine(userSetting.SDBDatFilePath);
 
+			CommentOut_Common = userSetting.CommentOut;
 
+			IsOutputCommonNumber = userSetting.IsOutputCommonNumber;
 		}
 		private string RootPathCombine(string path)
 		{
-			return Utils.String.FormatFilename(Path.Combine(ProjectRoot , path));
+			return Path.Combine(ProjectRoot , path);
 		}
 	}
 }
