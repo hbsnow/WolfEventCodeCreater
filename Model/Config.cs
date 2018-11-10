@@ -84,30 +84,72 @@ namespace WolfEventCodeCreater.Model
 
 
 
-		public Config(string root, UserSetting userSetting)
+		public Config(UserSetting userSetting)
         {
-			ProjectRoot =root;
+			ProjectRoot = userSetting.ProjectRoot;
 			System.Diagnostics.Debug.WriteLine(ProjectRoot , "ProjectRoot");
-			DumpDirPath = RootPathCombine(userSetting.OutputDirName);
-			CEvDumpDirPath = Path.Combine(DumpDirPath , "CEv");
-			CDBDumpDirPath = Path.Combine(DumpDirPath , "CDB");
-			UDBDumpDirPath = Path.Combine(DumpDirPath , "UDB");
-			SDBDumpDirPath = Path.Combine(DumpDirPath , "SDB");
-			CommonEventPath = RootPathCombine(userSetting.CommonEventPath);
-			CDBProjrctFilePath = RootPathCombine(userSetting.CDBProjrctFilePath);
-			CDBDatFilePath = RootPathCombine(userSetting.CDBDatFilePath);
-			UDBProjrctFilePath = RootPathCombine(userSetting.UDBProjrctFilePath);
-			UDBDatFilePath = RootPathCombine(userSetting.UDBDatFilePath);
-			SDBProjrctFilePath = RootPathCombine(userSetting.SDBProjrctFilePath);
-			SDBDatFilePath = RootPathCombine(userSetting.SDBDatFilePath);
+			PathChangeWithRootChanged(userSetting);
 
 			CommentOut = userSetting.CommentOut;
 
 			IsOutputCommonNumber = userSetting.IsOutputCommonNumber;
 		}
-		private string RootPathCombine(string path)
+
+		private string RootPathCombine(string path1, string path2)
 		{
-			return Path.Combine(ProjectRoot , path);
+			return Path.Combine(ProjectRoot , path1, path2);
+		}
+
+		///<summary>ルートパスに依存するパスの書き換え</summary>
+		public void PathChangeWithRootChanged(UserSetting userSetting) { 
+			DumpDirPath = RootPathCombine(userSetting.OutputDirName,"");
+			CEvDumpDirPath = Path.Combine(DumpDirPath, "CEv");
+			CDBDumpDirPath = Path.Combine(DumpDirPath, "CDB");
+			UDBDumpDirPath = Path.Combine(DumpDirPath, "UDB");
+			SDBDumpDirPath = Path.Combine(DumpDirPath, "SDB");
+			CommonEventPath = RootPathCombine(userSetting.CommonEventPath, "CommonEvent.dat");
+			CDBProjrctFilePath = RootPathCombine(userSetting.CDBProjrctFilePath, "CDataBase.project");
+			CDBDatFilePath = RootPathCombine(userSetting.CDBDatFilePath , "CDataBase.dat");
+			UDBProjrctFilePath = RootPathCombine(userSetting.UDBProjrctFilePath , "DataBase.project");
+			UDBDatFilePath = RootPathCombine(userSetting.UDBDatFilePath , "DataBase.dat");
+			SDBProjrctFilePath = RootPathCombine(userSetting.SDBProjrctFilePath , "SysDataBase.project");
+			SDBDatFilePath = RootPathCombine(userSetting.SDBDatFilePath , "SysDataBase.dat");
+		}
+
+		///<summary>ウディタの定義ファイルの存在を確認する</summary>
+		public bool IsWoditerDefineFiles()
+		{
+			bool tmpFlg = true;
+
+			if (!Utils.File.CheckFileExist(CommonEventPath , "コモンイベント定義ファイル"))
+			{
+				tmpFlg = false;
+			}
+			if (!Utils.File.CheckFileExist(CDBProjrctFilePath , "可変DB定義ファイル(project)"))
+			{
+				tmpFlg = false;
+			}
+			if (!Utils.File.CheckFileExist(CDBDatFilePath , "可変DB定義ファイル(dat)"))
+			{
+				tmpFlg = false;
+			}
+			if (!Utils.File.CheckFileExist(UDBProjrctFilePath , "ユーザーDB定義ファイル(project)"))
+			{
+				tmpFlg = false;
+			}
+			if (!Utils.File.CheckFileExist(UDBDatFilePath , "ユーザーDB定義ファイル(dat)"))
+			{
+				tmpFlg = false;
+			}
+			if (!Utils.File.CheckFileExist(SDBProjrctFilePath , "システムDB定義ファイル(project)"))
+			{
+				tmpFlg = false;
+			}
+			if (!Utils.File.CheckFileExist(SDBDatFilePath , "システムDB定義ファイル(dat)"))
+			{
+				tmpFlg = false;
+			}
+			return tmpFlg;
 		}
 	}
 }
