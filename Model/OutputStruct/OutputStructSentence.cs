@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace WolfEventCodeCreater.Model.OutputStruct
 {
-	public class OutputStructSentence: OutputStructBase
+	public class OutputStructSentence : OutputStructBase
 	{
 		///<summary>文章のデータ</summary>
-		public List<string> Sentences { get; private set; }
+		public string Sentence { get; private set; }
 
-		public OutputStructSentence(string entryName, List<string> sentences) 
-			:base(entryName, OutputStructType.Sentences)
+		public OutputStructSentence(string entryName , string sentence)
+			: base(entryName , OutputStructType.Sentence)
 		{
-			Sentences = sentences;
+			Sentence = sentence;
 		}
 	}
 }

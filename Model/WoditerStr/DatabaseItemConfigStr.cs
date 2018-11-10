@@ -10,14 +10,14 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 {
 	public class DatabaseItemConfigStr
 	{
-		public int ItemIDNo { get; private set; }
+		public OutputStructSentence ItemID { get; private set; }
 		public OutputStructTable ItemConfigTable { get; private set; }
 		public OutputStructTable ItemConfigSubTable { get; private set; }
 
 
 		public DatabaseItemConfigStr(ItemConfig itemConfig , int itemIdNo)
 		{
-			ItemIDNo = itemIdNo;
+			ItemID = new OutputStructSentence("項目ID",  itemIdNo.ToString());
 			ItemConfigTable = SetItemConfigTable(itemConfig, itemIdNo);
 			ItemConfigSubTable = SetItemConfigSubTable(itemConfig);
 		}

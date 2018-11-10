@@ -32,11 +32,18 @@ namespace WolfEventCodeCreater.Model
 			SDB = DatabaseRead(Database.DatabaseCategory.System);
 		}
 
+		//TODO:コモンイベント読み込み実装
+		///<summary>コモンイベントを読込</summary>
+		private void CommonEventRead()
+		{
+
+		}
+
 		///<summary>DBを読込</summary>
 		///<param name="db">読込対象のDB</param>
 		private Database DatabaseRead(Database.DatabaseCategory dbCategory)
 		{
-			Database dbProperty = null;
+			Database database = null;
 			string projectFilePath = "";
 			string datFilePath = "";
 			string dbName = "";
@@ -46,46 +53,54 @@ namespace WolfEventCodeCreater.Model
 			switch (dbCategory)
 			{
 				case Database.DatabaseCategory.Changeable:
+					{
 					projectFilePath = Config.CDBProjrctFilePath;
 					datFilePath = Config.CDBDatFilePath;
 					dbName = "可変データベース";
 					break;
+					}
 				case Database.DatabaseCategory.User:
+					{
 					projectFilePath = Config.UDBProjrctFilePath;
 					datFilePath = Config.UDBDatFilePath;
 					dbName = "ユーザーデータベース";
 					break;
+					}
 				case Database.DatabaseCategory.System:
+					{
 					projectFilePath = Config.SDBProjrctFilePath;
 					datFilePath = Config.SDBDatFilePath;
 					dbName = "システムデータベース";
 					break;
+					}
+				default:
+					{
+					// 念のため
+					break;
+					}
 			}
 
 			// 定義ファイルの存在チェック
-			isProjectFileExist = Utils.File.CheckFileExist(Config.CDBDatFilePath , $"{ dbName }の定義ファイル(.project)");
-			isDatFileExist = Utils.File.CheckFileExist(Config.CDBDatFilePath , $"{ dbName }の定義ファイル(.dat)");
+			isProjectFileExist = Utils.File.CheckFileExist(projectFilePath , $"{ dbName }の定義ファイル(.project)");
+			isDatFileExist = Utils.File.CheckFileExist(datFilePath , $"{ dbName }の定義ファイル(.dat)");
 
 			if (isProjectFileExist && isDatFileExist)
 			{
-				DatabaseFileReader dfr = new DatabaseFileReader(Config.CDBProjrctFilePath , Config.CDBProjrctFilePath);
-				dbProperty = dfr.GetReadData();
+				/* WodiKs.dll ver0.40にて以下のバグが発生
+				 * System.OverflowException: 算術演算の結果オーバーフローが発生しました。
+				*/
+				DatabaseFileReader dfr = new DatabaseFileReader(projectFilePath , datFilePath);
+				database = dfr.GetReadData();
 			}
 
 			// DB読込エラー処理
-			if (dbProperty == null)
+			if (database == null)
 			{
 				AppMesOpp.SetAppMessge($"{ dbName }の読込に失敗しました。");
 			}
 
-			return dbProperty;
+			return database;
 		}
 
-		//TODO:コモンイベント読み込み実装
-		///<summary>コモンイベントを読込</summary>
-		private void CommonEventRead()
-		{
-
-		}
 	}
 }

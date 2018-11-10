@@ -77,11 +77,9 @@
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\OutputDriver.cs" />
-    <Compile Include="Model\OutputStruct\OutputStructBase.cs" />
-    <Compile Include="Model\OutputStruct\OutputStructMix.cs" />
     <Compile Include="Model\OutputStruct\OutputStructSentence.cs" />
+    <Compile Include="Model\OutputStruct\OutputStructBase.cs" />
     <Compile Include="Model\OutputStruct\OutputStructTable.cs" />
-    <Compile Include="Model\OutputStruct\OutputStructTables.cs" />
     <Compile Include="Model\WoditerStr\DatabaseItemConfigStr.cs" />
     <Compile Include="Model\WoditerStr\DatabaseItemStr.cs" />
     <Compile Include="Model\WoditerStr\DatabaseTypeStr.cs" />

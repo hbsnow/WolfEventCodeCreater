@@ -6,6 +6,7 @@ using WodiKs.Ev.Common;
 using WodiKs.IO;
 using WolfEventCodeCreater.StrFormat;
 using WodiKs.Ev;
+using WolfEventCodeCreater.Model;
 
 namespace WolfEventCodeCreater
 {
@@ -56,7 +57,7 @@ namespace WolfEventCodeCreater
                 var commonName = Utils.String.Trim(CommonEvent.CommonEventName);
 
 				// コマンド数2未満、あるいはコモン名の入力がないもの、コメントアウトのものは除外
-                if (CommonEvent.NumEventCommand < 2 || commonName == "" || commonName.IndexOf(Config.CommentOut_Common) == 1)
+                if (CommonEvent.NumEventCommand < 2 || commonName == "" || commonName.IndexOf(Config.CommentOut) == 1)
                 {
                     continue;
                 }
@@ -123,7 +124,7 @@ namespace WolfEventCodeCreater
 							}
 							else
 							{
-								//!? InternalValueを取得できない（すべて0）。WodiKsライブラリのバグ？
+								//!? InternalValueを取得できない（すべて0）。WodiKs ver0.40ライブラリのバグ
 								MdList = mf.FormatSimpleSentence(MdList ,
 									$"cself[{ x }] - {Utils.WodiKs.ConvertNumericSpecialSettingTypeToName(InputNumericData.SpecialSettingType.ManuallyGenerateBranch)}");
 								List<string> headerManuallyGenerateBranch = new List<string> {"InternalValue" , "Name"};
@@ -227,7 +228,13 @@ namespace WolfEventCodeCreater
                 count++;
             }
 
-            return $"{ count }件のMarkdownを出力しました。";
+			//TODO:WodiKs ver0.40 のDB読込バグが修正されるまで一旦実装を中止する
+			// DB出力(将来はコモンイベント出力もまとめる)
+			//OutputDriver outputDriver = new OutputDriver(Config);
+			//outputDriver.Output();
+
+
+			return $"{ count }件のコモンイベントMarkdownを出力しました。";
         }
 
 

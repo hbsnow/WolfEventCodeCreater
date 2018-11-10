@@ -73,9 +73,9 @@ namespace WolfEventCodeCreater.Model
 		public string SDBDatFilePath;
 
 		/// <summary>
-		/// 出力しないコモンのコメントアウト形式へのフルパス
+		/// 出力しないコメントアウト形式へのフルパス
 		/// </summary>
-		public string CommentOut_Common;
+		public string CommentOut;
 
 		/// <summary>
 		/// 出力のときファイル名にコモン番号をつけるかどうか
@@ -101,7 +101,7 @@ namespace WolfEventCodeCreater.Model
 			SDBProjrctFilePath = RootPathCombine(userSetting.SDBProjrctFilePath);
 			SDBDatFilePath = RootPathCombine(userSetting.SDBDatFilePath);
 
-			CommentOut_Common = userSetting.CommentOut;
+			CommentOut = userSetting.CommentOut;
 
 			IsOutputCommonNumber = userSetting.IsOutputCommonNumber;
 		}

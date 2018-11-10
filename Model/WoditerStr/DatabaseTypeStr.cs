@@ -19,9 +19,9 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 
 		public DatabaseTypeStr (WodiKs.DB.Type dbType , int typeID)
 		{
-			TypeID = new OutputStructSentence("タイプID" , new List<string>() { typeID.ToString() });
-			TypeName = new OutputStructSentence("タイプ名" , new List<string>() { Utils.String.Trim(dbType.TypeName) });
-			Memo = new OutputStructSentence("メモ" , new List<string>() { Utils.String.Trim(dbType.Memo) });
+			TypeID = new OutputStructSentence("タイプID" , typeID.ToString());
+			TypeName = new OutputStructSentence("タイプ名" , Utils.String.Trim(dbType.TypeName));
+			Memo = new OutputStructSentence("メモ" , Utils.String.Trim(dbType.Memo));
 			TypeConfig = new OutputStructTable("タイプ設定" , 
 				new List<string>() {"データIDの設定方法" , "指定DB" , "指定タイプID" } ,SetTypeConfigData(dbType));
 			SetTypeIDStr(dbType);

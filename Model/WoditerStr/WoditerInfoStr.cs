@@ -55,6 +55,12 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 
 			for(int typeIDNo = 0; typeIDNo < db.NumType; typeIDNo++)
 			{
+				// データ数0、あるいはタイプ名の入力がないものは除外
+				if (db.TypesData[typeIDNo].NumData == 0 || db.TypesData[typeIDNo].TypeName == "")
+				{
+					continue;
+				}
+
 				dBStrs.Add(new DatabaseTypeStr(db.TypesData[typeIDNo] , typeIDNo));
 			}
 			return dBStrs;

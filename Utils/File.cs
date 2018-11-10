@@ -58,7 +58,7 @@ namespace WolfEventCodeCreater.Utils
 		/// <returns>ファイルが存在する場合はtrue</returns>
 		public static bool CheckFileExist(string filePath, string appMesFileNameWhenNoFileExist = "")
 		{
-			if (!Directory.Exists(filePath))
+			if (!System.IO.File.Exists(filePath))
 			{
 				if(appMesFileNameWhenNoFileExist != "")
 				{

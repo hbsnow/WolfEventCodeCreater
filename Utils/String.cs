@@ -81,5 +81,16 @@ namespace WolfEventCodeCreater.Utils
 		{
 			return isOnFlag ? "On" : "Off";
 		}
+
+
+
+		//TODO:出力ファイルタイプ設定によって拡張子を変える
+		///<summary>拡張子を付与</summary>
+		/// <param name="filenamePrefix"></param>
+		/// <param name="outputFileType"></param>
+		public static string AddExtension(string filenamePrefix)
+		{
+			return filenamePrefix + ".md";
+		}
 	}
 }
