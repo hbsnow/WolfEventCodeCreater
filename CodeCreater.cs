@@ -64,11 +64,11 @@ namespace WolfEventCodeCreater
                 }
 
 				// ファイル名にコモン番号を付ける設定対応
+				string commonIDNo = System.String.Format("{0:000}" , commonID);
 				string fileName = commonName;
 				if (Config.IsOutputCommonNumber)
 				{
-					string fileNamePrefix = System.String.Format("{0:000}" , commonID);
-					fileName = $"{ fileNamePrefix }_{ commonName }";
+					fileName = $"{ commonIDNo }_{ commonName }";
 				}
 				var filepath = Path.Combine(Config.DumpDirPath, $"{ Utils.String.FormatFilename(fileName) }.common.md");
 
@@ -77,6 +77,10 @@ namespace WolfEventCodeCreater
 
 				MdList = mf.FormatHeadline(MdList , commonName , 1);
 				MdList = mf.FormatSimpleSentence(MdList , Utils.String.Trim(CommonEvent.Memo));
+
+				// コモン番号
+				MdList = mf.FormatHeadline(MdList , "コモン番号" , 2);
+				MdList = mf.FormatSimpleSentence(MdList , commonIDNo);
 
 				// コモンイベント色
 				MdList = mf.FormatHeadline(MdList , "コモンイベント色" , 2);
