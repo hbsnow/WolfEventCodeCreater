@@ -41,6 +41,8 @@ namespace WolfEventCodeCreater
         
         private void create(object sender, EventArgs e)
         {
+			AppMesOpp.ClearAppMessge();
+
 			string now = DateTime.Now.ToString("yyyyMMdd_HHmmss");
 			string headMessage = ($"------出力実行({ now })------");
 			AppMesOpp.AddAppMessge(headMessage);

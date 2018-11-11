@@ -149,6 +149,11 @@ namespace WolfEventCodeCreater.Model
 			{
 				tmpFlg = false;
 			}
+
+			if (tmpFlg)
+			{
+				System.Diagnostics.Debug.WriteLine("WoditerDefineFiles are All Exists");
+			}
 			return tmpFlg;
 		}
 	}
