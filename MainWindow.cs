@@ -97,7 +97,7 @@ namespace WolfEventCodeCreater
 
         private void setting(object sender, EventArgs e)
         {
-            var settingWindow = new SettingWindow();
+            var settingWindow = new SettingWindow(userSetting);
             settingWindow.ShowDialog(this);
             settingWindow.Dispose();
         }

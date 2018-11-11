@@ -50,20 +50,27 @@ namespace WolfEventCodeCreater
             Console.WriteLine(Config.DumpDirPath);
 
             int count = 0;
-            for (int i = 0; i < CommonEventManager.NumCommonEvent; i++)
+            for (int commonID = 0; commonID < CommonEventManager.NumCommonEvent; commonID++)
             {
-                var CommonEvent = CommonEventManager.CommonEvents[i];
+                var CommonEvent = CommonEventManager.CommonEvents[commonID];
 
                 // コモン名のトリミング
                 var commonName = Utils.String.Trim(CommonEvent.CommonEventName);
 
 				// コマンド数2未満、あるいはコモン名の入力がないもの、コメントアウトのものは除外
-                if (CommonEvent.NumEventCommand < 2 || commonName == "" || commonName.IndexOf(Config.CommentOut) == 1)
+                if (CommonEvent.NumEventCommand < 2 || commonName == "" || commonName.IndexOf(Config.CommentOut) == 0)
                 {
                     continue;
                 }
 
-                var filepath = Path.Combine(Config.DumpDirPath, $"{ Utils.String.FormatFilename(commonName) }.common.md");
+				// ファイル名にコモン番号を付ける設定対応
+				string fileName = commonName;
+				if (Config.IsOutputCommonNumber)
+				{
+					string fileNamePrefix = System.String.Format("{0:000}" , commonID);
+					fileName = $"{ fileNamePrefix }_{ commonName }";
+				}
+				var filepath = Path.Combine(Config.DumpDirPath, $"{ Utils.String.FormatFilename(fileName) }.common.md");
 
                 MdList = new List<string>();
 				MdFormat mf = new MdFormat();
