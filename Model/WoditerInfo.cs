@@ -96,7 +96,7 @@ namespace WolfEventCodeCreater.Model
 			// DB読込エラー処理
 			if (database == null)
 			{
-				AppMesOpp.SetAppMessge($"{ dbName }の読込に失敗しました。");
+				AppMesOpp.AddAppMessge($"{ dbName }の読込に失敗しました。");
 			}
 
 			return database;

@@ -33,11 +33,12 @@ namespace WolfEventCodeCreater
         /// Markdownファイルの出力
         /// </summary>
         /// <returns></returns>
-        public string Write()
+        public void Write()
         {
             if (CommonEventManager == null)
             {
-                return "ファイルがみつからない、あるいは使用中のため出力に失敗しました。";
+                AppMesOpp.AddAppMessge("ファイルがみつからない、あるいは使用中のため出力に失敗しました。");
+				return;
             }
 
             // ファイル出力するディレクトリの作成
@@ -234,7 +235,8 @@ namespace WolfEventCodeCreater
 			//outputDriver.Output();
 
 
-			return $"{ count }件のコモンイベントMarkdownを出力しました。";
+			AppMesOpp.AddAppMessge($"{ count }件のコモンイベントMarkdownを出力しました。");
+			return;
         }
 
 

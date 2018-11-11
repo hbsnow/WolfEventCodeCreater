@@ -62,7 +62,7 @@ namespace WolfEventCodeCreater.Utils
 			{
 				if(appMesFileNameWhenNoFileExist != "")
 				{
-					AppMesOpp.SetAppMessge($"{appMesFileNameWhenNoFileExist} が\r\n" +
+					AppMesOpp.AddAppMessge($"{appMesFileNameWhenNoFileExist} が\r\n" +
 						$"{filePath} に見つかりません。");
 				}
 				System.Diagnostics.Debug.WriteLine($"{filePath} is No Exist.");
@@ -94,12 +94,12 @@ namespace WolfEventCodeCreater.Utils
 				{
 					if (isMakeDirectoryWhenNoFileExist)
 					{
-						AppMesOpp.SetAppMessge($"{appMesDirectoryNameWhenNoFileExist} を\r\n" +
+						AppMesOpp.AddAppMessge($"{appMesDirectoryNameWhenNoFileExist} を\r\n" +
 						$"{filePath} に作成しました。");
 					}
 					else
 					{
-						AppMesOpp.SetAppMessge($"{appMesDirectoryNameWhenNoFileExist} が\r\n" +
+						AppMesOpp.AddAppMessge($"{appMesDirectoryNameWhenNoFileExist} が\r\n" +
 						$"{filePath} に見つかりません。");
 					}
 

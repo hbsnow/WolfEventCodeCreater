@@ -117,35 +117,35 @@ namespace WolfEventCodeCreater.Model
 		}
 
 		///<summary>ウディタの定義ファイルの存在を確認する</summary>
-		public bool IsWoditerDefineFiles()
+		public bool IsWoditerDefineFiles(bool isAddAppMes = true)
 		{
 			bool tmpFlg = true;
 
-			if (!Utils.File.CheckFileExist(CommonEventPath , "コモンイベント定義ファイル"))
+			if (!Utils.File.CheckFileExist(CommonEventPath , isAddAppMes ? "コモンイベント定義ファイル" : ""))
 			{
 				tmpFlg = false;
 			}
-			if (!Utils.File.CheckFileExist(CDBProjrctFilePath , "可変DB定義ファイル(project)"))
+			if (!Utils.File.CheckFileExist(CDBProjrctFilePath , isAddAppMes ? "可変DB定義ファイル(project)" : ""))
 			{
 				tmpFlg = false;
 			}
-			if (!Utils.File.CheckFileExist(CDBDatFilePath , "可変DB定義ファイル(dat)"))
+			if (!Utils.File.CheckFileExist(CDBDatFilePath , isAddAppMes ? "可変DB定義ファイル(dat)" : ""))
 			{
 				tmpFlg = false;
 			}
-			if (!Utils.File.CheckFileExist(UDBProjrctFilePath , "ユーザーDB定義ファイル(project)"))
+			if (!Utils.File.CheckFileExist(UDBProjrctFilePath , isAddAppMes ? "ユーザーDB定義ファイル(project)" : ""))
 			{
 				tmpFlg = false;
 			}
-			if (!Utils.File.CheckFileExist(UDBDatFilePath , "ユーザーDB定義ファイル(dat)"))
+			if (!Utils.File.CheckFileExist(UDBDatFilePath , isAddAppMes ? "ユーザーDB定義ファイル(dat)" : ""))
 			{
 				tmpFlg = false;
 			}
-			if (!Utils.File.CheckFileExist(SDBProjrctFilePath , "システムDB定義ファイル(project)"))
+			if (!Utils.File.CheckFileExist(SDBProjrctFilePath , isAddAppMes ? "システムDB定義ファイル(project)" : ""))
 			{
 				tmpFlg = false;
 			}
-			if (!Utils.File.CheckFileExist(SDBDatFilePath , "システムDB定義ファイル(dat)"))
+			if (!Utils.File.CheckFileExist(SDBDatFilePath , isAddAppMes ? "システムDB定義ファイル(dat)" : ""))
 			{
 				tmpFlg = false;
 			}

@@ -10,7 +10,7 @@ namespace WolfEventCodeCreater
 		private Model.UserSetting userSetting;
 		private Model.Config Config;
 
-        public MainWindow()
+		public MainWindow()
         {
             InitializeComponent();
 			userSetting = Utils.File.LoadUserSetting();
@@ -42,30 +42,34 @@ namespace WolfEventCodeCreater
         private void create(object sender, EventArgs e)
         {
 			string now = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-			string message = $"------出力実行({ now })------" + "\r\n";
-			System.Diagnostics.Debug.WriteLine(message);
+			string headMessage = ($"------出力実行({ now })------" + "\r\n");
+			AppMesOpp.AddAppMessge(headMessage);
+			System.Diagnostics.Debug.WriteLine(headMessage);
 
 			try
             {
 				userSetting.ProjectRoot = Config.ProjectRoot;
+				// settings.xmlの上書き
 				Utils.File.WriteUserSetting(userSetting);
+
+				Config = new Model.Config(userSetting);
 
 				var CommonEventReader = new CommonEventDatReader(Config.CommonEventPath);
 
                 var CodeCreater = new CodeCreater(Config, CommonEventReader);
 
-                var writeMessage = CodeCreater.Write();
-
-				message = message + writeMessage + "\r\n" + "--------------------------------" + "\r\n";
-
-				textBox2.Text = message + textBox2.Text;
-
+				// 出力処理
+				CodeCreater.Write();
             }
             catch(Exception err)
             {
-                textBox2.Text = message+ err.ToString() + "--------------------------------" + "\r\n" + textBox2.Text;
+				AppMesOpp.AddAppMessge(err.ToString());
             }
-        }
+
+			// メッセージの表示
+			AppMesOpp.AddSeparatorAppMessge();
+			textBox2.Text = AppMesOpp.ReturnAppMessge(true) + textBox2.Text;
+		}
 
 
 
