@@ -5,7 +5,7 @@ namespace WolfEventCodeCreater
 {
 	public static class AppMesOpp
 	{
-		private const string APP_MES_SEPARATOR = "--------------------------------\r\n\r\n";
+		private const string APP_MES_SEPARATOR = "------------------------------------\r\n\r\n";
 
 		private static List<string> appMesList;
 

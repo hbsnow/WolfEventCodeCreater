@@ -42,7 +42,7 @@ namespace WolfEventCodeCreater
         private void create(object sender, EventArgs e)
         {
 			string now = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-			string headMessage = ($"------出力実行({ now })------" + "\r\n");
+			string headMessage = ($"------出力実行({ now })------");
 			AppMesOpp.AddAppMessge(headMessage);
 			System.Diagnostics.Debug.WriteLine(headMessage);
 
@@ -65,6 +65,9 @@ namespace WolfEventCodeCreater
             {
 				AppMesOpp.AddAppMessge(err.ToString());
             }
+
+			// settings.xmlを出力先ディレクトリに出力
+			Utils.File.WriteUserSetting(userSetting, Config.DumpDirPath, $"_{ now }");
 
 			// メッセージの表示
 			AppMesOpp.AddSeparatorAppMessge();

@@ -35,12 +35,31 @@ namespace WolfEventCodeCreater.Utils
 
 
 
-        /// <summary>
-        /// ユーザー設定の書き込み
-        /// </summary>
-        public static void WriteUserSetting(Model.UserSetting userSetting)
+		/// <summary>
+		/// <para>ユーザー設定の書き込み</para>
+		/// <para>パラメータ:directory="" の場合はカレントディレクトリを指定</para>
+		/// <para>パラメータ:filenameSufifxはファイル名に接尾語を追加</para>
+		/// </summary>
+		public static void WriteUserSetting(Model.UserSetting userSetting, string directory = "", string filenameSuffix = "")
         {
-            var settingFile = Path.Combine(Directory.GetCurrentDirectory(), SettingsFileName);
+			string settingFile = "";
+			string filename = SettingsFileName.Insert(SettingsFileName.Length - 4 , filenameSuffix);
+
+			if (directory == "")
+			{
+				settingFile = Path.Combine(Directory.GetCurrentDirectory() , filename);
+			}
+			else
+			{
+				if (Utils.File.CheckDirectoryExist(directory))
+				{
+					settingFile = Path.Combine(directory , filename);
+				}
+				else
+				{
+					return;
+				}
+			}
 
             using (var streamWriter = new StreamWriter(settingFile, false, new UTF8Encoding(false)))
             {
