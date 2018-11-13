@@ -24,7 +24,7 @@ namespace WolfEventCodeCreater
         public CodeCreater(Model.Config config, CommonEventDatReader commonEventDatReader)
         {
             Config = config;
-            CommonEventManager = commonEventDatReader.GetReadData();
+            CommonEventManager = commonEventDatReader.ReadFile(Config.CommonEventPath);
         }
 
 
@@ -136,7 +136,6 @@ namespace WolfEventCodeCreater
 							}
 							else
 							{
-								//!? InternalValueを取得できない（すべて0）。WodiKs ver0.40ライブラリのバグ
 								MdList = mf.FormatSimpleSentence(MdList ,
 									$"cself[{ x }] - {Utils.WodiKs.ConvertNumericSpecialSettingTypeToName(InputNumericData.SpecialSettingType.ManuallyGenerateBranch)}");
 								List<string> headerManuallyGenerateBranch = new List<string> {"InternalValue" , "Name"};
