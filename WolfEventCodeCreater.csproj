@@ -83,7 +83,7 @@
     <Compile Include="Model\WoditerStr\DatabaseItemConfigStr.cs" />
     <Compile Include="Model\WoditerStr\DatabaseItemStr.cs" />
     <Compile Include="Model\WoditerStr\DatabaseTypeStr.cs" />
-    <Compile Include="Model\WoditerStr\DatabaseDataIDStr.cs" />
+    <Compile Include="Model\WoditerStr\DatabaseDataStr.cs" />
     <Compile Include="Model\WoditerInfo.cs" />
     <Compile Include="Model\WoditerStr\WoditerInfoStr.cs" />
     <Compile Include="Program.cs" />

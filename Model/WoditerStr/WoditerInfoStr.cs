@@ -9,6 +9,8 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 {
 	public class WoditerInfoStr
 	{
+		private Config config;
+		
 		///<summary>文字列化したCommonEvent情報</summary>
 		//public List<CommonEvStr> CEvStrs{ get; private set; }
 
@@ -21,11 +23,13 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 		///<summary>文字列化したSDB情報</summary>
 		public List<DatabaseTypeStr> SDBStrs { get; private set; }
 
-		public WoditerInfoStr(WoditerInfo woditerInfo)
+		public WoditerInfoStr(WoditerInfo woditerInfo, Config config)
 		{
 			if (woditerInfo == null)
 				return;
 
+			this.config = config;
+			
 			/*if (woditerInfo.CEvMgr != null)
 			{
 
@@ -33,30 +37,32 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 
 			if (woditerInfo.CDB != null)
 			{
-				CDBStrs = SetDBStrs(woditerInfo.CDB);
+				CDBStrs = SetDBTypeStrs(woditerInfo.CDB);
 			}
 
 			if (woditerInfo.UDB != null)
 			{
-				UDBStrs = SetDBStrs(woditerInfo.UDB);
+				UDBStrs = SetDBTypeStrs(woditerInfo.UDB);
 			}
 
 			if (woditerInfo.SDB != null)
 			{
-				SDBStrs = SetDBStrs(woditerInfo.SDB);
+				SDBStrs = SetDBTypeStrs(woditerInfo.SDB);
 			}
 		}
 
 		//private List<CommonEvStr> SetCEvStrs() { }
 
-		private List<DatabaseTypeStr> SetDBStrs(Database db)
+		private List<DatabaseTypeStr> SetDBTypeStrs(Database db)
 		{
 			List<DatabaseTypeStr> dBStrs = new List<DatabaseTypeStr>();
 
 			for(int typeIDNo = 0; typeIDNo < db.NumType; typeIDNo++)
 			{
-				// データ数0、あるいはタイプ名の入力がないものは除外
-				if (db.TypesData[typeIDNo].NumData == 0 || db.TypesData[typeIDNo].TypeName == "")
+				// データ数0、各項目設定データが0、タイプ名の入力がないもの、コメントアウトのものは除外
+				string typeNmae = Utils.String.Trim(db.TypesData[typeIDNo].TypeName);
+				if (db.TypesData[typeIDNo].NumData == 0 || db.TypesData[typeIDNo].NumItems == 0 ||
+					typeNmae == "" || typeNmae.IndexOf(config.CommentOut) == 0)
 				{
 					continue;
 				}

@@ -16,7 +16,7 @@ namespace WolfEventCodeCreater.Model
 		{
 			this.config = config;
 			woditerInfo = new WoditerInfo(config);
-			woditerInfoStr = new WoditerInfoStr(woditerInfo);
+			woditerInfoStr = new WoditerInfoStr(woditerInfo, config);
 		}
 
 		public void Output()
@@ -44,57 +44,68 @@ namespace WolfEventCodeCreater.Model
 
 		private void CreateOutputStrsDB(List<DatabaseTypeStr> databaseTypeStrs , Database.DatabaseCategory dbCategory)
 		{
-			MakeOutputDir(dbCategory);
+			int count = 0;
+			
+			// 出力先ディレクトリ確認と作成
+			 MakeOutputDir(dbCategory);
 
 			foreach (DatabaseTypeStr databaseTypeStr in databaseTypeStrs)
 			{
-				// データ数0、あるいはタイプ名の入力がないもの、コメントアウトのものは除外
-				if (databaseTypeStr.TypeName.Sentence.IndexOf(config.CommentOut) == 1)
-				{
-					continue;
-				}
-
 				List<string> outputStrs = new List<string>() { };
 
+				// 各内容をList&lt;string&gt;に整形して書き出し
+				outputStrs = FormatDBContents(outputStrs, databaseTypeStr);
 
-				
+				// 出力先ファイルパスの設定
+				string outputFileName = databaseTypeStr.TypeName.Sentence;
+				if (config.IsOutputCommonNumber)
+				{
+					outputFileName = $"{ databaseTypeStr.TypeID.Sentence }_{ outputFileName }";
+				}
+				string outputFilePath = ForamtToOutputFilePath(dbCategory, outputFileName);
+
+				// 出力
+				File.WriteAllLines(outputFilePath , outputStrs);
+				count++;
 			}
+
+			AppMesOpp.AddAppMessge($"{ count }件の{ Utils.WodiKs.ConvertDatabaseCategoryToName(dbCategory) }のMarkdownを出力しました。");
 		}
 
 		///<summary>出力先ディレクトリの存在確認（存在しない場合は新たに作成）</summary>
 		private void MakeOutputDir(Database.DatabaseCategory dbCategory)
 		{
 			string outputDir = "";
-			string appMesDirName = "";
+			//string appMesDirName = "";
 
 			switch (dbCategory)
 			{
-				case Database.DatabaseCategory.CommonEvent:
+				/*case Database.DatabaseCategory.CommonEvent:
 					{
 						outputDir = config.CEvDumpDirPath;
-						appMesDirName = "コモンイベント出力フォルダ";
+						//appMesDirName = "コモンイベント出力フォルダ";
 						break;
-					}
+					}*/
 				case Database.DatabaseCategory.Changeable:
 					{
 						outputDir = config.CDBDumpDirPath;
-						appMesDirName = "可変DB出力フォルダ";
+						//appMesDirName = "可変DB出力フォルダ";
 						break;
 					}
 				case Database.DatabaseCategory.User:
 					{
 						outputDir = config.UDBDumpDirPath;
-						appMesDirName = "ユーザーDB出力フォルダ";
+						//appMesDirName = "ユーザーDB出力フォルダ";
 						break;
 					}
 				case Database.DatabaseCategory.System:
 					{
 						outputDir = config.SDBDumpDirPath;
-						appMesDirName = "システムDB出力フォルダ";
+						//appMesDirName = "システムDB出力フォルダ";
 						break;
 					}
 			}
-			Utils.File.CheckDirectoryExist(outputDir , appMesDirName , true);
+			Utils.File.CheckDirectoryExist(outputDir , "" , true);
 		}
 
 
@@ -110,25 +121,25 @@ namespace WolfEventCodeCreater.Model
 				case Database.DatabaseCategory.CommonEvent:
 					{
 						outputFilePath = config.CEvDumpDirPath;
-						filename = ".common" + filename;
+						filename += ".common";
 						break;
 					}
 				case Database.DatabaseCategory.Changeable:
 					{
 						outputFilePath = config.CDBDumpDirPath;
-						filename = ".cdb" + filename;
+						filename += ".cdb";
 						break;
 					}
 				case Database.DatabaseCategory.User:
 					{
 						outputFilePath = config.UDBDumpDirPath;
-						filename = ".udb" + filename;
+						filename += ".udb";
 						break;
 					}
 				case Database.DatabaseCategory.System:
 					{
 						outputFilePath = config.SDBDumpDirPath;
-						filename = ".sdb" + filename;
+						filename += ".sdb";
 						break;
 					}
 			}
@@ -145,17 +156,22 @@ namespace WolfEventCodeCreater.Model
 		{
 			MdFormat format = new MdFormat();
 
-			/*    タイプIDとタイプ名    */
-			list = format.FormatHeadline(list, dts.TypeID.Sentence + ":" + dts.TypeName.Sentence , 1);
+			/*    タイプ名    */
+			list = format.FormatHeadline(list, dts.TypeName.Sentence , 1);
 
 			/*    メモ    */
+			list = format.FormatHeadline(list , dts.Memo.EntryName , 2);
 			list = format.FormatSimpleSentence(list , dts.Memo.Sentence);
+
+			/*    タイプID    */
+			list = format.FormatHeadline(list , dts.TypeID.EntryName, 2);
+			list = format.FormatSimpleSentence(list , dts.TypeID.Sentence);
 
 			/*    タイプの設定    */
 			list = format.FormatHeadline(list , dts.TypeConfig.EntryName , 2);
 			list = format.FormatTable(list , dts.TypeConfig.TableHeader , dts.TypeConfig.TableData);
 
-			//TODO:WodiKs ver0.40 のDB読込バグが修正されるまで一旦実装を中止する
+			
 
 			return list;
 		}

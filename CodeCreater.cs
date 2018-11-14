@@ -241,8 +241,8 @@ namespace WolfEventCodeCreater
 
 			//TODO:WodiKs ver0.40 のDB読込バグが修正されるまで一旦実装を中止する
 			// DB出力(将来はコモンイベント出力もまとめる)
-			//OutputDriver outputDriver = new OutputDriver(Config);
-			//outputDriver.Output();
+			OutputDriver outputDriver = new OutputDriver(Config);
+			outputDriver.Output();
 
 
 			AppMesOpp.AddAppMessge($"{ count }件のコモンイベントMarkdownを出力しました。");

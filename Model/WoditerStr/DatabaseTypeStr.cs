@@ -15,16 +15,22 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 		public OutputStructSentence Memo { get; private set; }
 		public OutputStructTable TypeConfig { get; private set; }
 		public List<DatabaseItemConfigStr> ItemConfigList { get; private set; }
-		public List<DatabaseItemStr> DataList { get; private set; }
+		public List<DatabaseDataStr> DataList { get; private set; }
 
 		public DatabaseTypeStr (WodiKs.DB.Type dbType , int typeID)
 		{
 			TypeID = new OutputStructSentence("タイプID" , typeID.ToString());
 			TypeName = new OutputStructSentence("タイプ名" , Utils.String.Trim(dbType.TypeName));
 			Memo = new OutputStructSentence("メモ" , Utils.String.Trim(dbType.Memo));
-			TypeConfig = new OutputStructTable("タイプ設定" , 
-				new List<string>() {"データIDの設定方法" , "指定DB" , "指定タイプID" } ,SetTypeConfigData(dbType));
-			SetTypeIDStr(dbType);
+			TypeConfig = new OutputStructTable("タイプ設定" ,
+				SetTypeConfigHeader() , SetTypeConfigData(dbType));
+			ItemConfigList = SetItemConfigStrList(dbType);
+			DataList = SetDataStrList(dbType);
+		}
+
+		private List<string> SetTypeConfigHeader()
+		{
+			return new List<string>() { "データIDの設定方法" , "指定DB" , "指定タイプID" };
 		}
 
 		private List<List<string>> SetTypeConfigData(WodiKs.DB.Type dbType)
@@ -52,14 +58,26 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 			return data;
 		}
 
-		private List<DatabaseDataIDStr> SetTypeIDStr(WodiKs.DB.Type dbType)
+		private List<DatabaseItemConfigStr> SetItemConfigStrList(WodiKs.DB.Type dbType)
 		{
-			List<DatabaseDataIDStr> typeIDStrList = new List<DatabaseDataIDStr>();
+			List<DatabaseItemConfigStr> itemConfigStrList = new List<DatabaseItemConfigStr>();
+
+			for (int itemIDNo = 0; itemIDNo < dbType.NumItems; itemIDNo++)
+			{
+				itemConfigStrList.Add(new DatabaseItemConfigStr(dbType.ItemsConfig[itemIDNo] , itemIDNo));
+			}
+
+			return itemConfigStrList;
+		}
+
+		private List<DatabaseDataStr> SetDataStrList(WodiKs.DB.Type dbType)
+		{
+			List<DatabaseDataStr> typeIDStrList = new List<DatabaseDataStr>() { };
 
 			for (int dataIdNo = 0; dataIdNo < dbType.NumData; dataIdNo++)
 			{
 				typeIDStrList.Add(
-					new DatabaseDataIDStr(dbType.Data[dataIdNo], dbType.NumItems, dataIdNo, dbType.ItemsConfig[dataIdNo]));
+					new DatabaseDataStr(dbType.Data[dataIdNo], dataIdNo , dbType.ItemsConfig, dbType.NumItems, TypeID));
 			}
 			return typeIDStrList;
 		}

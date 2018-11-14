@@ -10,25 +10,27 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 {
 	public class DatabaseItemStr
 	{
+		public OutputStructSentence TypeID { get; private set; }
 		public OutputStructSentence DataID { get; private set; }
 		public OutputStructSentence ItemID { get; private set; }
-		public OutputStructTable DataTable { get; private set; }
+		public OutputStructTable ItemTable { get; private set; }
 
-		public DatabaseItemStr(ItemData itemData, int itemIDNo, ItemConfig itemConfig, int dataIDNo)
+		public DatabaseItemStr(ItemData itemData, int itemIDNo, ItemConfig itemConfig, OutputStructSentence typeID, OutputStructSentence dataID)
 		{
-			DataID = new OutputStructSentence("DataID", dataIDNo.ToString());
+			TypeID = typeID;
+			DataID = dataID;
 			ItemID = new OutputStructSentence("項目ID" , itemIDNo.ToString());
-			DataTable = SetDataTable(itemData, itemIDNo, itemConfig);
+			ItemTable = SetItemTable(itemData, itemIDNo, itemConfig);
 		}
 
-		private OutputStructTable SetDataTable(ItemData itemData, int itemIDNo, ItemConfig itemConfig)
+		private OutputStructTable SetItemTable(ItemData itemData, int itemIDNo, ItemConfig itemConfig)
 		{
 			return new OutputStructTable($"項目{itemIDNo.ToString()}",
-				SetDataTableHeader(), SetDataTableData(itemData, itemConfig));
+				SetItemTableHeader(), SetItemTableData(itemData, itemConfig));
 		}
 
 
-		private List<string> SetDataTableHeader()
+		private List<string> SetItemTableHeader()
 		{
 			List<string> dataTableHeader = new List<string>() {
 				"ItemName","ValueType" ,"Value"};
@@ -36,12 +38,11 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 			return dataTableHeader;
 		}
 
-		private List<List<string>> SetDataTableData(ItemData itemData, ItemConfig itemConfig)
+		private List<List<string>> SetItemTableData(ItemData itemData, ItemConfig itemConfig)
 		{
 			List<List<string>> dataTableData = new List<List<string>>() { };
 
 			List<string> record = new List<string>() { };
-
 
 			record.Add(Utils.String.Trim(itemConfig.ItemName));        // ItemName
 			record.Add(Utils.WodiKs.ConvertItemTypeToName(itemConfig.ItemDataType));    // ValueType

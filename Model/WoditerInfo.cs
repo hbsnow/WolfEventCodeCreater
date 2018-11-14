@@ -7,8 +7,6 @@ namespace WolfEventCodeCreater.Model
 {
 	public class WoditerInfo
 	{
-		//private enum DBCategory { CDB, UDB, SDB }
-
 		public CommonEventManager CEvMgr { get; private set; }
 
 		public Database CDB { get; private set; }
