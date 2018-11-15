@@ -9,6 +9,7 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 {
 	public class WoditerInfoStr
 	{
+		public WoditerInfo Source { get; private set;}
 		private Config config;
 		
 		///<summary>文字列化したCommonEvent情報</summary>
@@ -28,6 +29,7 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 			if (woditerInfo == null)
 				return;
 
+			Source = woditerInfo;
 			this.config = config;
 			
 			/*if (woditerInfo.CEvMgr != null)
@@ -37,23 +39,23 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 
 			if (woditerInfo.CDB != null)
 			{
-				CDBStrs = SetDBTypeStrs(woditerInfo.CDB);
+				CDBStrs = SetDBTypeStrs(woditerInfo.CDB, Database.DatabaseCategory.Changeable);
 			}
 
 			if (woditerInfo.UDB != null)
 			{
-				UDBStrs = SetDBTypeStrs(woditerInfo.UDB);
+				UDBStrs = SetDBTypeStrs(woditerInfo.UDB, Database.DatabaseCategory.User);
 			}
 
 			if (woditerInfo.SDB != null)
 			{
-				SDBStrs = SetDBTypeStrs(woditerInfo.SDB);
+				SDBStrs = SetDBTypeStrs(woditerInfo.SDB, Database.DatabaseCategory.System);
 			}
 		}
 
 		//private List<CommonEvStr> SetCEvStrs() { }
 
-		private List<DatabaseTypeStr> SetDBTypeStrs(Database db)
+		private List<DatabaseTypeStr> SetDBTypeStrs(Database db, Database.DatabaseCategory databaseCategory)
 		{
 			List<DatabaseTypeStr> dBStrs = new List<DatabaseTypeStr>();
 
@@ -67,7 +69,7 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 					continue;
 				}
 
-				dBStrs.Add(new DatabaseTypeStr(db.TypesData[typeIDNo] , typeIDNo));
+				dBStrs.Add(new DatabaseTypeStr(db.TypesData[typeIDNo] , typeIDNo, databaseCategory, Source));
 			}
 			return dBStrs;
 		}

@@ -84,9 +84,6 @@ namespace WolfEventCodeCreater.Model
 
 			if (isProjectFileExist && isDatFileExist)
 			{
-				/* WodiKs.dll ver0.40にて以下のバグが発生
-				 * System.OverflowException: 算術演算の結果オーバーフローが発生しました。
-				*/
 				DatabaseFileReader dfr = new DatabaseFileReader(projectFilePath , datFilePath);
 				database = dfr.GetReadData();
 			}
@@ -100,5 +97,30 @@ namespace WolfEventCodeCreater.Model
 			return database;
 		}
 
+		public Database GetDatabaseSource(Database.DatabaseCategory databaseCategory)
+		{
+			switch (databaseCategory)
+			{
+				case Database.DatabaseCategory.Changeable:
+					{
+						return CDB;
+					}
+				case Database.DatabaseCategory.User:
+					{
+						return UDB;
+					}
+				case Database.DatabaseCategory.System:
+					{
+						return SDB;
+					}
+				case Database.DatabaseCategory.CommonEvent:
+					{
+						System.Diagnostics.Debug.WriteLine("WoditerInfo.GetDatabaseSource()のNULLエラー");
+						return null;
+					}
+				default:
+					return null;
+			}
+		}
 	}
 }

@@ -171,11 +171,38 @@ namespace WolfEventCodeCreater.Model
 			list = format.FormatHeadline(list , dts.TypeConfig.EntryName , 2);
 			list = format.FormatTable(list , dts.TypeConfig.TableHeader , dts.TypeConfig.TableData);
 
-			
+			/*    項目の設定    */
+			list = format.FormatHeadline(list , "項目の設定" , 2);
+			foreach(var itemConfigStr in dts.ItemConfigList)
+			{
+				list = format.FormatSimpleSentence(list , itemConfigStr.ItemConfigTable.EntryName);
+				list = format.FormatTable(list , itemConfigStr.ItemConfigTable.TableHeader , itemConfigStr.ItemConfigTable.TableData ,
+						itemConfigStr.ItemConfigTable.EntryName);
+
+				if (itemConfigStr.ItemConfigSubTable.TableHeader.Count != 0)
+				{
+					list = format.FormatTable(list , itemConfigStr.ItemConfigSubTable.TableHeader , itemConfigStr.ItemConfigSubTable.TableData,
+						itemConfigStr.ItemConfigSubTable.EntryName);
+				}
+			}
+
+			/*    データと各項目の値    */
+			list = format.FormatHeadline(list , "データと各項目の値" , 2);
+			list = format.FormatHeadline(list , dts.DataTable.EntryName , 3);
+			//TODO:FormatTableの行数折返し
+			list = format.FormatTable(list , dts.DataTable.TableHeader , dts.DataTable.TableData);
+
+			foreach (var data in dts.DataList)
+			{
+				list = format.FormatHeadline(list , $"{data.DataID.Sentence}:{data.DataName.Sentence}", 3);
+				foreach(var item in data.ItemStrList)
+				{
+					list = format.FormatSimpleSentence(list, item.ItemTable.EntryName);
+					list = format.FormatTable(list , item.ItemTable.TableHeader , item.ItemTable.TableData , item.ItemTable.EntryName);
+				}
+			}
 
 			return list;
 		}
-
-
 	}
 }
