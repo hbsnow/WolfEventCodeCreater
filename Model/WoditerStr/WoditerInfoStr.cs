@@ -62,9 +62,8 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 			for(int typeIDNo = 0; typeIDNo < db.NumType; typeIDNo++)
 			{
 				// データ数0、各項目設定データが0、タイプ名の入力がないもの、コメントアウトのものは除外
-				string typeNmae = Utils.String.Trim(db.TypesData[typeIDNo].TypeName);
-				if (db.TypesData[typeIDNo].NumData == 0 || db.TypesData[typeIDNo].NumItems == 0 ||
-					typeNmae == "" || typeNmae.IndexOf(config.CommentOut) == 0)
+				string typeName = Utils.String.Trim(db.TypesData[typeIDNo].TypeName);
+				if (db.TypesData[typeIDNo].NumData == 0 || typeName == "" || typeName.IndexOf(config.CommentOut) == 0)
 				{
 					continue;
 				}
