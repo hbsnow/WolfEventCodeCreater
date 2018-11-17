@@ -12,18 +12,18 @@ namespace WolfEventCodeCreater.Model
 		private WoditerInfo woditerInfo;
 		private WoditerInfoStr woditerInfoStr;
 
-		public  OutputDriver(Config config)
+		public OutputDriver(Config config)
 		{
 			this.config = config;
 			woditerInfo = new WoditerInfo(config);
-			woditerInfoStr = new WoditerInfoStr(woditerInfo, config);
+			woditerInfoStr = new WoditerInfoStr(woditerInfo , config);
 		}
 
 		public void Output()
 		{
 			//if(CEvStrs != null)
 			CreateOutputStrsCEv();
-			if(woditerInfoStr.CDBStrs != null)
+			if (woditerInfoStr.CDBStrs != null)
 			{
 				CreateOutputStrsDB(woditerInfoStr.CDBStrs , Database.DatabaseCategory.Changeable);
 			}
@@ -45,16 +45,16 @@ namespace WolfEventCodeCreater.Model
 		private void CreateOutputStrsDB(List<DatabaseTypeStr> databaseTypeStrs , Database.DatabaseCategory dbCategory)
 		{
 			int count = 0;
-			
+
 			// 出力先ディレクトリ確認と作成
-			 MakeOutputDir(dbCategory);
+			MakeOutputDir(dbCategory);
 
 			foreach (DatabaseTypeStr databaseTypeStr in databaseTypeStrs)
 			{
 				List<string> outputStrs = new List<string>() { };
 
 				// 各内容をList&lt;string&gt;に整形して書き出し
-				outputStrs = FormatDBContents(outputStrs, databaseTypeStr);
+				outputStrs = FormatDBContents(outputStrs , databaseTypeStr);
 
 				// 出力先ファイルパスの設定
 				string outputFileName = databaseTypeStr.TypeName.Sentence;
@@ -62,7 +62,7 @@ namespace WolfEventCodeCreater.Model
 				{
 					outputFileName = $"{ databaseTypeStr.TypeID.Sentence }_{ outputFileName }";
 				}
-				string outputFilePath = ForamtToOutputFilePath(dbCategory, outputFileName);
+				string outputFilePath = ForamtToOutputFilePath(dbCategory , outputFileName);
 
 				// 出力
 				File.WriteAllLines(outputFilePath , outputStrs);
@@ -108,10 +108,8 @@ namespace WolfEventCodeCreater.Model
 			Utils.File.CheckDirectoryExist(outputDir , "" , true);
 		}
 
-
-
 		///<summary>出力ファイルパスに整形</summary>
-		private string ForamtToOutputFilePath(Database.DatabaseCategory dbCategory, string filenamePrefix)
+		private string ForamtToOutputFilePath(Database.DatabaseCategory dbCategory , string filenamePrefix)
 		{
 			string outputFilePath = "";
 			string filename = Utils.String.FormatFilename(filenamePrefix);
@@ -149,40 +147,36 @@ namespace WolfEventCodeCreater.Model
 			return outputFilePath = Path.Combine(outputFilePath , filename);
 		}
 
-
-
 		///<summary>DBの各内容をList&lt;string&gt;に整形して書き出し</summary>
-		private List<string> FormatDBContents(List<string> list, DatabaseTypeStr dts)
+		private List<string> FormatDBContents(List<string> list , DatabaseTypeStr dts)
 		{
 			MdFormat format = new MdFormat();
 
 			/*    タイプ名    */
-			list = format.FormatHeadline(list, dts.TypeName.Sentence , 1);
+			list = format.FormatHeadline(list , dts.TypeName.Sentence , 1);
 
 			/*    メモ    */
 			list = format.FormatHeadline(list , dts.Memo.EntryName , 2);
 			list = format.FormatSimpleSentence(list , dts.Memo.Sentence);
 
 			/*    タイプID    */
-			list = format.FormatHeadline(list , dts.TypeID.EntryName, 2);
+			list = format.FormatHeadline(list , dts.TypeID.EntryName , 2);
 			list = format.FormatSimpleSentence(list , dts.TypeID.Sentence);
 
 			/*    タイプの設定    */
 			list = format.FormatHeadline(list , dts.TypeConfig.EntryName , 2);
-			list = format.FormatTable(list , dts.TypeConfig.TableHeader , dts.TypeConfig.TableData);
+			list = format.FormatTable(list , dts.TypeConfig , dts.TypeConfig.EntryName);
 
 			/*    項目の設定    */
 			list = format.FormatHeadline(list , "項目の設定" , 2);
-			foreach(var itemConfigStr in dts.ItemConfigList)
+			foreach (var itemConfigStr in dts.ItemConfigList)
 			{
 				list = format.FormatSimpleSentence(list , itemConfigStr.ItemConfigTable.EntryName);
-				list = format.FormatTable(list , itemConfigStr.ItemConfigTable.TableHeader , itemConfigStr.ItemConfigTable.TableData ,
-						itemConfigStr.ItemConfigTable.EntryName);
+				list = format.FormatTable(list , itemConfigStr.ItemConfigTable , itemConfigStr.ItemConfigTable.EntryName);
 
-				if (itemConfigStr.ItemConfigSubTable.TableHeader.Count != 0)
+				if (itemConfigStr.ItemConfigSubTable.Columns.Count != 0)
 				{
-					list = format.FormatTable(list , itemConfigStr.ItemConfigSubTable.TableHeader , itemConfigStr.ItemConfigSubTable.TableData,
-						itemConfigStr.ItemConfigSubTable.EntryName);
+					list = format.FormatTable(list , itemConfigStr.ItemConfigSubTable , itemConfigStr.ItemConfigSubTable.EntryName);
 				}
 			}
 
@@ -190,15 +184,15 @@ namespace WolfEventCodeCreater.Model
 			list = format.FormatHeadline(list , "データと各項目の値" , 2);
 			list = format.FormatHeadline(list , dts.DataTable.EntryName , 3);
 			//TODO:FormatTableの行数折返し
-			list = format.FormatTable(list , dts.DataTable.TableHeader , dts.DataTable.TableData);
+			list = format.FormatTable(list , dts.DataTable , dts.DataTable.EntryName);
 
 			foreach (var data in dts.DataList)
 			{
-				list = format.FormatHeadline(list , $"{data.DataID.Sentence}:{data.DataName.Sentence}", 3);
-				foreach(var item in data.ItemStrList)
+				list = format.FormatHeadline(list , $"{data.DataID.Sentence}:{data.DataName.Sentence}" , 3);
+				foreach (var item in data.ItemStrList)
 				{
-					list = format.FormatSimpleSentence(list, item.ItemTable.EntryName);
-					list = format.FormatTable(list , item.ItemTable.TableHeader , item.ItemTable.TableData , item.ItemTable.EntryName);
+					list = format.FormatSimpleSentence(list , item.ItemTable.EntryName);
+					list = format.FormatTable(list , item.ItemTable , item.ItemTable.EntryName);
 				}
 			}
 

@@ -20,7 +20,7 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 		{
 			Parent = parent;
 			DataID = new OutputStructSentence("データID" , dataIdNo.ToString());
-			DataName = new OutputStructSentence("データ名" , parent.DataTable.TableData[dataIdNo][1]);
+			DataName = new OutputStructSentence("データ名" , parent.DataTable[dataIdNo][1]);
 			ItemStrList = SetItemStrList(data, itemConfigs, itemNum, dataIdNo);
 		}
 

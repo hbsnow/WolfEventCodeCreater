@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data;
+using WolfEventCodeCreater.Model.OutputStruct;
 
 namespace WolfEventCodeCreater.StrFormat
 {
@@ -8,6 +9,13 @@ namespace WolfEventCodeCreater.StrFormat
 	/// </summary>
 	internal class MdFormat : StrFormatBase
 	{
+		internal MdFormat()
+		{
+			columnDelimiter = "|";									// 列同士の区切り文字
+			betweenHeaderAndDataDelimiter = "---";		// ヘッダ部とデータ部の区切り文字
+	}
+
+
 		/// <summary>
 		/// 見出しの文字列に整形する【MDファイル】
 		/// </summary>
@@ -49,40 +57,38 @@ namespace WolfEventCodeCreater.StrFormat
 		/// テーブル構造（ヘッダ部とデータ部とフッタ部）を作成し整形する【MDファイル】
 		/// </summary>
 		/// <param name="mdList">出力文字列が格納されたリスト</param>
-		/// <param name="headerStrs">テーブルのヘッダに適用する文字列のリスト</param>
-		/// <param name="dataStrs">テーブルのデータに適用する文字列のリスト</param>
+		/// <param name="outputStructTable">出力元のテーブル構造</param>
+		/// <param name="tableName">テーブルの名前</param>
+		/// <param name="maxRowNum">テーブルのデータのうち1列に格納する最大行数</param>
+		/// <param name="isSimpleSentenceWhenOnlyOneRecord">データが一行のみのときに文章に変更するかどうか</param>
 		/// <returns>整形済みの文字列が入力された出力文字列リスト</returns>
-		public override List<string> FormatTable(List<string> mdList , List<string> headerStrs , List<List<string>> dataStrs , string tableName = "")
+		public override List<string> FormatTable(List<string> mdList, OutputStructTable outputStructTable,
+			string tableName = "", int maxRowNum = 20, bool isSimpleSentenceWhenOnlyOneRecord = true)
 		{
-			if (headerStrs == null || dataStrs == null)
+			if (outputStructTable.Columns == null || outputStructTable.Rows == null)
 			{
-				System.Diagnostics.Debug.WriteLine("headerStrsまたはdataStrsがNull");
+				System.Diagnostics.Debug.WriteLine("表のヘッダまたはデータがNull");
 				//TODO:Error処理
 				return mdList;
 			}
 
-			if ((0 < headerStrs.Count) && (0 < dataStrs.Count) && (headerStrs.Count == dataStrs[0].Count))
+			if ((0 < outputStructTable.Columns.Count) && (0 < outputStructTable.Rows.Count))
 			{
-				if (1 < headerStrs.Count)
+				if (!(isSimpleSentenceWhenOnlyOneRecord && outputStructTable.Columns.Count == 1))
 				{
-					StrTable strTable = new StrTable(headerStrs , dataStrs , "|" , "---" , tableName);
-					// System.Diagnostics.Debug.WriteLine(strTable.Columns.Count, "strTable.Columns.Count");
-					// System.Diagnostics.Debug.WriteLine(strTable.Rows.Count , "strTable.Rows.Count");
-
-					mdList = this.FormatTableHeader(mdList , strTable);
-					mdList = this.FormatTableData(mdList , strTable);
+					mdList = this.FormatTableHeader(mdList , outputStructTable);
+					mdList = this.FormatTableData(mdList , outputStructTable, maxRowNum);
 					mdList = this.FormatTableFooter(mdList , "");
 				}
 				// headerStrsの要素が1つのみの場合は単文の文字列に整形する
 				else
 				{
-					return FormatSimpleSentence(mdList , headerStrs[0]);
+					return FormatSimpleSentence(mdList , (string)outputStructTable.Rows[0][0]);
 				}
 			}
 			else
 			{
-				System.Diagnostics.Debug.WriteLine("headerStrsまたはdataStrsの要素数が0、またはheaderStrsとdataStrsとの列数に差異がある");
-				//TODO:Error処理
+				System.Diagnostics.Debug.WriteLine("ヘッダまたはデータの要素数が0");
 			}
 
 			return mdList;
@@ -92,41 +98,27 @@ namespace WolfEventCodeCreater.StrFormat
 		/// テーブルのヘッダの文字列に整形する【MDファイル】
 		/// </summary>
 		/// <param name="mdList">出力文字列が格納されたリスト</param>
-		/// <param name="inputStr">文字列のテーブルオブジェクト</param>
+		/// <param name="outputStructTable">出力元のテーブル構造</param>
 		/// <returns>整形済みの文字列が入力された出力文字列リスト</returns>
-		protected override List<string> FormatTableHeader(List<string> mdList , StrTable strTable)
+		protected override List<string> FormatTableHeader(List<string> mdList , OutputStructTable outputStructTable)
 		{
-			DataColumnCollection headerStrs = strTable.HeaderStrs;
-			string columnDelimiter = strTable.ColumnDelimiter;
+			List<string> headerStrs = outputStructTable.Columns;
 			string columnDelimiterStr = " " + columnDelimiter + " ";
-			string betweenHeaderAndDataDelimiter = strTable.BetweenHeaderAndDataDelimiter;
 			string headerStr = " ";
 			string headerAndDataDelimiterStr = "";
 
-			if (1 < headerStrs.Count)
+			for (int i = 0; i < headerStrs.Count - 1; i++)
 			{
-				for (int i = 0; i < headerStrs.Count - 1; i++)
-				{
-					headerStr = headerStr + headerStrs[i].ColumnName + columnDelimiterStr;
-					headerAndDataDelimiterStr = headerAndDataDelimiterStr + betweenHeaderAndDataDelimiter + columnDelimiterStr;
-				}
-				headerStr = headerStr + headerStrs[headerStrs.Count - 1].ColumnName + " ";
-				headerAndDataDelimiterStr = headerAndDataDelimiterStr + betweenHeaderAndDataDelimiter + " ";
+				headerStr = headerStr + headerStrs[i] + columnDelimiterStr;
+				headerAndDataDelimiterStr = headerAndDataDelimiterStr + betweenHeaderAndDataDelimiter + columnDelimiterStr;
+			}
+			// 残った最後の要素のヘッダを追加
+			headerStr = headerStr + headerStrs[headerStrs.Count - 1] + " ";
+			headerAndDataDelimiterStr = headerAndDataDelimiterStr + betweenHeaderAndDataDelimiter + " ";
 
-				mdList.Add(headerStr);
-				mdList.Add(headerAndDataDelimiterStr);
-			}
-			// inputStrsの要素が1つのみの場合は単文の文字列に整形する
-			else if (1 == headerStrs.Count)
-			{
-				return FormatSimpleSentence(mdList , headerStrs[0].ColumnName);
-			}
-			else
-			{
-				System.Diagnostics.Debug.WriteLine("headerStrsの要素数が0");
-				//TODO:Error処理
-				// このメソッドはprotectedかつ呼び出し元のFormatTableメソッドにてエラー処理しているため、Error処理不要だが一応残す
-			}
+			mdList.Add(headerStr);
+			mdList.Add(headerAndDataDelimiterStr);
+			
 			return mdList;
 		}
 
@@ -134,24 +126,24 @@ namespace WolfEventCodeCreater.StrFormat
 		/// テーブルのデータ部の文字列に整形する【MDファイル】
 		/// </summary>
 		/// <param name="mdList">出力文字列が格納されたリスト</param>
-		/// <param name="dataStrs">文字列のテーブルオブジェクト</param>
+		/// <param name="outputStructTable">出力元のテーブル構造</param>
+		/// <param name="maxRowNum">テーブルのデータのうち1列に格納する最大行数</param>
 		/// <returns>整形済みの文字列が入力された出力文字列リスト</returns>
-		protected override List<string> FormatTableData(List<string> mdList , StrTable strTable)
+		protected override List<string> FormatTableData(List<string> mdList , OutputStructTable outputStructTable, int maxRowNum)
 		{
-			DataRowCollection dataStrs = strTable.DataStrs;
-			string columnDelimiter = strTable.ColumnDelimiter;
+			List<List<string>> dataStrs = outputStructTable.Rows;
 			string columnDelimiterStr = " " + columnDelimiter + " ";
 
-			foreach (DataRow record in dataStrs)
+			foreach (var record in dataStrs)
 			{
 				string recordStr = "";
-				foreach (var field in record.ItemArray)
+				foreach (string field in record)
 				{
 					/* field == ""の場合、WolfEventCodeCreaterのVer1.0.0.0の表記に合わせようとすると
 					recordStrの扱いが複雑になるため、
 					WolfEventCodeCreaterのVer1.0.0.0の表記に合わせないことにした。
 					ただし、MDファイルをHTML表示した時は表記の違いによる影響はない。*/
-					recordStr += field.ToString() + columnDelimiterStr;
+					recordStr += field + columnDelimiterStr;
 				}
 				recordStr = recordStr.Substring(0 , recordStr.Length - columnDelimiterStr.Length);
 				mdList.Add(recordStr);

@@ -49,7 +49,7 @@ namespace WolfEventCodeCreater
 
             Console.WriteLine(Config.DumpDirPath);
 
-            int count = 0;
+            /*int count = 0;
             for (int commonID = 0; commonID < CommonEventManager.NumCommonEvent; commonID++)
             {
                 var CommonEvent = CommonEventManager.CommonEvents[commonID];
@@ -238,14 +238,12 @@ namespace WolfEventCodeCreater
 
                 count++;
             }
+			AppMesOpp.AddAppMessge($"{ count }件のコモンイベントMarkdownを出力しました。");*/
 
-			//TODO:WodiKs ver0.40 のDB読込バグが修正されるまで一旦実装を中止する
 			// DB出力(将来はコモンイベント出力もまとめる)
 			OutputDriver outputDriver = new OutputDriver(Config);
 			outputDriver.Output();
 
-
-			AppMesOpp.AddAppMessge($"{ count }件のコモンイベントMarkdownを出力しました。");
 			return;
         }
 
