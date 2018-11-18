@@ -101,9 +101,6 @@
     <Compile Include="Model\UserSetting.cs" />
     <Compile Include="StrFormat\MdFormat.cs" />
     <Compile Include="StrFormat\StrFormatBase.cs" />
-    <Compile Include="StrFormat\StrTable.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="StrFormat\TxtFormat.cs" />
     <Compile Include="Utils\File.cs" />
     <Compile Include="Utils\String.cs" />

@@ -40,67 +40,6 @@ namespace WolfEventCodeCreater.Model
 			}
 		}
 
-		private void CreateOutputStrsCEv(List<CommonEventStr> CEvStrs)
-		{
-			int count = 0;
-
-			// 出力先ディレクトリ確認と作成
-			MakeOutputDir(Database.DatabaseCategory.CommonEvent);
-
-			foreach (CommonEventStr cEvStr in CEvStrs)
-			{
-				List<string> outputStrs = new List<string>();
-
-				// 各内容をList&lt;string&gt;に整形して書き出し
-				outputStrs = FormatCEvContents(outputStrs , cEvStr);
-
-				// 出力先ファイルパスの設定
-				string outputFileName = cEvStr.CEvName.Sentence;
-				// ファイル名にコモン番号を付ける設定対応
-				if (config.IsOutputCommonNumber)
-				{
-					outputFileName = $"{ cEvStr.CEvID.Sentence }_{ outputFileName }";
-				}
-				string outputFilePath = ForamtToOutputFilePath(Database.DatabaseCategory.CommonEvent , outputFileName);
-
-				// 出力
-				File.WriteAllLines(outputFilePath , outputStrs);
-				count++;
-			}
-
-			AppMesOpp.AddAppMessge($"{ count }件のコモンイベントのMarkdownを出力しました。");
-		}
-
-		private void CreateOutputStrsDB(List<DatabaseTypeStr> databaseTypeStrs , Database.DatabaseCategory dbCategory)
-		{
-			int count = 0;
-
-			// 出力先ディレクトリ確認と作成
-			MakeOutputDir(dbCategory);
-
-			foreach (DatabaseTypeStr databaseTypeStr in databaseTypeStrs)
-			{
-				List<string> outputStrs = new List<string>() { };
-
-				// 各内容をList&lt;string&gt;に整形して書き出し
-				outputStrs = FormatDBContents(outputStrs , databaseTypeStr);
-
-				// 出力先ファイルパスの設定
-				string outputFileName = databaseTypeStr.TypeName.Sentence;
-				if (config.IsOutputCommonNumber)
-				{
-					outputFileName = $"{ databaseTypeStr.TypeID.Sentence }_{ outputFileName }";
-				}
-				string outputFilePath = ForamtToOutputFilePath(dbCategory , outputFileName);
-
-				// 出力
-				File.WriteAllLines(outputFilePath , outputStrs);
-				count++;
-			}
-
-			AppMesOpp.AddAppMessge($"{ count }件の{ Utils.WodiKs.ConvertDatabaseCategoryToName(dbCategory) }のMarkdownを出力しました。");
-		}
-
 		///<summary>出力先ディレクトリの存在確認（存在しない場合は新たに作成）</summary>
 		private void MakeOutputDir(Database.DatabaseCategory dbCategory)
 		{
@@ -174,6 +113,38 @@ namespace WolfEventCodeCreater.Model
 			filename = Utils.String.AddExtension(filename);
 
 			return outputFilePath = Path.Combine(outputFilePath , filename);
+		}
+
+		#region コモンイベント
+		private void CreateOutputStrsCEv(List<CommonEventStr> CEvStrs)
+		{
+			int count = 0;
+
+			// 出力先ディレクトリ確認と作成
+			MakeOutputDir(Database.DatabaseCategory.CommonEvent);
+
+			foreach (CommonEventStr cEvStr in CEvStrs)
+			{
+				List<string> outputStrs = new List<string>();
+
+				// 各内容をList&lt;string&gt;に整形して書き出し
+				outputStrs = FormatCEvContents(outputStrs , cEvStr);
+
+				// 出力先ファイルパスの設定
+				string outputFileName = cEvStr.CEvName.Sentence;
+				// ファイル名にコモン番号を付ける設定対応
+				if (config.IsOutputCommonNumber)
+				{
+					outputFileName = $"{ cEvStr.CEvID.Sentence }_{ outputFileName }";
+				}
+				string outputFilePath = ForamtToOutputFilePath(Database.DatabaseCategory.CommonEvent , outputFileName);
+
+				// 出力
+				File.WriteAllLines(outputFilePath , outputStrs);
+				count++;
+			}
+
+			AppMesOpp.AddAppMessge($"{ count }件のコモンイベントのMarkdownを出力しました。");
 		}
 
 		///<summary>コモンイベントの内容を出力文字列に整形</summary>
@@ -250,6 +221,38 @@ namespace WolfEventCodeCreater.Model
 
 			return list;
 		}
+		#endregion
+
+		#region DB
+		private void CreateOutputStrsDB(List<DatabaseTypeStr> databaseTypeStrs , Database.DatabaseCategory dbCategory)
+		{
+			int count = 0;
+
+			// 出力先ディレクトリ確認と作成
+			MakeOutputDir(dbCategory);
+
+			foreach (DatabaseTypeStr databaseTypeStr in databaseTypeStrs)
+			{
+				List<string> outputStrs = new List<string>() { };
+
+				// 各内容をList&lt;string&gt;に整形して書き出し
+				outputStrs = FormatDBContents(outputStrs , databaseTypeStr);
+
+				// 出力先ファイルパスの設定
+				string outputFileName = databaseTypeStr.TypeName.Sentence;
+				if (config.IsOutputCommonNumber)
+				{
+					outputFileName = $"{ databaseTypeStr.TypeID.Sentence }_{ outputFileName }";
+				}
+				string outputFilePath = ForamtToOutputFilePath(dbCategory , outputFileName);
+
+				// 出力
+				File.WriteAllLines(outputFilePath , outputStrs);
+				count++;
+			}
+
+			AppMesOpp.AddAppMessge($"{ count }件の{ Utils.WodiKs.ConvertDatabaseCategoryToName(dbCategory) }のMarkdownを出力しました。");
+		}
 
 		///<summary>DBの各内容を出力文字列に整形</summary>
 		private List<string> FormatDBContents(List<string> list , DatabaseTypeStr dts)
@@ -302,5 +305,6 @@ namespace WolfEventCodeCreater.Model
 
 			return list;
 		}
+		#endregion
 	}
 }
