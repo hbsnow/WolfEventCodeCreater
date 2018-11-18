@@ -79,7 +79,10 @@
     <Compile Include="Model\OutputDriver.cs" />
     <Compile Include="Model\OutputStruct\OutputStructSentence.cs" />
     <Compile Include="Model\OutputStruct\OutputStructBase.cs" />
+    <Compile Include="Model\OutputStruct\OutputStructSentences.cs" />
     <Compile Include="Model\OutputStruct\OutputStructTable.cs" />
+    <Compile Include="Model\OutputStruct\OutputStructTables.cs" />
+    <Compile Include="Model\WoditerStr\CommonEventStr.cs" />
     <Compile Include="Model\WoditerStr\DatabaseItemConfigStr.cs" />
     <Compile Include="Model\WoditerStr\DatabaseItemStr.cs" />
     <Compile Include="Model\WoditerStr\DatabaseTypeStr.cs" />

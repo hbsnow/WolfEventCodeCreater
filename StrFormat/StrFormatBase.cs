@@ -18,16 +18,18 @@ namespace WolfEventCodeCreater.StrFormat
 		/// <param name="mdList">出力文字列が格納されたリスト</param>
 		/// <param name="inputStr">整形対象の文字列</param>
 		/// <param name="headlineLevel">見出しのレベル(既定値は2)</param>
+		/// <param name="isAddLFCodeInLastStr">文の最後にLFコードを付け足すか</param>
 		/// <returns>整形済みの文字列が入力された出力文字列リスト</returns>
-		public abstract List<string> FormatHeadline(List<string> mdList , string inputStr , int headlineLevel = 2);
+		public abstract List<string> FormatHeadline(List<string> mdList , string inputStr , int headlineLevel = 2, bool isAddLFCodeInLastStr = true);
 
 		/// <summary>
 		/// 単文の文字列に整形する
 		/// </summary>
 		/// <param name="mdList">出力文字列が格納されたリスト</param>
 		/// <param name="inputStr">整形対象の文字列</param>
+		/// <param name="isAddLFCodeInLastStr">文の最後にLFコードを付け足すか</param>
 		/// <returns>整形済みの文字列が入力された出力文字列リスト</returns>
-		public abstract List<string> FormatSimpleSentence(List<string> mdList , string inputStr);
+		public abstract List<string> FormatSimpleSentence(List<string> mdList , string inputStr, bool isAddLFCodeInLastStr = true);
 
 		/// <summary>
 		/// テーブル構造（ヘッダ部とデータ部とフッタ部）を作成し整形する

@@ -22,8 +22,9 @@ namespace WolfEventCodeCreater.StrFormat
 		/// <param name="mdList">出力文字列が格納されたリスト</param>
 		/// <param name="inputStr">整形対象の文字列</param>
 		/// <param name="headlineLevel">見出しのレベル(既定値は2)</param>
+		/// <param name="isAddLFCodeInLastStr">文の最後にLFコードを付け足すか</param>
 		/// <returns>整形済みの文字列が入力された出力文字列リスト</returns>
-		public override List<string> FormatHeadline(List<string> mdList , string inputStr , int headlineLevel = 2)
+		public override List<string> FormatHeadline(List<string> mdList , string inputStr , int headlineLevel = 2 , bool isAddLFCodeInLastStr = true)
 		{
 			throw new NotImplementedException();
 		}
@@ -33,8 +34,9 @@ namespace WolfEventCodeCreater.StrFormat
 		/// </summary>
 		/// <param name="mdList">出力文字列が格納されたリスト</param>
 		/// <param name="inputStr">整形対象の文字列</param>
+		/// <param name="isAddLFCodeInLastStr">文の最後にLFコードを付け足すか</param>
 		/// <returns>整形済みの文字列が入力された出力文字列リスト</returns>
-		public override List<string> FormatSimpleSentence(List<string> mdList , string inputStr)
+		public override List<string> FormatSimpleSentence(List<string> mdList , string inputStr, bool isAddLFCodeInLastStr = true)
 		{
 			throw new NotImplementedException();
 			/* 現在は未使用

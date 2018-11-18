@@ -19,22 +19,36 @@ namespace WolfEventCodeCreater.Model
 
 		public WoditerInfo(Config config)
 		{
+			CEvMgr = null;
 			CDB = null;
 			UDB = null;
 			SDB = null;
 			this.Config = config;
 
-			CommonEventRead();
+			CEvMgr = CommonEventRead();
 			CDB = DatabaseRead(Database.DatabaseCategory.Changeable);
 			UDB = DatabaseRead(Database.DatabaseCategory.User);
 			SDB = DatabaseRead(Database.DatabaseCategory.System);
 		}
 
-		//TODO:コモンイベント読み込み実装
 		///<summary>コモンイベントを読込</summary>
-		private void CommonEventRead()
-		{
+		private CommonEventManager CommonEventRead() {
+			CommonEventManager commonEventManager = null;
 
+			// 定義ファイルの存在チェック
+			if(Utils.File.CheckFileExist(Config.CommonEventPath , $"コモンイベント管理データの定義ファイル"))
+			{
+				var commonEventDatReader = new CommonEventDatReader();
+				commonEventManager = commonEventDatReader.ReadFile(Config.CommonEventPath);
+			}
+
+			// 読込エラー処理
+			if(commonEventManager == null)
+			{
+				AppMesOpp.AddAppMessge("コモンイベントの読込に失敗しました。");
+			}
+
+			return commonEventManager;
 		}
 
 		///<summary>DBを読込</summary>
@@ -97,6 +111,7 @@ namespace WolfEventCodeCreater.Model
 			return database;
 		}
 
+		///<summary>パラメータのdatabaseCategoryごとに対応するWoditerInfoクラスのDatabase型プロパティを返す</summary>
 		public Database GetDatabaseSource(Database.DatabaseCategory databaseCategory)
 		{
 			switch (databaseCategory)

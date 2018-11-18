@@ -16,15 +16,15 @@ namespace WolfEventCodeCreater
     public class CodeCreater
     {
         private Model.Config Config;
-        private CommonEventManager CommonEventManager;
-        private List<string> MdList;
+        //private CommonEventManager CommonEventManager;
+        //private List<string> MdList;
 
 
 
-        public CodeCreater(Model.Config config, CommonEventDatReader commonEventDatReader)
+        public CodeCreater(Model.Config config)
         {
             Config = config;
-            CommonEventManager = commonEventDatReader.ReadFile(Config.CommonEventPath);
+            //CommonEventManager = commonEventDatReader.ReadFile(Config.CommonEventPath);
         }
 
 
@@ -35,7 +35,7 @@ namespace WolfEventCodeCreater
         /// <returns></returns>
         public void Write()
         {
-            if (CommonEventManager == null)
+            /*if (CommonEventManager == null)
             {
                 AppMesOpp.AddAppMessge("ファイルがみつからない、あるいは使用中のため出力に失敗しました。");
 				return;
@@ -49,7 +49,7 @@ namespace WolfEventCodeCreater
 
             Console.WriteLine(Config.DumpDirPath);
 
-            /*int count = 0;
+            int count = 0;
             for (int commonID = 0; commonID < CommonEventManager.NumCommonEvent; commonID++)
             {
                 var CommonEvent = CommonEventManager.CommonEvents[commonID];
@@ -240,15 +240,17 @@ namespace WolfEventCodeCreater
             }
 			AppMesOpp.AddAppMessge($"{ count }件のコモンイベントMarkdownを出力しました。");*/
 
-			// DB出力(将来はコモンイベント出力もまとめる)
+			// ウディタ情報を取得
 			OutputDriver outputDriver = new OutputDriver(Config);
+
+			// ファイル出力処理
 			outputDriver.Output();
 
 			return;
         }
 
 
-
+		/*
 		/// <summary>
 		/// 起動条件データをListに追加して戻す
 		/// </summary>
@@ -445,6 +447,6 @@ namespace WolfEventCodeCreater
 				}
 			}
 			return maxNumNumericData;
-		}
+		}*/
 	}
 }

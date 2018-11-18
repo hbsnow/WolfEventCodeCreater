@@ -58,7 +58,7 @@ namespace WolfEventCodeCreater
 
 				var CommonEventReader = new CommonEventDatReader();
 
-                var CodeCreater = new CodeCreater(Config, CommonEventReader);
+                var CodeCreater = new CodeCreater(Config);
 
 				// 出力処理
 				CodeCreater.Write();

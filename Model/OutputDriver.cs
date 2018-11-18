@@ -19,10 +19,13 @@ namespace WolfEventCodeCreater.Model
 			woditerInfoStr = new WoditerInfoStr(woditerInfo , config);
 		}
 
+		///<summary>ウディタ情報をファイル出力</summary>
 		public void Output()
 		{
-			//if(CEvStrs != null)
-			CreateOutputStrsCEv();
+			if (woditerInfoStr.CEvStrs != null)
+			{
+				CreateOutputStrsCEv(woditerInfoStr.CEvStrs);
+			}
 			if (woditerInfoStr.CDBStrs != null)
 			{
 				CreateOutputStrsDB(woditerInfoStr.CDBStrs , Database.DatabaseCategory.Changeable);
@@ -37,9 +40,35 @@ namespace WolfEventCodeCreater.Model
 			}
 		}
 
-		//TODO 実装
-		private void CreateOutputStrsCEv()
+		private void CreateOutputStrsCEv(List<CommonEventStr> CEvStrs)
 		{
+			int count = 0;
+
+			// 出力先ディレクトリ確認と作成
+			MakeOutputDir(Database.DatabaseCategory.CommonEvent);
+
+			foreach (CommonEventStr cEvStr in CEvStrs)
+			{
+				List<string> outputStrs = new List<string>();
+
+				// 各内容をList&lt;string&gt;に整形して書き出し
+				outputStrs = FormatCEvContents(outputStrs , cEvStr);
+
+				// 出力先ファイルパスの設定
+				string outputFileName = cEvStr.CEvName.Sentence;
+				// ファイル名にコモン番号を付ける設定対応
+				if (config.IsOutputCommonNumber)
+				{
+					outputFileName = $"{ cEvStr.CEvID.Sentence }_{ outputFileName }";
+				}
+				string outputFilePath = ForamtToOutputFilePath(Database.DatabaseCategory.CommonEvent , outputFileName);
+
+				// 出力
+				File.WriteAllLines(outputFilePath , outputStrs);
+				count++;
+			}
+
+			AppMesOpp.AddAppMessge($"{ count }件のコモンイベントのMarkdownを出力しました。");
 		}
 
 		private void CreateOutputStrsDB(List<DatabaseTypeStr> databaseTypeStrs , Database.DatabaseCategory dbCategory)
@@ -80,12 +109,12 @@ namespace WolfEventCodeCreater.Model
 
 			switch (dbCategory)
 			{
-				/*case Database.DatabaseCategory.CommonEvent:
+				case Database.DatabaseCategory.CommonEvent:
 					{
 						outputDir = config.CEvDumpDirPath;
 						//appMesDirName = "コモンイベント出力フォルダ";
 						break;
-					}*/
+					}
 				case Database.DatabaseCategory.Changeable:
 					{
 						outputDir = config.CDBDumpDirPath;
@@ -147,7 +176,82 @@ namespace WolfEventCodeCreater.Model
 			return outputFilePath = Path.Combine(outputFilePath , filename);
 		}
 
-		///<summary>DBの各内容をList&lt;string&gt;に整形して書き出し</summary>
+		///<summary>コモンイベントの内容を出力文字列に整形</summary>
+		private List<string> FormatCEvContents(List<string> list , CommonEventStr ces)
+		{
+			MdFormat format = new MdFormat();
+
+			/*    コモン名    */
+			list = format.FormatHeadline(list , ces.CEvName.Sentence , 1);
+
+			/*    メモ    */
+			list = format.FormatSimpleSentence(list , ces.Memo.Sentence);
+
+			/*    コモン番号    */
+			list = format.FormatHeadline(list , ces.CEvID.EntryName , 2);
+			list = format.FormatSimpleSentence(list , ces.CEvID.Sentence);
+
+			/*    コモンイベント色    */
+			list = format.FormatHeadline(list , ces.Color.EntryName , 2);
+			list = format.FormatSimpleSentence(list , ces.Color.Sentence);
+
+			/*    起動条件    */
+			list = format.FormatHeadline(list , ces.TriggerConditions.EntryName , 2);
+			list = format.FormatTable(list , ces.TriggerConditions);
+
+			/*    引数    */
+			if(ces.Args.Rows.Count != 0)
+			{
+				list = format.FormatHeadline(list , ces.Args.EntryName , 2);
+				list = format.FormatTable(list , ces.Args);
+			}
+
+			/*    数値入力の特殊設定    */
+			if (ces.NumericSpecialSettings.Count != 0)
+			{
+				list = format.FormatHeadline(list , ces.NumericSpecialSettings.EntryName , 4);
+				foreach (var table in ces.NumericSpecialSettings.TableList)
+				{
+					list = format.FormatSimpleSentence(list , table.EntryName);
+					list = format.FormatTable(list , table);
+				}
+			}
+
+			/*    返り値    */
+			list = format.FormatHeadline(list , ces.Return.EntryName , 2);
+			list = ces.Return.Rows.Count == 0 ? format.FormatSimpleSentence(list , "結果を返さない") : format.FormatTable(list , ces.Return);
+
+			/*    コモンセルフ変数    */
+			list = format.FormatHeadline(list , ces.CSelf.EntryName , 2);
+			list = format.FormatTable(list , ces.CSelf);
+
+			/*    イベントコード    */
+			list = format.FormatHeadline(list , ces.EventCommands.EntryName , 2);
+			list.Add("```");
+			foreach (var sentence in ces.EventCommands.Sentences)
+			{
+				list = format.FormatSimpleSentence(list , sentence, false);
+			}
+			list.Add("```");
+
+			/*    動作指定コマンドコード    */
+			if (ces.MoveEventCommands.Count != 0)
+			{
+				list = format.FormatHeadline(list , "動作指定コマンドコード" , 2);
+				foreach (var tables in ces.MoveEventCommands)
+				{
+					list = format.FormatSimpleSentence(list , tables.EntryName);
+					foreach (var table in tables.TableList)
+					{
+						list = format.FormatTable(list , table);
+					}
+				}
+			}
+
+			return list;
+		}
+
+		///<summary>DBの各内容を出力文字列に整形</summary>
 		private List<string> FormatDBContents(List<string> list , DatabaseTypeStr dts)
 		{
 			MdFormat format = new MdFormat();

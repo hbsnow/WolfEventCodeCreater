@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WodiKs.DB;
+using WodiKs.Ev.Common;
 
 namespace WolfEventCodeCreater.Model.WoditerStr
 {
@@ -13,7 +14,7 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 		private Config config;
 		
 		///<summary>文字列化したCommonEvent情報</summary>
-		//public List<CommonEvStr> CEvStrs{ get; private set; }
+		public List<CommonEventStr> CEvStrs{ get; private set; }
 
 		///<summary>文字列化したCDB情報</summary>
 		public List<DatabaseTypeStr> CDBStrs { get; private set; }
@@ -32,10 +33,10 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 			Source = woditerInfo;
 			this.config = config;
 			
-			/*if (woditerInfo.CEvMgr != null)
+			if (woditerInfo.CEvMgr != null)
 			{
-
-			}*/
+				CEvStrs = SetCEventStrs(woditerInfo.CEvMgr);
+			}
 
 			if (woditerInfo.CDB != null)
 			{
@@ -53,7 +54,26 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 			}
 		}
 
-		//private List<CommonEvStr> SetCEvStrs() { }
+		private List<CommonEventStr> SetCEventStrs(CommonEventManager commonEventManager)
+		{
+			List<CommonEventStr> cEventStrs = new List<CommonEventStr>();
+			
+			for(int cEvID = 0; cEvID < commonEventManager.NumCommonEvent; cEvID++)
+			{
+				CommonEvent commonEvent = commonEventManager.CommonEvents[cEvID];
+
+				// コマンド数2未満、あるいはコモン名の入力がないもの、コメントアウトのものは除外
+				string commonName = Utils.String.Trim(commonEvent.CommonEventName);
+				if (commonEvent.NumEventCommand < 2 || commonName == "" || commonName.IndexOf(config.CommentOut) == 0)
+				{
+					continue;
+				}
+
+				cEventStrs.Add(new CommonEventStr(commonEvent, cEvID, Source));
+			}
+
+			return cEventStrs;
+		}
 
 		private List<DatabaseTypeStr> SetDBTypeStrs(Database db, Database.DatabaseCategory databaseCategory)
 		{
