@@ -7,12 +7,17 @@ namespace WolfEventCodeCreater
 {
     public partial class MainWindow : Form
     {
-        private Model.Config Config;
+		private Model.UserSetting userSetting;
+		private Model.Config Config;
 
-        public MainWindow()
+		public MainWindow()
         {
             InitializeComponent();
-        }
+			userSetting = Utils.File.LoadUserSetting();
+			Config = new Model.Config(userSetting);
+
+			textBox1.Text = userSetting.ProjectRoot;
+		}
 
 
 
@@ -24,10 +29,11 @@ namespace WolfEventCodeCreater
 
             if (fbd.ShowDialog(this) == DialogResult.OK)
             {
-                Config = new Model.Config(fbd.SelectedPath, Utils.File.LoadUserSetting());
-
-                textBox1.Text = fbd.SelectedPath;
-                button2.Enabled = true;
+				textBox1.Text = fbd.SelectedPath;
+				if (!button2.Enabled)
+				{
+					textBox2.Text = "ウディタ定義ファイルが見つかりません。" + "\r\n" + textBox2.Text;
+				}
             }
         }
 
@@ -35,23 +41,40 @@ namespace WolfEventCodeCreater
         
         private void create(object sender, EventArgs e)
         {
-            try
-            {
-                var CommonEventReader = new CommonEventDatReader(Config.CommonEventPath);
+			AppMesOpp.ClearAppMessge();
 
+			string now = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+			string headMessage = ($"------出力実行({ now })------");
+			AppMesOpp.AddAppMessge(headMessage);
+			System.Diagnostics.Debug.WriteLine(headMessage);
+
+			try
+            {
+				userSetting.ProjectRoot = Config.ProjectRoot;
+				// settings.xmlの上書き
+				Utils.File.WriteUserSetting(userSetting);
+
+				Config = new Model.Config(userSetting);
+
+				var CommonEventReader = new CommonEventDatReader(Config.CommonEventPath);
 
                 var CodeCreater = new CodeCreater(Config, CommonEventReader);
 
-                var message = CodeCreater.Write();
-                
-                textBox2.Text = textBox2.Text == "" ? message : message + "\r\n" + textBox2.Text;
-
+				// 出力処理
+				CodeCreater.Write();
             }
             catch(Exception err)
             {
-                textBox2.Text = err.ToString();
+				AppMesOpp.AddAppMessge(err.ToString());
             }
-        }
+
+			// settings.xmlを出力先ディレクトリに出力
+			Utils.File.WriteUserSetting(userSetting, Config.DumpDirPath, $"_{ now }");
+
+			// メッセージの表示
+			AppMesOpp.AddSeparatorAppMessge();
+			textBox2.Text = AppMesOpp.ReturnAppMessge(true) + textBox2.Text;
+		}
 
 
 
@@ -76,14 +99,16 @@ namespace WolfEventCodeCreater
 
         private void setting(object sender, EventArgs e)
         {
-            var settingWindow = new SettingWindow();
+            var settingWindow = new SettingWindow(userSetting);
             settingWindow.ShowDialog(this);
             settingWindow.Dispose();
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            button2.Enabled = true;
+			Config.ProjectRoot = textBox1.Text;
+			Config.PathChangeWithRootChanged(userSetting);
+			button2.Enabled = Config.IsWoditerDefineFiles();
         }
-    }
+	}
 }

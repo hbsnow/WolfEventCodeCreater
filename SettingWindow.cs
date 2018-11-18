@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Windows.Forms;
+using WolfEventCodeCreater.Model;
 
 namespace WolfEventCodeCreater
 {
     public partial class SettingWindow : Form
     {
-        public SettingWindow()
+		private UserSetting userSetting;
+
+		public SettingWindow(UserSetting userSetting)
         {
             InitializeComponent();
 
-            var userSetting = Utils.File.LoadUserSetting();
+            this.userSetting = userSetting;
 
             textBox1.Text = userSetting.OutputDirName;
             textBox2.Text = userSetting.CommentOut;
@@ -22,7 +25,6 @@ namespace WolfEventCodeCreater
 
         private void submit(object sender, EventArgs e)
         {
-            var userSetting = new Model.UserSetting();
             userSetting.OutputDirName = textBox1.Text;
             userSetting.CommentOut = textBox2.Text;
             userSetting.IsOutputCommonNumber = comboBox1.SelectedIndex == 0 ? true : false;
