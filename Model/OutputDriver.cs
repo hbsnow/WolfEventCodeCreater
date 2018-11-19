@@ -296,11 +296,7 @@ namespace WolfEventCodeCreater.Model
 			foreach (var data in dts.DataList)
 			{
 				list = format.FormatHeadline(list , $"{data.DataID.Sentence}:{data.DataName.Sentence}" , 3);
-				foreach (var item in data.ItemStrList)
-				{
-					list = format.FormatSimpleSentence(list , item.ItemTable.EntryName);
-					list = format.FormatTable(list , item.ItemTable , item.ItemTable.EntryName);
-				}
+				list = format.FormatTable(list , data.ItemAllTable);
 			}
 
 			return list;

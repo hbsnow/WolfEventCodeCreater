@@ -10,8 +10,11 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 {
 	public class DatabaseItemStr
 	{
+		///<summary>この項目を所有するデータ</summary>
 		public DatabaseDataStr Parent { get; private set; }
+		///<summary>項目ID</summary>
 		public OutputStructSentence ItemID { get; private set; }
+		///<summary>項目情報のテーブル</summary>
 		public OutputStructTable ItemTable { get; private set; }
 
 		public DatabaseItemStr(ItemData itemData, int itemIDNo, ItemConfig itemConfig, DatabaseDataStr parent)
@@ -31,7 +34,7 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 		private List<string> SetItemTableHeader()
 		{
 			List<string> dataTableHeader = new List<string>() {
-				"ItemName","ValueType" ,"Value"};
+				"ItemID", "ItemName","ValueType" ,"Value"};
 
 			return dataTableHeader;
 		}
@@ -42,6 +45,7 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 
 			List<string> record = new List<string>() { };
 
+			record.Add(ItemID.Sentence);		// ItemID
 			record.Add(Utils.String.Trim(itemConfig.ItemName));        // ItemName
 			record.Add(Utils.WodiKs.ConvertItemTypeToName(itemConfig.ItemDataType));    // ValueType
 
