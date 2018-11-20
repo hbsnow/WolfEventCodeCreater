@@ -266,6 +266,10 @@ namespace WolfEventCodeCreater.Model
 			list = format.FormatHeadline(list , dts.Memo.EntryName , 2);
 			list = format.FormatSimpleSentence(list , dts.Memo.Sentence);
 
+			/*    DBタイプ    */
+			list = format.FormatHeadline(list , "DBタイプ" , 2);
+			list = format.FormatSimpleSentence(list , Utils.WodiKs.ConvertDatabaseCategoryToName(dts.DatabaseCategory));
+
 			/*    タイプID    */
 			list = format.FormatHeadline(list , dts.TypeID.EntryName , 2);
 			list = format.FormatSimpleSentence(list , dts.TypeID.Sentence);
