@@ -272,31 +272,30 @@ namespace WolfEventCodeCreater.Model
 
 			/*    タイプの設定    */
 			list = format.FormatHeadline(list , dts.TypeConfig.EntryName , 2);
-			list = format.FormatTable(list , dts.TypeConfig , dts.TypeConfig.EntryName);
+			list = format.FormatTable(list , dts.TypeConfig);
 
 			/*    項目の設定    */
 			list = format.FormatHeadline(list , "項目の設定" , 2);
 			foreach (var itemConfigStr in dts.ItemConfigList)
 			{
 				list = format.FormatSimpleSentence(list , itemConfigStr.ItemConfigTable.EntryName);
-				list = format.FormatTable(list , itemConfigStr.ItemConfigTable , itemConfigStr.ItemConfigTable.EntryName);
+				list = format.FormatTable(list , itemConfigStr.ItemConfigTable);
 
 				if (itemConfigStr.ItemConfigSubTable.Columns.Count != 0)
 				{
-					list = format.FormatTable(list , itemConfigStr.ItemConfigSubTable , itemConfigStr.ItemConfigSubTable.EntryName);
+					list = format.FormatTable(list , itemConfigStr.ItemConfigSubTable);
 				}
 			}
 
 			/*    データと各項目の値    */
 			list = format.FormatHeadline(list , "データと各項目の値" , 2);
 			list = format.FormatHeadline(list , dts.DataTable.EntryName , 3);
-			//TODO:FormatTableの行数折返し
-			list = format.FormatTable(list , dts.DataTable , dts.DataTable.EntryName);
+			list = format.FormatTable(list , dts.DataTable, 20);
 
 			foreach (var data in dts.DataList)
 			{
 				list = format.FormatHeadline(list , $"{data.DataID.Sentence}:{data.DataName.Sentence}" , 3);
-				list = format.FormatTable(list , data.ItemAllTable);
+				list = format.FormatTable(list , data.ItemAllTable, 20);
 			}
 
 			return list;

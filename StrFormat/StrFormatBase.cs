@@ -36,12 +36,11 @@ namespace WolfEventCodeCreater.StrFormat
 		/// </summary>
 		/// <param name="mdList">出力文字列が格納されたリスト</param>
 		/// <param name="outputStructTable">出力元のテーブル構造</param>
-		/// <param name="tableName">テーブルの名前</param>
 		/// <param name="maxRowNum">テーブルのデータのうち1列に格納する最大行数</param>
 		/// <param name="isSimpleSentenceWhenOnlyOneRecord">データが一行のみのときに文章に変更するかどうか</param>
 		/// <returns>整形済みの文字列が入力された出力文字列リスト</returns>
 		public abstract List<string> FormatTable(List<string> mdList, OutputStructTable outputStructTable,
-			string tableName = "", int maxRowNum = 20, bool isSimpleSentenceWhenOnlyOneRecord = true);
+			int maxRowNum = 20, bool isSimpleSentenceWhenOnlyOneRecord = true);
 
 		/// <summary>
 		/// テーブルのヘッダ部の文字列に整形する
@@ -56,9 +55,8 @@ namespace WolfEventCodeCreater.StrFormat
 		/// </summary>
 		/// <param name="mdList">出力文字列が格納されたリスト</param>
 		/// <param name="outputStructTable">出力元のテーブル構造</param>
-		/// <param name="maxRowNum">テーブルのデータのうち1列に格納する最大行数</param>
 		/// <returns>整形済みの文字列が入力された出力文字列リスト</returns>
-		protected abstract List<string> FormatTableData(List<string> mdList , OutputStructTable outputStructTable, int maxRowNum);
+		protected abstract List<string> FormatTableData(List<string> mdList , OutputStructTable outputStructTable);
 
 		/// <summary>
 		/// テーブルのフッタ部の文字列に整形する

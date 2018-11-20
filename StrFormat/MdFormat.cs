@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Data;
+using System.Linq;
 using WolfEventCodeCreater.Model.OutputStruct;
 
 namespace WolfEventCodeCreater.StrFormat
@@ -60,12 +60,11 @@ namespace WolfEventCodeCreater.StrFormat
 		/// </summary>
 		/// <param name="mdList">出力文字列が格納されたリスト</param>
 		/// <param name="outputStructTable">出力元のテーブル構造</param>
-		/// <param name="tableName">テーブルの名前</param>
 		/// <param name="maxRowNum">テーブルのデータのうち1列に格納する最大行数</param>
 		/// <param name="isSimpleSentenceWhenOnlyOneRecord">データが一行のみのときに文章に変更するかどうか</param>
 		/// <returns>整形済みの文字列が入力された出力文字列リスト</returns>
 		public override List<string> FormatTable(List<string> mdList, OutputStructTable outputStructTable,
-			string tableName = "", int maxRowNum = 20, bool isSimpleSentenceWhenOnlyOneRecord = true)
+			int maxRowNum = 20, bool isSimpleSentenceWhenOnlyOneRecord = true)
 		{
 			if (outputStructTable.Columns == null || outputStructTable.Rows == null)
 			{
@@ -78,8 +77,12 @@ namespace WolfEventCodeCreater.StrFormat
 			{
 				if (!(isSimpleSentenceWhenOnlyOneRecord && outputStructTable.Columns.Count == 1))
 				{
-					mdList = this.FormatTableHeader(mdList , outputStructTable);
-					mdList = this.FormatTableData(mdList , outputStructTable, maxRowNum);
+					// テーブルのデータが1列に格納する最大行数を超えた場合、折り返された新規作成のOutputStructTableを返す
+					OutputStructTable tmpOutputStructTable =
+						outputStructTable.Rows.Count <= maxRowNum ? outputStructTable : SetNewlyWrappedOutputStructTable(outputStructTable, maxRowNum);
+
+					mdList = this.FormatTableHeader(mdList , tmpOutputStructTable);
+					mdList = this.FormatTableData(mdList , tmpOutputStructTable);
 					mdList = this.FormatTableFooter(mdList , "");
 				}
 				// headerStrsの要素が1つのみの場合は単文の文字列に整形する
@@ -90,7 +93,7 @@ namespace WolfEventCodeCreater.StrFormat
 			}
 			else
 			{
-				System.Diagnostics.Debug.WriteLine("ヘッダまたはデータの要素数が0");
+				// System.Diagnostics.Debug.WriteLine("ヘッダまたはデータの要素数が0");
 			}
 
 			return mdList;
@@ -129,9 +132,8 @@ namespace WolfEventCodeCreater.StrFormat
 		/// </summary>
 		/// <param name="mdList">出力文字列が格納されたリスト</param>
 		/// <param name="outputStructTable">出力元のテーブル構造</param>
-		/// <param name="maxRowNum">テーブルのデータのうち1列に格納する最大行数</param>
 		/// <returns>整形済みの文字列が入力された出力文字列リスト</returns>
-		protected override List<string> FormatTableData(List<string> mdList , OutputStructTable outputStructTable, int maxRowNum)
+		protected override List<string> FormatTableData(List<string> mdList , OutputStructTable outputStructTable)
 		{
 			List<List<string>> dataStrs = outputStructTable.Rows;
 			string columnDelimiterStr = " " + columnDelimiter + " ";
@@ -163,6 +165,59 @@ namespace WolfEventCodeCreater.StrFormat
 		{
 			mdList.Add(inputStr);
 			return mdList;
+		}
+
+		///<summary>折り返された新規作成のOutputStructTableを返す</summary>
+		private OutputStructTable SetNewlyWrappedOutputStructTable(OutputStructTable sourceTable , int maxRowNum)
+		{
+			// 新規に折り返した結果の最終的な列セット数
+			int wrappedColumnSetNum = sourceTable.Rows.Count / maxRowNum;
+			if(sourceTable.Rows.Count % maxRowNum != 0)
+			{
+				wrappedColumnSetNum += 1;
+			}
+
+			// sourceTableの表内容のコピーを新しくインスタンス化（元のOutputStructTableを変更したくないため）
+			List<string> copiedSourceHeader = new List<string>(sourceTable.Columns);
+			List<List<string>> copiedSourceData = new List<List<string>>(sourceTable.Rows);
+
+			// 第1列目（折り返す必要のない列）を初期値として代入
+			List<string> newlyHeader = new List<string>(copiedSourceHeader);
+			List<List<string>> newlyData = new List<List<string>>();
+			for (int row = 0; row < maxRowNum; row++)
+			{
+				newlyData.Add(copiedSourceData[row]);
+			}
+
+			// 空欄用のデータを作成（折返したときに生じる可能性がある表の余白部分を埋めるためのデータ）
+			List<string> emptyData = new List<string>();
+			copiedSourceHeader.ForEach(_ => emptyData.Add(""));
+
+			// 折返し列の代入
+			for (int columnSet = 1; columnSet < wrappedColumnSetNum; columnSet++)
+			{
+				newlyHeader.Add("");            // 区切り用の列を追加
+				newlyHeader.AddRange(copiedSourceHeader);
+
+				for (int row = 0; row < maxRowNum; row++)
+				{
+					newlyData[row].Add("");            // 区切り用の列を追加
+
+					int nowIndex = maxRowNum * columnSet + row;		// 現在forループ中で指しているインデックス
+					if (nowIndex < copiedSourceData.Count)
+					{
+						newlyData[row].AddRange(copiedSourceData[nowIndex]);
+					}
+					else
+					{
+						newlyData[row].AddRange(emptyData);
+					}
+				}
+			}
+
+			OutputStructTable newlyWrappedOutputStructTable = new OutputStructTable(sourceTable.EntryName , newlyHeader, newlyData, false);
+
+			return newlyWrappedOutputStructTable;
 		}
 	}
 }
