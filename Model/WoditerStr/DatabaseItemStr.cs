@@ -55,7 +55,8 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 			}
 			else
 			{
-				record.Add(Utils.String.Trim(itemData.StringData));        // Value
+				// 改行文字を<\n>に置換する
+				record.Add(Utils.String.EncloseCRLFCodeOrSimpleLFCodeInLtAndGt(Utils.String.Trim(itemData.StringData)));        // Value
 			}
 
 			dataTableData.Add(record);
