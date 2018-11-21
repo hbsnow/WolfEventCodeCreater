@@ -1,7 +1,23 @@
-﻿namespace WolfEventCodeCreater.Model
+﻿using System.Diagnostics;
+using System.Reflection;
+
+namespace WolfEventCodeCreater.Model
 {
-    public class UserSetting
-    {
+	public class UserSetting
+	{
+		public UserSetting()
+		{
+			FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
+			AppName = fileVersionInfo.ProductName;
+			Version = fileVersionInfo.FileVersion;
+		}
+
+		///<summary>アプリ名</summary>
+		public string AppName { get; set; }
+
+		///<summary>バージョン</summary>
+		public string Version { get; set; }
+		
 		/// <summary>
 		/// ルートパス
 		/// </summary>
