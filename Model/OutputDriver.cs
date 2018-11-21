@@ -282,7 +282,7 @@ namespace WolfEventCodeCreater.Model
 			list = format.FormatHeadline(list , "項目の設定" , 2);
 			foreach (var itemConfigStr in dts.ItemConfigList)
 			{
-				list = format.FormatSimpleSentence(list , itemConfigStr.ItemConfigTable.EntryName);
+				list = format.FormatHeadline(list , itemConfigStr.ItemConfigTable.EntryName, 4);
 				list = format.FormatTable(list , itemConfigStr.ItemConfigTable);
 
 				if (itemConfigStr.ItemConfigSubTable.Columns.Count != 0)
@@ -293,12 +293,12 @@ namespace WolfEventCodeCreater.Model
 
 			/*    データと各項目の値    */
 			list = format.FormatHeadline(list , "データと各項目の値" , 2);
-			list = format.FormatHeadline(list , dts.DataTable.EntryName , 3);
+			list = format.FormatHeadline(list , dts.DataTable.EntryName , 4);
 			list = format.FormatTable(list , dts.DataTable, 20);
 
 			foreach (var data in dts.DataList)
 			{
-				list = format.FormatHeadline(list , $"{data.DataID.Sentence}:{data.DataName.Sentence}" , 3);
+				list = format.FormatHeadline(list , $"{data.DataID.Sentence}:{data.DataName.Sentence}" , 4);
 				list = format.FormatTable(list , data.ItemAllTable, 20);
 			}
 
