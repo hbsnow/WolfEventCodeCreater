@@ -52,10 +52,12 @@ namespace WolfEventCodeCreater
             {
 				// settings.xmlの上書き
 				Config = userSetting.OverWriteUserSettingFile(Config.ProjectRoot, now);
-				
-				// 出力処理
-                var CodeCreater = new CodeCreater(Config);
-				CodeCreater.Write();
+
+				// ウディタ情報を取得
+				var outputDriver = new Model.OutputDriver(Config);
+
+				// ファイル出力処理
+				outputDriver.Output();
 
 				System.Diagnostics.Debug.WriteLine($"------出力処理正常終了------");
 			}
