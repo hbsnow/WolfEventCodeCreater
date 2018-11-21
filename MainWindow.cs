@@ -56,8 +56,6 @@ namespace WolfEventCodeCreater
 
 				Config = new Model.Config(userSetting);
 
-				var CommonEventReader = new CommonEventDatReader();
-
                 var CodeCreater = new CodeCreater(Config);
 
 				// 出力処理
