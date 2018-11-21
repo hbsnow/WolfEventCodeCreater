@@ -107,7 +107,6 @@ namespace WolfEventCodeCreater
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
 			Config.ProjectRoot = textBox1.Text;
-			Config.PathChangeWithRootChanged(userSetting);
 			button2.Enabled = Config.IsWoditerDefineFiles();
         }
 	}
