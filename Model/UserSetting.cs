@@ -24,6 +24,11 @@ namespace WolfEventCodeCreater.Model
 		public string ProjectRoot = "";
 
 		/// <summary>
+		/// 出力処理実行時の日時
+		/// </summary>
+		public string DateTime = "";
+
+		/// <summary>
 		/// 出力するディレクトリ名
 		/// </summary>
 		public string OutputDirName = "Dump";
@@ -69,9 +74,27 @@ namespace WolfEventCodeCreater.Model
 		/// 
 		public string CommentOut = "//";
 
-        /// <summary>
-        /// 出力のときファイル名にコモン番号をつけるかどうか
-        /// </summary>
-        public bool IsOutputCommonNumber = false;
+		/// <summary>
+		/// 出力フォルダに出力日時の接尾辞をつけるかどうか
+		/// </summary>
+		public bool IsAdditionalDateTimeToOutputDirNameSuffiix = false;
+
+		/// <summary>
+		/// 出力のときファイル名にコモン番号をつけるかどうか
+		/// </summary>
+		public bool IsOutputCommonNumber = false;
+
+		///<summary>settings.xmlを上書きし、新たなConfigインスタンスを生成する</summary>
+		public Config OverWriteUserSettingFile(string projectRoot, string dateTime)
+		{
+			ProjectRoot = projectRoot;
+			DateTime = dateTime;
+
+			Utils.File.WriteUserSetting(this);
+
+			Config config = new Model.Config(this);
+
+			return config;
+		}
     }
 }

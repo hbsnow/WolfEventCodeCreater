@@ -15,9 +15,16 @@ namespace WolfEventCodeCreater.Model
 		public string ProjectRoot;
 
 		/// <summary>
+		/// 出力処理実行時の日時
+		/// </summary>
+		public string DateTime;
+
+		/// <summary>
 		/// 出力するディレクトリへのフルパス
 		/// </summary>
-		public string DumpDirPath { get { return RootPathCombine(userSetting.OutputDirName , ""); } }
+		public string DumpDirPath { get {
+				return RootPathCombine(userSetting.OutputDirName + (userSetting.IsAdditionalDateTimeToOutputDirNameSuffiix ? $"_{DateTime}" : "") , "");
+			} }
 
 		/// <summary>
 		/// コモンイベントを出力するディレクトリへのフルパス
@@ -92,6 +99,8 @@ namespace WolfEventCodeCreater.Model
 
 			ProjectRoot = userSetting.ProjectRoot;
 			System.Diagnostics.Debug.WriteLine(ProjectRoot , "ProjectRoot");
+
+			DateTime = userSetting.DateTime;
 
 			CommentOut = userSetting.CommentOut;
 
