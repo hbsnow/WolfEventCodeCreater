@@ -71,22 +71,22 @@ namespace WolfEventCodeCreater.Model
 		/// <summary>
 		///マップの定義ファイル(map)が格納されたディレクトリ
 		/// </summary>
-		public string MapDataDir = @"Data\Map";
+		public string MapDataDir = @"Data\MapData";
 
 		/// <summary>
 		///マップツリーの定義ファイル(dat)が格納されたディレクトリ
 		/// </summary>
-		public string MapTreeDir = @"Data\Map";
+		public string MapTreeDir = @"Data\BasicData";
 
 		/// <summary>
 		///マップツリー展開状態の定義ファイル(dat)が格納されたディレクトリ
 		/// </summary>
-		public string MapTreeOpenStatusDir = @"Data\Map";
+		public string MapTreeOpenStatusDir = @"Data\BasicData";
 
 		/// <summary>
 		///タイルセットの定義ファイル(dat)が格納されたディレクトリ
 		/// </summary>
-		public string TileSetDataDir = @"Data\TileSet";
+		public string TileSetDataDir = @"Data\BasicData";
 
 		/// <summary>
 		/// 出力しないコモンのコメントアウト形式
