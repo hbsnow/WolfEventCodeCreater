@@ -34,39 +34,59 @@ namespace WolfEventCodeCreater.Model
 		public string OutputDirName = "Dump";
 
 		/// <summary>
-		/// コモンイベントの定義ファイル(dat)
+		/// コモンイベントの定義ファイル(dat)が格納されたディレクトリ
 		/// </summary>
-		public string CommonEventPath = @"Data\BasicData";
+		public string CommonEventDir = @"Data\BasicData";
 
 		/// <summary>
-		/// 可変DBの定義ファイル(project)
+		/// 可変DBの定義ファイル(project)が格納されたディレクトリ
 		/// </summary>
-		public string CDBProjrctFilePath = @"Data\BasicData";
+		public string CDBProjrctFileDir = @"Data\BasicData";
 
 		/// <summary>
-		/// 可変DBの定義ファイル(dat)
+		/// 可変DBの定義ファイル(dat)が格納されたディレクトリ
 		/// </summary>
-		public string CDBDatFilePath = @"Data\BasicData";
+		public string CDBDatFileDir = @"Data\BasicData";
 
 		/// <summary>
-		/// ユーザーDBの定義ファイル(project)
+		/// ユーザーDBの定義ファイル(project)が格納されたディレクトリ
 		/// </summary>
-		public string UDBProjrctFilePath = @"Data\BasicData";
+		public string UDBProjrctFileDir = @"Data\BasicData";
 
 		/// <summary>
-		/// ユーザーDBの定義ファイル(dat)
+		/// ユーザーDBの定義ファイル(dat)が格納されたディレクトリ
 		/// </summary>
-		public string UDBDatFilePath = @"Data\BasicData";
+		public string UDBDatFileDir = @"Data\BasicData";
 
 		/// <summary>
-		/// システムDBの定義ファイル(project)
+		/// システムDBの定義ファイル(project)が格納されたディレクトリ
 		/// </summary>
-		public string SDBProjrctFilePath = @"Data\BasicData";
+		public string SDBProjrctFileDir = @"Data\BasicData";
 
 		/// <summary>
-		/// システムDBの定義ファイル(dat)
+		/// システムDBの定義ファイル(dat)が格納されたディレクトリ
 		/// </summary>
-		public string SDBDatFilePath = @"Data\BasicData";
+		public string SDBDatFileDir = @"Data\BasicData";
+
+		/// <summary>
+		///マップの定義ファイル(map)が格納されたディレクトリ
+		/// </summary>
+		public string MapDataDir = @"Data\Map";
+
+		/// <summary>
+		///マップツリーの定義ファイル(dat)が格納されたディレクトリ
+		/// </summary>
+		public string MapTreeDir = @"Data\Map";
+
+		/// <summary>
+		///マップツリー展開状態の定義ファイル(dat)が格納されたディレクトリ
+		/// </summary>
+		public string MapTreeOpenStatusDir = @"Data\Map";
+
+		/// <summary>
+		///タイルセットの定義ファイル(dat)が格納されたディレクトリ
+		/// </summary>
+		public string TileSetDataDir = @"Data\TileSet";
 
 		/// <summary>
 		/// 出力しないコモンのコメントアウト形式

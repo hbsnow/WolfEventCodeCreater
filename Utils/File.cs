@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.IO;
 using System.Text;
 
 namespace WolfEventCodeCreater.Utils
@@ -127,6 +129,33 @@ namespace WolfEventCodeCreater.Utils
 			}
 
 			return true;
+		}
+
+
+
+		/// <summary>
+		/// ディレクトリ内のファイルパス取得
+		/// </summary>
+		/// <param name="directoryPath">探索対象のフォルダ(絶対パス)</param>
+		/// <param name="searchPatern">探索条件("*"時は全件抽出)</param>
+		/// <param name="isRecursiveSearch">サブフォルダを検索をするか</param>
+		/// <returns>探索結果のファイル絶対パス</returns>
+		public static List<string> GetFilesInDirectory(string directoryPath, string searchPatern = "*", bool isRecursiveSearch = true)
+		{
+			List<string> resultPathList = new List<string>();
+
+			if (Directory.Exists(directoryPath))
+			{
+				var paths = Directory.GetFiles(directoryPath, searchPatern, isRecursiveSearch ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+
+				resultPathList.AddRange(paths);
+			}
+			else
+			{
+				System.Diagnostics.Debug.WriteLine($"{directoryPath} is No Exist.");
+			}
+
+			return resultPathList;
 		}
 	}
 }
