@@ -13,7 +13,7 @@ namespace WolfEventCodeCreater.Model
 		public Database CDB { get; private set; }
 		public Database UDB { get; private set; }
 		public Database SDB { get; private set; }
-		public List<MapData> MapDataList { get; private set; }
+		public Dictionary<string, MapData> MapDataList { get; private set; }
 		public MapTree MapTree { get; private set; }
 		public TileSetManager TileMgr { get; private set; }
 		public Config Config { get; private set; }
@@ -34,8 +34,8 @@ namespace WolfEventCodeCreater.Model
 			UDB = DatabaseRead(Database.DatabaseCategory.User);
 			SDB = DatabaseRead(Database.DatabaseCategory.System);
 			MapDataList = MapDataListRead();
-			MapTree = MapTreeRead();
-			TileMgr = TileSetRead();
+			//MapTree = MapTreeRead();
+			//TileMgr = TileSetRead();
 		}
 
 		///<summary>コモンイベントを読込</summary>
@@ -147,27 +147,28 @@ namespace WolfEventCodeCreater.Model
 		}
 
 		///<summary>マップデータを読込</summary>
-		private List<MapData> MapDataListRead()
+		private Dictionary<string, MapData> MapDataListRead()
 		{
-			List<MapData> mapDataList = new List<MapData>();
+			Dictionary<string, MapData> mapDataList = new Dictionary<string, MapData>();
 
-			// 定義ファイルの存在チェック
+			// 定義ファイル格納フォルダの存在チェック
 			if (Utils.File.CheckDirectoryExist(Config.MapDataDir, "", false))
 			{
-				List<string> mapFileList = Utils.File.GetFilesInDirectory(Config.MapDataDir, "*.map", true);
+				List<string> mapFileList = Utils.File.GetFilesInDirectory(Config.MapDataDir, "*.mps", true);
 
 				foreach (var mapFile in mapFileList)
 				{
 					var mdr = new MapDataReader(mapFile);
 					MapData mapData = mdr.GetReadData();
 
+					// 読込エラー処理
 					if (mapData == null)
 					{
 						AppMesOpp.AddAppMessge($"{ Config.MapDataDir }のマップデータ読込に失敗しました。");
 					}
 					else
 					{
-						mapDataList.Add(mapData);
+						mapDataList.Add(mapFile, mapData);
 					}
 				}
 			}

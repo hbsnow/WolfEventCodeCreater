@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WolfEventCodeCreater.Model.OutputStruct
 {
-	public enum OutputStructType { Sentence, Sentences, Table, Tables, Mix}
+	public enum OutputStructType { Sentence, Sentences, Table, Tables}
 
 	public class OutputStructBase
 	{

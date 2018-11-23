@@ -59,10 +59,10 @@ namespace WolfEventCodeCreater.StrFormat
 		/// <param name="mdList">出力文字列が格納されたリスト</param>
 		/// <param name="outputStructTable">出力元のテーブル構造</param>
 		/// <param name="maxRowNum">テーブルのデータのうち1列に格納する最大行数</param>
-		/// <param name="isSimpleSentenceWhenOnlyOneRecord">データが一行のみのときに文章に変更するかどうか</param>
+		/// <param name="isSimpleSentenceWhenOnlyOneColumn">データが一列のみのときに文章に変更するかどうか</param>
 		/// <returns>整形済みの文字列が入力された出力文字列リスト</returns>
 		public override List<string> FormatTable(List<string> mdList , OutputStructTable outputStructTable,
-			int maxRowNum = 20, bool isSimpleSentenceWhenOnlyOneRecord = true)
+			int maxRowNum = 20, bool isSimpleSentenceWhenOnlyOneColumn = true)
 		{
 			if (outputStructTable.Columns == null || outputStructTable.Rows == null)
 			{
@@ -72,7 +72,7 @@ namespace WolfEventCodeCreater.StrFormat
 
 			if ((0 < outputStructTable.Columns.Count) && (0 < outputStructTable.Rows.Count))
 			{
-				if (!(isSimpleSentenceWhenOnlyOneRecord && outputStructTable.Columns.Count== 1))
+				if (!(isSimpleSentenceWhenOnlyOneColumn && outputStructTable.Columns.Count== 1))
 				{
 					mdList = this.FormatTableHeader(mdList , outputStructTable);
 					mdList = this.FormatTableData(mdList , outputStructTable);

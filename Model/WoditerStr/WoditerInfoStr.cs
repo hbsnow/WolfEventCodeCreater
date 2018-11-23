@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WodiKs.DB;
 using WodiKs.Ev.Common;
+using WodiKs.Map;
 
 namespace WolfEventCodeCreater.Model.WoditerStr
 {
@@ -24,6 +25,15 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 		
 		///<summary>文字列化したSDB情報</summary>
 		public List<DatabaseTypeStr> SDBStrs { get; private set; }
+
+		///<summary>文字列化したマップデータ情報</summary>
+		public List<MapDataStr> MapDataStrs { get; private set; }
+
+		///<summary>文字列化したマップツリー情報</summary>
+		//public MapTreeStr MapTreeStr { get; private set; }
+
+		///<summary>文字列化したタイルセット情報</summary>
+		//public TileSetStr TileMgrStr { get; private set; }
 
 		public WoditerInfoStr(WoditerInfo woditerInfo, Config config)
 		{
@@ -51,6 +61,11 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 			if (woditerInfo.SDB != null)
 			{
 				SDBStrs = SetDBTypeStrs(woditerInfo.SDB, Database.DatabaseCategory.System);
+			}
+
+			if(woditerInfo.MapDataList.Count != 0)
+			{
+				MapDataStrs = SetMapDataStrs(woditerInfo.MapDataList);
 			}
 		}
 
@@ -93,5 +108,15 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 			return dBStrs;
 		}
 
+		private List<MapDataStr> SetMapDataStrs(Dictionary<string, MapData> mapDataList)
+		{
+			List <MapDataStr> mapDataStrs = new List<MapDataStr>();
+
+			foreach (var mapData in mapDataList)
+			{
+				mapDataStrs.Add(new MapDataStr(mapData.Value, mapData.Key, Source));
+			}
+			return mapDataStrs;
+		}
 	}
 }

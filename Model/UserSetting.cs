@@ -71,7 +71,7 @@ namespace WolfEventCodeCreater.Model
 		/// <summary>
 		///マップの定義ファイル(map)が格納されたディレクトリ
 		/// </summary>
-		public string MapDataDir = @"Data\MapData";
+		public string MapDataDir = @"Data";
 
 		/// <summary>
 		///マップツリーの定義ファイル(dat)が格納されたディレクトリ

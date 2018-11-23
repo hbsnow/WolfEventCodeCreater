@@ -55,7 +55,6 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 			NumericSpecialSettings = SetNumericSpecialSettings(commonEvent);
 			Return = new OutputStructTable("返り値" , SetReturnHeader() , SetReturnData(commonEvent));
 			CSelf = new OutputStructTable("コモンセルフ変数" , SetCSelfHeader() , SetCSelfData(commonEvent));
-			MoveEventCommands = new List<OutputStructTables>();     // 事前にインスタンス生成が必要
 			SetEventCommandsAndMoveEventCommands(commonEvent);
 		}
 
@@ -293,171 +292,13 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 		#endregion コモンセルフ変数
 
 		#region イベントコード & 動作指定コマンドコード
-
 		private void SetEventCommandsAndMoveEventCommands(CommonEvent commonEvent)
 		{
-			List<string> eventCommands = new List<string>();
-			List<OutputStructTables> moveEventCommandsList = new List<OutputStructTables>();
-
-			eventCommands.Add("WoditorEvCOMMAND_START");
-			eventCommands.AddRange(GetEventCodes(commonEvent));
-			eventCommands.Add("WoditorEvCOMMAND_END");
-
-			OutputStructSentences eventCommandsSentences = new OutputStructSentences("イベントコード" , eventCommands);
-
-			EventCommands = eventCommandsSentences;
+			EventCommandsStr eventCommandsStr = new EventCommandsStr();
+			eventCommandsStr.SetEventCommandsAndMoveEventCommands(commonEvent.EventCommandList, (int)commonEvent.NumEventCommand);
+			EventCommands = eventCommandsStr.EventCommands;
+			MoveEventCommands = eventCommandsStr.MoveEventCommands;
 		}
-
-		/// <summary>
-		/// コモンイベントコードを取得する
-		/// </summary>
-		/// <param name="commonEvent"></param>
-		/// <returns></returns>
-		private List<string> GetEventCodes(CommonEvent commonEvent)
-		{
-			List<string> eventCommandList = new List<string>();
-
-			for (int i = 0; i < commonEvent.NumEventCommand; i++)
-			{
-				var eventCommand = commonEvent.EventCommandList[i];
-
-				string eventCode = Utils.String.Trim(eventCommand.GetEventCode());
-
-				// コモンイベントコードを出力用に最適化
-				eventCode = Utils.String.RemoveDoubleCRCode(eventCode);
-				eventCode = Utils.String.EncloseCRLFCodeOrSimpleLFCodeInLtAndGt(eventCode);
-				//eventCode = Utils.String.RemoveLastLFCode(eventCode);
-
-				eventCommandList.Add(eventCode);
-
-				// 動作指定コマンドの場合、動作指定コマンドを取得
-				if (eventCommand.IsMoveEvent)
-				{
-					MoveEventCommands.Add(GetMoveEventCommandsTable(eventCommand , i + 1));
-				}
-			}
-
-			return eventCommandList;
-		}
-
-		/// <summary>
-		/// 動作指定コマンドコード関連情報を取得する
-		/// </summary>
-		/// <param name="eventCommand"></param>
-		/// <param name="eventCommandLine"></param>
-		/// <returns></returns>
-		private OutputStructTables GetMoveEventCommandsTable(EventCommand eventCommand , int eventCommandLine)
-		{
-			List<OutputStructTable> moveEventCommandsTableList = new List<OutputStructTable>();
-
-			// 動作指定機能フラグを取得しテーブル構造に整形
-			moveEventCommandsTableList.Add(SetMoveEventFlag(eventCommand));
-
-			// 動作指定コマンドコードをテーブル構造に整形
-			moveEventCommandsTableList.Add(SetMoveEventCommandsTable(eventCommand));
-
-			OutputStructTables moveEventCommandsTables = new OutputStructTables($"{ eventCommandLine.ToString() }行目(イベントコード)" , moveEventCommandsTableList);
-
-			return moveEventCommandsTables;
-		}
-
-		///<summary>動作指定機能フラグを取得しテーブル構造化</summary>
-		private OutputStructTable SetMoveEventFlag(EventCommand eventCommand)
-		{
-			byte moveEventFlag = eventCommand.MoveEventFlag;
-			List<string> headerMoveEventFlag = new List<string>() { "動作完了までウェイト" , "動作を繰り返す" , "移動できない場合は飛ばす" };
-			List<List<string>> dataMoveEventFlag = new List<List<string>>() {new List<string>(){
-							Utils.String.ConvertFlagToString((0 < (moveEventFlag & (byte)MoveEventFlags.WaitForFinish)) ? true : false),
-							Utils.String.ConvertFlagToString((0 < (moveEventFlag & (byte)MoveEventFlags.RepeatMovement)) ? true : false),
-							Utils.String.ConvertFlagToString((0 < (moveEventFlag & (byte)MoveEventFlags.SkipImpossibleMoves)) ? true : false)} };
-
-			OutputStructTable moveEventFlagTable = new OutputStructTable("動作指定機能フラグ" , headerMoveEventFlag , dataMoveEventFlag);
-
-			return moveEventFlagTable;
-		}
-
-		///<summary>動作指定コマンドコードを取得しテーブル構造化</summary>
-		private OutputStructTable SetMoveEventCommandsTable(EventCommand eventCommand)
-		{
-			int maxNumNumericData = 0;          // あるイベントコードにおける全ての動作指定コマンドコードの最大数値データ数
-			maxNumNumericData = GetMaxNumNumericDataOfMoveEventCommandCode(eventCommand);
-			List<string> moveEventCommandsHeader = SetMoveEventCommandsHeader(ref maxNumNumericData);
-			List<List<string>> moveEventCommandsData = SetMoveEventCommandsData(eventCommand , maxNumNumericData);
-
-			OutputStructTable moveEventCommandsTable = new OutputStructTable("動作指定コマンドコード" , moveEventCommandsHeader , moveEventCommandsData);
-
-			return moveEventCommandsTable;
-		}
-
-		/// <summary>
-		/// 動作指定コマンドコードの数値データの最大データ数を取得する
-		/// </summary>
-		/// <param name="eventCommand"></param>
-		/// <returns></returns>
-		private int GetMaxNumNumericDataOfMoveEventCommandCode(EventCommand eventCommand)
-		{
-			int maxNumNumericData = 0;
-			MoveEventCommand[] moveEventCommands = eventCommand.MoveEventCommandList;
-
-			foreach (MoveEventCommand moveEventCommand in moveEventCommands)
-			{
-				if (maxNumNumericData < moveEventCommand.NumNumericData)
-				{
-					maxNumNumericData = moveEventCommand.NumNumericData;
-				}
-			}
-			return maxNumNumericData;
-		}
-
-		private List<string> SetMoveEventCommandsHeader(ref int maxNumNumericData)
-		{
-			List<string> headerMoveEventCommands = new List<string>() { "動作ID" };
-
-			if (0 < maxNumNumericData)
-			{
-				for (int n = 1; n <= maxNumNumericData; n++)
-				{
-					headerMoveEventCommands.Add($"数値{ n }");
-				}
-			}
-			else
-			{
-				headerMoveEventCommands.Add("数値なし");
-				maxNumNumericData = 1;
-			}
-
-			return headerMoveEventCommands;
-		}
-
-		private List<List<string>> SetMoveEventCommandsData(EventCommand eventCommand , int maxNumNumericData)
-		{
-			List<List<string>> moveEventCommandsData = new List<List<string>>();
-			MoveEventCommand[] moveEventCommands = eventCommand.MoveEventCommandList;
-
-			foreach (MoveEventCommand moveEventCommand in moveEventCommands)
-			{
-				List<string> recordMoveEventCommandCode = new List<string>() { };
-
-				recordMoveEventCommandCode.Add(moveEventCommand.MoveCommandID.ToString());
-
-				foreach (int numData in moveEventCommand.NumericList)
-				{
-					recordMoveEventCommandCode.Add(numData.ToString());
-				}
-
-				// 最大数値データ数より足りない分を""で埋める
-				int lackNumNumericData = maxNumNumericData - moveEventCommand.NumNumericData;
-				for (int i = 0; i < lackNumNumericData; i++)
-				{
-					recordMoveEventCommandCode.Add("");
-				}
-
-				moveEventCommandsData.Add(recordMoveEventCommandCode);
-			}
-
-			return moveEventCommandsData;
-		}
-
 		#endregion イベントコード & 動作指定コマンドコード
 	}
 }
