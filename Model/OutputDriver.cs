@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using WodiKs.DB;
 using WolfEventCodeCreater.Model.WoditerStr;
 using WolfEventCodeCreater.StrFormat;
 
@@ -16,119 +15,107 @@ namespace WolfEventCodeCreater.Model
 		{
 			this.config = config;
 			woditerInfo = new WoditerInfo(config);
-			woditerInfoStr = new WoditerInfoStr(woditerInfo , config);
+			woditerInfoStr = new WoditerInfoStr(woditerInfo, config);
 		}
 
 		///<summary>ウディタ情報をファイル出力</summary>
 		public void Output()
 		{
+			MdFormat format = new MdFormat();
+
 			if (woditerInfoStr.CEvStrs != null)
 			{
-				CreateOutputStrsCEv(woditerInfoStr.CEvStrs);
+				CreateOutputStrsCEv(woditerInfoStr.CEvStrs, format);
 			}
 			if (woditerInfoStr.CDBStrs != null)
 			{
-				CreateOutputStrsDB(woditerInfoStr.CDBStrs , Database.DatabaseCategory.Changeable);
+				CreateOutputStrsDB(woditerInfoStr.CDBStrs, WoditerInfo.WoditerInfoCategory.CDB, format);
 			}
 			if (woditerInfoStr.UDBStrs != null)
 			{
-				CreateOutputStrsDB(woditerInfoStr.UDBStrs , Database.DatabaseCategory.User);
+				CreateOutputStrsDB(woditerInfoStr.UDBStrs, WoditerInfo.WoditerInfoCategory.UDB, format);
 			}
 			if (woditerInfoStr.SDBStrs != null)
 			{
-				CreateOutputStrsDB(woditerInfoStr.SDBStrs , Database.DatabaseCategory.System);
+				CreateOutputStrsDB(woditerInfoStr.SDBStrs, WoditerInfo.WoditerInfoCategory.SDB, format);
+			}
+
+			if(woditerInfoStr.MapDataStrs.Count != 0)
+			{
+				CreateOutputStrsMap(woditerInfoStr.MapDataStrs, format);
 			}
 		}
 
 		///<summary>出力先ディレクトリの存在確認（存在しない場合は新たに作成）</summary>
-		private void MakeOutputDir(Database.DatabaseCategory dbCategory)
+		private void MakeOutputDir(WoditerInfo.WoditerInfoCategory woditerInfoCategory)
 		{
-			string outputDir = "";
-			//string appMesDirName = "";
-
-			switch (dbCategory)
-			{
-				case Database.DatabaseCategory.CommonEvent:
-					{
-						outputDir = config.CEvDumpDirPath;
-						//appMesDirName = "コモンイベント出力フォルダ";
-						break;
-					}
-				case Database.DatabaseCategory.Changeable:
-					{
-						outputDir = config.CDBDumpDirPath;
-						//appMesDirName = "可変DB出力フォルダ";
-						break;
-					}
-				case Database.DatabaseCategory.User:
-					{
-						outputDir = config.UDBDumpDirPath;
-						//appMesDirName = "ユーザーDB出力フォルダ";
-						break;
-					}
-				case Database.DatabaseCategory.System:
-					{
-						outputDir = config.SDBDumpDirPath;
-						//appMesDirName = "システムDB出力フォルダ";
-						break;
-					}
-			}
-			Utils.File.CheckDirectoryExist(outputDir , "" , true);
+			Utils.File.CheckDirectoryExist(config.GetOutputDir(woditerInfoCategory), "", true);
 		}
 
 		///<summary>出力ファイルパスに整形</summary>
-		private string ForamtToOutputFilePath(Database.DatabaseCategory dbCategory , string filenamePrefix)
+		private string ForamtToOutputFilePath(WoditerInfo.WoditerInfoCategory woditerInfoCategory, string filenamePrefix)
 		{
-			string outputFilePath = "";
+			string outputFilePath = config.GetOutputDir(woditerInfoCategory);
 			string filename = Utils.String.FormatFilename(filenamePrefix);
 
-			switch (dbCategory)
+			switch (woditerInfoCategory)
 			{
-				case Database.DatabaseCategory.CommonEvent:
+				case WoditerInfo.WoditerInfoCategory.CEv:
 					{
-						outputFilePath = config.CEvDumpDirPath;
 						filename += ".common";
 						break;
 					}
-				case Database.DatabaseCategory.Changeable:
+				case WoditerInfo.WoditerInfoCategory.CDB:
 					{
-						outputFilePath = config.CDBDumpDirPath;
 						filename += ".cdb";
 						break;
 					}
-				case Database.DatabaseCategory.User:
+				case WoditerInfo.WoditerInfoCategory.UDB:
 					{
-						outputFilePath = config.UDBDumpDirPath;
 						filename += ".udb";
 						break;
 					}
-				case Database.DatabaseCategory.System:
+				case WoditerInfo.WoditerInfoCategory.SDB:
 					{
-						outputFilePath = config.SDBDumpDirPath;
 						filename += ".sdb";
 						break;
 					}
+				case WoditerInfo.WoditerInfoCategory.Map:
+					{
+						filename += ".map";
+						break;
+					}
+				case WoditerInfo.WoditerInfoCategory.MapTree:
+					{
+						filename += ".maptree";
+						break;
+					}
+				case WoditerInfo.WoditerInfoCategory.TileSet:
+					{
+						filename += ".tileset";
+						break;
+					}
 			}
-
 			filename = Utils.String.AddExtension(filename);
 
-			return outputFilePath = Path.Combine(outputFilePath , filename);
+			return outputFilePath = Path.Combine(outputFilePath, filename);
 		}
 
 		#region コモンイベント
-		private void CreateOutputStrsCEv(List<CommonEventStr> CEvStrs)
+
+		private void CreateOutputStrsCEv<Format>(List<CommonEventStr> CEvStrs, Format format) where Format : StrFormatBase
 		{
 			int count = 0;
 
 			// 出力先ディレクトリ確認と作成
-			MakeOutputDir(Database.DatabaseCategory.CommonEvent);
+			MakeOutputDir(WoditerInfo.WoditerInfoCategory.CEv);
 
 			foreach (CommonEventStr cEvStr in CEvStrs)
 			{
 				List<string> outputStrs = new List<string>();
 
-				// 各内容をList&lt;string&gt;に整形して書き出し
-				outputStrs = FormatCEvContents(outputStrs , cEvStr);
+				// 各内容をList<string>に整形して書き出し
+				outputStrs = FormatCEvContents(outputStrs, cEvStr, format);
 
 				// 出力先ファイルパスの設定
 				string outputFileName = cEvStr.CEvName.Sentence;
@@ -137,10 +124,10 @@ namespace WolfEventCodeCreater.Model
 				{
 					outputFileName = $"{ cEvStr.CEvID.Sentence }_{ outputFileName }";
 				}
-				string outputFilePath = ForamtToOutputFilePath(Database.DatabaseCategory.CommonEvent , outputFileName);
+				string outputFilePath = ForamtToOutputFilePath(WoditerInfo.WoditerInfoCategory.CEv, outputFileName);
 
 				// 出力
-				File.WriteAllLines(outputFilePath , outputStrs);
+				File.WriteAllLines(outputFilePath, outputStrs);
 				count++;
 			}
 
@@ -148,90 +135,91 @@ namespace WolfEventCodeCreater.Model
 		}
 
 		///<summary>コモンイベントの内容を出力文字列に整形</summary>
-		private List<string> FormatCEvContents(List<string> list , CommonEventStr ces)
+		private List<string> FormatCEvContents<Format>(List<string> list, CommonEventStr ces, Format format) where Format : StrFormatBase
 		{
-			MdFormat format = new MdFormat();
-
 			/*    コモン名    */
-			list = format.FormatHeadline(list , ces.CEvName.Sentence , 1);
+			list = format.FormatHeadline(list, ces.CEvName.Sentence, 1);
 
 			/*    メモ    */
-			list = format.FormatSimpleSentence(list , ces.Memo.Sentence);
+			list = format.FormatSimpleSentence(list, ces.Memo.Sentence);
 
 			/*    コモン番号    */
-			list = format.FormatHeadline(list , ces.CEvID.EntryName , 2);
-			list = format.FormatSimpleSentence(list , ces.CEvID.Sentence);
+			list = format.FormatHeadline(list, ces.CEvID.EntryName, 2);
+			list = format.FormatSimpleSentence(list, ces.CEvID.Sentence);
 
 			/*    コモンイベント色    */
-			list = format.FormatHeadline(list , ces.Color.EntryName , 2);
-			list = format.FormatSimpleSentence(list , ces.Color.Sentence);
+			list = format.FormatHeadline(list, ces.Color.EntryName, 2);
+			list = format.FormatSimpleSentence(list, ces.Color.Sentence);
 
 			/*    起動条件    */
-			list = format.FormatHeadline(list , ces.TriggerConditions.EntryName , 2);
-			list = format.FormatTable(list , ces.TriggerConditions);
+			list = format.FormatHeadline(list, ces.TriggerConditions.EntryName, 2);
+			list = format.FormatTable(list, ces.TriggerConditions);
 
 			/*    引数    */
-			if(ces.Args.Rows.Count != 0)
+			if (ces.Args.Rows.Count != 0)
 			{
-				list = format.FormatHeadline(list , ces.Args.EntryName , 2);
-				list = format.FormatTable(list , ces.Args);
+				list = format.FormatHeadline(list, ces.Args.EntryName, 2);
+				list = format.FormatTable(list, ces.Args);
 			}
 
 			/*    数値入力の特殊設定    */
 			if (ces.NumericSpecialSettings.Count != 0)
 			{
-				list = format.FormatHeadline(list , ces.NumericSpecialSettings.EntryName , 4);
+				list = format.FormatHeadline(list, ces.NumericSpecialSettings.EntryName, 4);
 				foreach (var table in ces.NumericSpecialSettings.TableList)
 				{
-					list = format.FormatSimpleSentence(list , table.EntryName);
-					list = format.FormatTable(list , table);
+					list = format.FormatSimpleSentence(list, table.EntryName);
+					list = format.FormatTable(list, table);
 				}
 			}
 
 			/*    返り値    */
-			list = format.FormatHeadline(list , ces.Return.EntryName , 2);
-			list = ces.Return.Rows.Count == 0 ? format.FormatSimpleSentence(list , "結果を返さない") : format.FormatTable(list , ces.Return);
+			list = format.FormatHeadline(list, ces.Return.EntryName, 2);
+			list = ces.Return.Rows.Count == 0 ? format.FormatSimpleSentence(list, "結果を返さない") : format.FormatTable(list, ces.Return);
 
 			/*    コモンセルフ変数    */
-			list = format.FormatHeadline(list , ces.CSelf.EntryName , 2);
-			list = format.FormatTable(list , ces.CSelf);
+			list = format.FormatHeadline(list, ces.CSelf.EntryName, 2);
+			list = format.FormatTable(list, ces.CSelf);
 
 			/*    イベントコード    */
-			list = format.FormatHeadline(list , ces.EventCommands.EntryName , 2);
+			list = format.FormatHeadline(list, ces.EventCommands.EntryName, 2);
 			list = format.FormatCode(list, ces.EventCommands.Sentences);
 
 			/*    動作指定コマンドコード    */
 			if (ces.MoveEventCommands.Count != 0)
 			{
-				list = format.FormatHeadline(list , "動作指定コマンドコード" , 2);
+				list = format.FormatHeadline(list, "動作指定コマンドコード", 2);
 				foreach (var tables in ces.MoveEventCommands)
 				{
-					list = format.FormatSimpleSentence(list , tables.EntryName);
+					list = format.FormatSimpleSentence(list, tables.EntryName);
 					foreach (var table in tables.TableList)
 					{
-						list = format.FormatTable(list , table);
+						list = format.FormatTable(list, table);
 					}
 				}
 			}
 
 			return list;
 		}
-		#endregion
+
+		#endregion コモンイベント
 
 		#region DB
-		private void CreateOutputStrsDB(List<DatabaseTypeStr> databaseTypeStrs , Database.DatabaseCategory dbCategory)
+
+		private void CreateOutputStrsDB<Format>
+			(List<DatabaseTypeStr> databaseTypeStrs, WoditerInfo.WoditerInfoCategory woditerInfoCategory, Format format) where Format : StrFormatBase
 		{
 			int count = 0;
 
 			// 出力先ディレクトリ確認と作成
-			MakeOutputDir(dbCategory);
+			MakeOutputDir(woditerInfoCategory);
 
 			foreach (DatabaseTypeStr databaseTypeStr in databaseTypeStrs)
 			{
 				List<string> outputStrs = new List<string>() { };
 
 				// 各内容をList&lt;string&gt;に整形して書き出し
-				outputStrs = FormatDBContents(outputStrs , databaseTypeStr);
+				outputStrs = FormatDBContents(outputStrs, databaseTypeStr, format);
 
 				// 出力先ファイルパスの設定
 				string outputFileName = databaseTypeStr.TypeName.Sentence;
@@ -239,66 +227,213 @@ namespace WolfEventCodeCreater.Model
 				{
 					outputFileName = $"{ databaseTypeStr.TypeID.Sentence }_{ outputFileName }";
 				}
-				string outputFilePath = ForamtToOutputFilePath(dbCategory , outputFileName);
+				string outputFilePath = ForamtToOutputFilePath(woditerInfoCategory, outputFileName);
 
 				// 出力
-				File.WriteAllLines(outputFilePath , outputStrs);
+				File.WriteAllLines(outputFilePath, outputStrs);
 				count++;
 			}
 
-			AppMesOpp.AddAppMessge($"{ count }件の{ Utils.WodiKs.ConvertDatabaseCategoryToName(dbCategory) }のMarkdownを出力しました。");
+			AppMesOpp.AddAppMessge($"{ count }件の{ woditerInfoCategory.ToString() }のMarkdownを出力しました。");
 		}
 
 		///<summary>DBの各内容を出力文字列に整形</summary>
-		private List<string> FormatDBContents(List<string> list , DatabaseTypeStr dts)
+		private List<string> FormatDBContents<Format>(List<string> list, DatabaseTypeStr dts, Format format) where Format : StrFormatBase
 		{
-			MdFormat format = new MdFormat();
-
 			/*    タイプ名    */
-			list = format.FormatHeadline(list , dts.TypeName.Sentence , 1);
+			list = format.FormatHeadline(list, dts.TypeName.Sentence, 1);
 
 			/*    メモ    */
-			list = format.FormatHeadline(list , dts.Memo.EntryName , 2);
-			list = format.FormatSimpleSentence(list , dts.Memo.Sentence);
+			list = format.FormatHeadline(list, dts.Memo.EntryName, 2);
+			list = format.FormatSimpleSentence(list, dts.Memo.Sentence);
 
 			/*    DBタイプ    */
-			list = format.FormatHeadline(list , "DBタイプ" , 2);
-			list = format.FormatSimpleSentence(list , Utils.WodiKs.ConvertDatabaseCategoryToName(dts.DatabaseCategory));
+			list = format.FormatHeadline(list, "DBタイプ", 2);
+			list = format.FormatSimpleSentence(list, Utils.WodiKs.ConvertDatabaseCategoryToName(dts.DatabaseCategory));
 
 			/*    タイプID    */
-			list = format.FormatHeadline(list , dts.TypeID.EntryName , 2);
-			list = format.FormatSimpleSentence(list , dts.TypeID.Sentence);
+			list = format.FormatHeadline(list, dts.TypeID.EntryName, 2);
+			list = format.FormatSimpleSentence(list, dts.TypeID.Sentence);
 
 			/*    タイプの設定    */
-			list = format.FormatHeadline(list , dts.TypeConfig.EntryName , 2);
-			list = format.FormatTable(list , dts.TypeConfig);
+			list = format.FormatHeadline(list, dts.TypeConfig.EntryName, 2);
+			list = format.FormatTable(list, dts.TypeConfig);
 
 			/*    項目の設定    */
-			list = format.FormatHeadline(list , "項目の設定" , 2);
+			list = format.FormatHeadline(list, "項目の設定", 2);
 			foreach (var itemConfigStr in dts.ItemConfigList)
 			{
-				list = format.FormatHeadline(list , itemConfigStr.ItemConfigTable.EntryName, 4);
-				list = format.FormatTable(list , itemConfigStr.ItemConfigTable);
+				list = format.FormatHeadline(list, itemConfigStr.ItemConfigTable.EntryName, 4);
+				list = format.FormatTable(list, itemConfigStr.ItemConfigTable);
 
 				if (itemConfigStr.ItemConfigSubTable.Columns.Count != 0)
 				{
-					list = format.FormatTable(list , itemConfigStr.ItemConfigSubTable);
+					list = format.FormatTable(list, itemConfigStr.ItemConfigSubTable);
 				}
 			}
 
 			/*    データと各項目の値    */
-			list = format.FormatHeadline(list , "データと各項目の値" , 2);
-			list = format.FormatHeadline(list , dts.DataTable.EntryName , 4);
-			list = format.FormatTable(list , dts.DataTable, 20);
+			list = format.FormatHeadline(list, "データと各項目の値", 2);
+			list = format.FormatHeadline(list, dts.DataTable.EntryName, 4);
+			list = format.FormatTable(list, dts.DataTable, 20);
 
 			foreach (var data in dts.DataList)
 			{
-				list = format.FormatHeadline(list , $"{data.DataID.Sentence}:{data.DataName.Sentence}" , 4);
-				list = format.FormatTable(list , data.ItemAllTable, 20);
+				list = format.FormatHeadline(list, $"{data.DataID.Sentence}:{data.DataName.Sentence}", 4);
+				list = format.FormatTable(list, data.ItemAllTable, 20);
 			}
 
 			return list;
 		}
-		#endregion
+
+		#endregion DB
+
+		#region マップ
+
+		private void CreateOutputStrsMap<Format>(List<MapDataStr> mapDataList, Format format) where Format : StrFormatBase
+		{
+			int count = 0;
+
+			// 出力先ディレクトリ確認と作成
+			MakeOutputDir(WoditerInfo.WoditerInfoCategory.Map);
+
+			foreach (var mapData in mapDataList)
+			{
+				List<string> outputStrs = new List<string>();
+
+				// 各内容をList<string>に整形して書き出し
+				outputStrs = FormatMapContents(outputStrs, mapData, format);
+
+				// 出力先ファイルパスの設定
+				string outputFileName = Path.GetFileNameWithoutExtension(mapData.FilePath.Sentence);
+				// ファイル名にコモン番号を付ける設定対応
+				if (config.IsOutputCommonNumber)
+				{
+					outputFileName = $"{ mapData.MapID.Sentence }_{ outputFileName }";
+				}
+				string outputFilePath = ForamtToOutputFilePath(WoditerInfo.WoditerInfoCategory.Map, outputFileName);
+
+				// 出力
+				File.WriteAllLines(outputFilePath, outputStrs);
+				count++;
+			}
+
+			AppMesOpp.AddAppMessge($"{ count }件のマップのMarkdownを出力しました。");
+		}
+
+		///<summary>マップデータの内容を出力文字列に整形</summary>
+		private List<string> FormatMapContents<Format>(List<string> list, MapDataStr mds, Format format) where Format : StrFormatBase
+		{
+			/*    マップファイル名    */
+			list = format.FormatHeadline(list, mds.FileName, 1);
+
+			/*    マップ名    */
+			list = format.FormatHeadline(list, mds.MapName.EntryName, 2);
+			list = format.FormatSimpleSentence(list, mds.MapName.Sentence);
+
+			/*    マップID    */
+			list = format.FormatHeadline(list, mds.MapID.EntryName, 2);
+			list = format.FormatSimpleSentence(list, mds.MapID.Sentence);
+
+			/*    マップサイズ    */
+			list = format.FormatHeadline(list, mds.MapSize.EntryName, 2);
+			list = format.FormatTable(list, mds.MapSize);
+
+			/*    タイルセットID    */
+			list = format.FormatHeadline(list, mds.TileSetID.EntryName, 2);
+			list = format.FormatSimpleSentence(list, mds.TileSetID.Sentence);
+
+			/*    レイヤー    */
+			list = format.FormatHeadline(list, mds.MapLayerTables.EntryName, 2);
+			foreach (var mapLayer in mds.MapLayerTables.TableList)
+			{
+				list = format.FormatHeadline(list, mapLayer.EntryName, 4);
+				list = format.FormatTable(list, mapLayer, 10000);
+			}
+
+			/*    マップイベント    */
+			list = format.FormatHeadline(list, "マップイベント", 1);
+			foreach(var mapEvent in mds.MapEventList)
+			{
+				/*    マップイベント名    */
+				list = format.FormatHeadline(list, mapEvent.EventName.EntryName, 2);
+				list = format.FormatSimpleSentence(list, mapEvent.EventName.Sentence);
+
+				/*    マップイベントID    */
+				list = format.FormatHeadline(list, mapEvent.EventID.EntryName, 4);
+				list = format.FormatSimpleSentence(list, mapEvent.EventID.Sentence);
+
+				/*    座標    */
+				list = format.FormatHeadline(list, mapEvent.Position.EntryName, 4);
+				list = format.FormatTable(list, mapEvent.Position);
+
+				/*    マップイベントページ    */
+				list = format.FormatHeadline(list, "マップイベントページ", 4);
+				foreach(var mapEventPage in mapEvent.MapEventPageList)
+				{
+					/*    マップイベントページID    */
+					list = format.FormatHeadline(list, mapEventPage.PageID.EntryName, 5);
+					list = format.FormatSimpleSentence(list, mapEventPage.PageID.Sentence);
+
+					/*    グラフィックの設定    */
+					list = format.FormatHeadline(list, mapEventPage.GraphicType.EntryName, 5);
+					list = format.FormatTable(list, mapEventPage.GraphicType);
+
+					/*    影グラフィック番号    */
+					list = format.FormatHeadline(list, mapEventPage.ShadowGraphicNo.EntryName, 5);
+					list = format.FormatSimpleSentence(list, mapEventPage.ShadowGraphicNo.Sentence);
+
+					/*    マップイベント起動条件    */
+					list = format.FormatHeadline(list, mapEventPage.TriggerConditionsType.EntryName, 5);
+					list = format.FormatSimpleSentence(list, mapEventPage.TriggerConditionsType.Sentence);
+
+					/*    起動条件データ    */
+					list = format.FormatHeadline(list, mapEventPage.Triggers.EntryName, 5);
+					foreach(var trigger in mapEventPage.Triggers.TableList)
+					{
+						list = format.FormatSimpleSentence(list, trigger.EntryName);
+						list = format.FormatTable(list, trigger);
+					}
+
+					/*    接触範囲拡張    */
+					list = format.FormatHeadline(list, mapEventPage.ExpandCollisionRange.EntryName, 5);
+					list = format.FormatTable(list, mapEventPage.ExpandCollisionRange);
+
+					/*    移動情報データ    */
+					list = format.FormatHeadline(list, mapEventPage.MovementData.EntryName, 5);
+					foreach (var movementData in mapEventPage.MovementData.TableList)
+					{
+						if(movementData.Rows.Count != 0)
+						{
+							list = format.FormatSimpleSentence(list, movementData.EntryName);
+							list = format.FormatTable(list, movementData);
+						}
+					}
+
+					/*    マップイベントコード    */
+					if(2 < mapEventPage.EventCommands.Sentences.Count)
+					{
+						list = format.FormatHeadline(list, mapEventPage.EventCommands.EntryName, 5);
+						list = format.FormatCode(list, mapEventPage.EventCommands.Sentences);
+
+						/*    動作指定コマンドコード    */
+						if (mapEventPage.MoveEventCommands.Count != 0)
+						{
+							list = format.FormatHeadline(list, "動作指定コマンドコード", 5);
+							foreach (var moveEventCommandTables in mapEventPage.MoveEventCommands)
+							{
+								list = format.FormatSimpleSentence(list, moveEventCommandTables.EntryName);
+								foreach(var moveEventCommandTable in moveEventCommandTables.TableList)
+								list = format.FormatTable(list, moveEventCommandTable);
+							}
+						}
+					}
+				}
+			}
+
+			return list;
+		}
+
+		#endregion マップ
 	}
 }

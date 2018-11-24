@@ -9,6 +9,11 @@ namespace WolfEventCodeCreater.Model
 {
 	public class WoditerInfo
 	{
+		public enum WoditerInfoCategory
+		{
+			CEv, CDB, UDB, SDB, Map, MapTree, TileSet
+		}
+
 		public CommonEventManager CEvMgr { get; private set; }
 		public Database CDB { get; private set; }
 		public Database UDB { get; private set; }

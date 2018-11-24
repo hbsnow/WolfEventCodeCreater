@@ -19,22 +19,22 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 		public OutputStructSentence TriggerConditionsType { get; private set; }
 		public OutputStructTables Triggers { get; private set; }
 		public OutputStructTable ExpandCollisionRange { get; private set; }
+		public OutputStructTables MovementData { get; private set; }
 		public OutputStructSentences EventCommands { get; private set; }
 		public List<OutputStructTables> MoveEventCommands { get; private set; }
-		public OutputStructTables MovementData { get; private set; }
 
 
 		public MapEventPageStr(MapEventPage mapEventPage, int pageIDNo, MapEventStr mapEventStr)
 		{
 			Parent = mapEventStr;
 			PageID = new OutputStructSentence("ページID", pageIDNo.ToString());
-			GraphicType = new OutputStructTable("グラフィックの設定タイプ", SetGraphicTypeHeader(mapEventPage.GraphicType), SetGraphicTypeData(mapEventPage, mapEventPage.GraphicType));
+			GraphicType = new OutputStructTable("グラフィックの設定", SetGraphicTypeHeader(mapEventPage.GraphicType), SetGraphicTypeData(mapEventPage, mapEventPage.GraphicType));
 			ShadowGraphicNo = new OutputStructSentence("影グラフィック番号", mapEventPage.ShadowGraphicNo.ToString());
 			TriggerConditionsType = new OutputStructSentence("マップイベント起動条件", Utils.WodiKs.ConvertTriggerConditionsToName(mapEventPage.TriggerConditionsType));
 			Triggers = new OutputStructTables("起動条件データ", SetTrigersTableList(mapEventPage));
 			ExpandCollisionRange = new OutputStructTable("接触範囲拡張", SetExpandCollisionRangeHeader(), SetExpandCollisionRangeData(mapEventPage));
-			SetEventCommandsAndMoveEventCommands(mapEventPage.EventCommandList);
 			MovementData = new OutputStructTables("移動情報データ", SetMovementDataTableList(mapEventPage.MovementData));
+			SetEventCommandsAndMoveEventCommands(mapEventPage.EventCommandList);
 		}
 
 		private List<string> SetGraphicTypeHeader(MapEventPage.GraphicTypes graphicType)
@@ -121,14 +121,6 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 			return expandCollisionRangeData;
 		}
 
-		private void SetEventCommandsAndMoveEventCommands(EventCommand[] eventCommands)
-		{
-			EventCommandsStr eventCommandsStr = new EventCommandsStr();
-			eventCommandsStr.SetEventCommandsAndMoveEventCommands(eventCommands, eventCommands.Count());
-			EventCommands = eventCommandsStr.EventCommands;
-			MoveEventCommands = eventCommandsStr.MoveEventCommands;
-		}
-
 		private List<OutputStructTable> SetMovementDataTableList(Movement movement)
 		{
 			var movementDataTableList = new List<OutputStructTable>();
@@ -168,6 +160,14 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 				eventCommandsStr.SetMoveEventCommandsTableForMapEvent(movement.MoveEventCommandList, "移動ルート"));
 
 			return movementDataTableList;
+		}
+
+		private void SetEventCommandsAndMoveEventCommands(EventCommand[] eventCommands)
+		{
+			EventCommandsStr eventCommandsStr = new EventCommandsStr();
+			eventCommandsStr.SetEventCommandsAndMoveEventCommands(eventCommands, eventCommands.Count());
+			EventCommands = eventCommandsStr.EventCommands;
+			MoveEventCommands = eventCommandsStr.MoveEventCommands;
 		}
 	}
 }

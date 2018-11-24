@@ -50,8 +50,18 @@ namespace WolfEventCodeCreater.Model
 		/// <summary>
 		/// Mapを出力するディレクトリへのフルパス
 		/// </summary>
-		public string MapDumpDirPath { get { return Path.Combine(DumpDirPath , @"Map"); } }
-		#endregion
+		public string MapDumpDirPath { get { return Path.Combine(DumpDirPath , @"Map\Map"); } }
+
+		/// <summary>
+		/// MapTreeを出力するディレクトリへのフルパス
+		/// </summary>
+		public string MapTreeDumpDirPath { get { return Path.Combine(DumpDirPath, @"Map"); } }
+
+		/// <summary>
+		/// TileSetを出力するディレクトリへのフルパス
+		/// </summary>
+		public string TileSetDumpDirPath { get { return Path.Combine(DumpDirPath, @"TileSet"); } }
+	#endregion
 
 		#region ウディタ定義ファイル
 		/// <summary>
@@ -189,6 +199,44 @@ namespace WolfEventCodeCreater.Model
 		private bool IsTileFileExist(bool isAddAppMes)
 		{
 			return Utils.File.CheckFileExist(TileSetDataFilePath , isAddAppMes ? "タイルセット定義ファイル" : "");
+		}
+
+		///<summary>出力先ディレクトリの取得</summary>
+		public string GetOutputDir(WoditerInfo.WoditerInfoCategory woditerInfoCategory)
+		{
+			switch (woditerInfoCategory)
+			{
+				case WoditerInfo.WoditerInfoCategory.CEv:
+					{
+						return CEvDumpDirPath;
+					}
+				case WoditerInfo.WoditerInfoCategory.CDB:
+					{
+						return CDBDumpDirPath;
+					}
+				case WoditerInfo.WoditerInfoCategory.UDB:
+					{
+						return UDBDumpDirPath;
+					}
+				case WoditerInfo.WoditerInfoCategory.SDB:
+					{
+						return SDBDumpDirPath;
+					}
+				case WoditerInfo.WoditerInfoCategory.Map:
+					{
+						return MapDumpDirPath;
+					}
+				case WoditerInfo.WoditerInfoCategory.MapTree:
+					{
+						return MapTreeDumpDirPath;
+					}
+				case WoditerInfo.WoditerInfoCategory.TileSet:
+					{
+						return TileSetDumpDirPath;
+					}
+				default:
+					return "";
+			}
 		}
 	}
 }

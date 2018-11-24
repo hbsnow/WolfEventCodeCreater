@@ -42,7 +42,14 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 
 			Source = woditerInfo;
 			this.config = config;
-			
+			CEvStrs = null;
+			CDBStrs = null;
+			UDBStrs = null;
+			SDBStrs = null;
+			MapDataStrs = null;
+			//MapTreeStr = null;
+			//TileMgrStr = null;
+
 			if (woditerInfo.CEvMgr != null)
 			{
 				CEvStrs = SetCEventStrs(woditerInfo.CEvMgr);
@@ -114,7 +121,7 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 
 			foreach (var mapData in mapDataList)
 			{
-				mapDataStrs.Add(new MapDataStr(mapData.Value, mapData.Key, Source));
+				mapDataStrs.Add(new MapDataStr(mapData.Value, mapData.Key, Source, this));
 			}
 			return mapDataStrs;
 		}
