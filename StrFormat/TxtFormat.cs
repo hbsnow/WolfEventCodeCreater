@@ -54,6 +54,20 @@ namespace WolfEventCodeCreater.StrFormat
 		}
 
 		/// <summary>
+		/// コード文の文字列に整形する【Txtファイル】
+		/// </summary>
+		/// <param name="mdList">出力文字列が格納されたリスト</param>
+		/// <param name="inputStrs">整形対象の文字列リスト</param>
+		/// <returns>整形済みの文字列が入力された出力文字列リスト</returns>
+		public override List<string> FormatCode(List<string> mdList, List<string> inputStrs)
+		{
+			mdList.Add("```");
+			inputStrs.ForEach(str => FormatSimpleSentence(mdList, str, false));
+			mdList.Add("```");
+			return mdList;
+		}
+
+		/// <summary>
 		/// テーブル構造（ヘッダ部とデータ部とフッタ部）を作成し整形する【Txtファイル】
 		/// </summary>
 		/// <param name="mdList">出力文字列が格納されたリスト</param>
@@ -78,15 +92,18 @@ namespace WolfEventCodeCreater.StrFormat
 					mdList = this.FormatTableData(mdList , outputStructTable);
 					mdList = this.FormatTableFooter(mdList , "");
 				}
-				// headerStrsの要素が1つのみの場合は単文の文字列に整形する
+				// データが1列のみの場合は単文の文字列に整形する
 				else
 				{
-					return FormatSimpleSentence(mdList, (string)outputStructTable.Rows[0][0]);
+					foreach (var record in outputStructTable.Rows)
+					{
+						FormatSimpleSentence(mdList, record[0]);
+					}
 				}
 			}
 			else
 			{
-				System.Diagnostics.Debug.WriteLine("ヘッダまたはデータの要素数が0");
+				// System.Diagnostics.Debug.WriteLine("ヘッダまたはデータの要素数が0");
 			}
 
 			return mdList;

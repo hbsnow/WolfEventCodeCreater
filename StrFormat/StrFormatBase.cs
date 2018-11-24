@@ -32,6 +32,14 @@ namespace WolfEventCodeCreater.StrFormat
 		public abstract List<string> FormatSimpleSentence(List<string> mdList , string inputStr, bool isAddLFCodeInLastStr = true);
 
 		/// <summary>
+		/// コード文の文字列に整形する
+		/// </summary>
+		/// <param name="mdList">出力文字列が格納されたリスト</param>
+		/// <param name="inputStrs">整形対象の文字列リスト</param>
+		/// <returns>整形済みの文字列が入力された出力文字列リスト</returns>
+		public abstract List<string> FormatCode(List<string> mdList, List<string> inputStrs);
+
+		/// <summary>
 		/// テーブル構造（ヘッダ部とデータ部とフッタ部）を作成し整形する
 		/// </summary>
 		/// <param name="mdList">出力文字列が格納されたリスト</param>

@@ -198,12 +198,7 @@ namespace WolfEventCodeCreater.Model
 
 			/*    イベントコード    */
 			list = format.FormatHeadline(list , ces.EventCommands.EntryName , 2);
-			list.Add("```");
-			foreach (var sentence in ces.EventCommands.Sentences)
-			{
-				list = format.FormatSimpleSentence(list , sentence, false);
-			}
-			list.Add("```");
+			list = format.FormatCode(list, ces.EventCommands.Sentences);
 
 			/*    動作指定コマンドコード    */
 			if (ces.MoveEventCommands.Count != 0)
