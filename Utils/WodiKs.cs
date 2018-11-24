@@ -5,6 +5,9 @@ namespace WolfEventCodeCreater.Utils
 {
 	public static class WodiKs
 	{
+		///<summary>DB参照時などにデータ取得できない場合の値</summary>
+		public const string NO_DATA = "☓ NoData";
+
 		/// <summary>
 		/// CommonEventColor型を色名に変換する
 		/// </summary>
@@ -232,6 +235,5 @@ namespace WolfEventCodeCreater.Utils
 					return "";
 			}
 		}
-
 	}
 }

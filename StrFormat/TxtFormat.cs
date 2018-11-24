@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using WolfEventCodeCreater.Model.OutputStruct;
 
 namespace WolfEventCodeCreater.StrFormat
 {
@@ -8,14 +10,21 @@ namespace WolfEventCodeCreater.StrFormat
 	/// </summary>
 	internal class TxtFormat : StrFormatBase
 	{
+		internal TxtFormat()
+		{
+			columnDelimiter = "|";                                  // 列同士の区切り文字
+			betweenHeaderAndDataDelimiter = "---";      // ヘッダ部とデータ部の区切り文字
+		}
+
 		/// <summary>
 		/// 見出しの文字列に整形する【Txtファイル】
 		/// </summary>
 		/// <param name="mdList">出力文字列が格納されたリスト</param>
 		/// <param name="inputStr">整形対象の文字列</param>
 		/// <param name="headlineLevel">見出しのレベル(既定値は2)</param>
+		/// <param name="isAddLFCodeInLastStr">文の最後にLFコードを付け足すか</param>
 		/// <returns>整形済みの文字列が入力された出力文字列リスト</returns>
-		public override List<string> FormatHeadline(List<string> mdList , string inputStr , int headlineLevel = 2)
+		public override List<string> FormatHeadline(List<string> mdList , string inputStr , int headlineLevel = 2 , bool isAddLFCodeInLastStr = true)
 		{
 			throw new NotImplementedException();
 		}
@@ -25,8 +34,9 @@ namespace WolfEventCodeCreater.StrFormat
 		/// </summary>
 		/// <param name="mdList">出力文字列が格納されたリスト</param>
 		/// <param name="inputStr">整形対象の文字列</param>
+		/// <param name="isAddLFCodeInLastStr">文の最後にLFコードを付け足すか</param>
 		/// <returns>整形済みの文字列が入力された出力文字列リスト</returns>
-		public override List<string> FormatSimpleSentence(List<string> mdList , string inputStr)
+		public override List<string> FormatSimpleSentence(List<string> mdList , string inputStr, bool isAddLFCodeInLastStr = true)
 		{
 			throw new NotImplementedException();
 			/* 現在は未使用
@@ -47,37 +57,36 @@ namespace WolfEventCodeCreater.StrFormat
 		/// テーブル構造（ヘッダ部とデータ部とフッタ部）を作成し整形する【Txtファイル】
 		/// </summary>
 		/// <param name="mdList">出力文字列が格納されたリスト</param>
-		/// <param name="headerStrs">テーブルのヘッダに適用する文字列のリスト</param>
-		/// <param name="dataStrs">テーブルのデータに適用する文字列のリスト</param>
+		/// <param name="outputStructTable">出力元のテーブル構造</param>
+		/// <param name="maxRowNum">テーブルのデータのうち1列に格納する最大行数</param>
+		/// <param name="isSimpleSentenceWhenOnlyOneRecord">データが一行のみのときに文章に変更するかどうか</param>
 		/// <returns>整形済みの文字列が入力された出力文字列リスト</returns>
-		public override List<string> FormatTable(List<string> mdList ,
-			List<string> headerStrs , List<List<string>> dataStrs , string tableName = "")
+		public override List<string> FormatTable(List<string> mdList , OutputStructTable outputStructTable,
+			int maxRowNum = 20, bool isSimpleSentenceWhenOnlyOneRecord = true)
 		{
-			if (headerStrs == null || dataStrs == null)
+			if (outputStructTable.Columns == null || outputStructTable.Rows == null)
 			{
-				//TODO:Error処理
+				System.Diagnostics.Debug.WriteLine("表のヘッダまたはデータがNull");
 				return mdList;
 			}
 
-			if ((0 < headerStrs.Count) && (0 < dataStrs.Count) && (headerStrs.Count == dataStrs[0].Count))
+			if ((0 < outputStructTable.Columns.Count) && (0 < outputStructTable.Rows.Count))
 			{
-				if (1 < headerStrs.Count)
+				if (!(isSimpleSentenceWhenOnlyOneRecord && outputStructTable.Columns.Count== 1))
 				{
-					StrTable strTable = new StrTable(headerStrs , dataStrs , "|" , "---" , tableName);
-
-					mdList = this.FormatTableHeader(mdList , strTable);
-					mdList = this.FormatTableData(mdList , strTable);
+					mdList = this.FormatTableHeader(mdList , outputStructTable);
+					mdList = this.FormatTableData(mdList , outputStructTable);
 					mdList = this.FormatTableFooter(mdList , "");
 				}
 				// headerStrsの要素が1つのみの場合は単文の文字列に整形する
 				else
 				{
-					return FormatSimpleSentence(mdList , headerStrs[0]);
+					return FormatSimpleSentence(mdList, (string)outputStructTable.Rows[0][0]);
 				}
 			}
 			else
 			{
-				//TODO:Error処理
+				System.Diagnostics.Debug.WriteLine("ヘッダまたはデータの要素数が0");
 			}
 
 			return mdList;
@@ -87,9 +96,9 @@ namespace WolfEventCodeCreater.StrFormat
 		/// テーブルのヘッダの文字列に整形する【Txtファイル】
 		/// </summary>
 		/// <param name="mdList">出力文字列が格納されたリスト</param>
-		/// <param name="inputStr">文字列のテーブルオブジェクト</param>
+		/// <param name="outputStructTable">出力元のテーブル構造</param>
 		/// <returns>整形済みの文字列が入力された出力文字列リスト</returns>
-		protected override List<string> FormatTableHeader(List<string> mdList , StrTable strTable)
+		protected override List<string> FormatTableHeader(List<string> mdList , OutputStructTable outputStructTable)
 		{
 			throw new NotImplementedException();
 		}
@@ -98,9 +107,9 @@ namespace WolfEventCodeCreater.StrFormat
 		/// テーブルのデータ部の文字列に整形する【Txtファイル】
 		/// </summary>
 		/// <param name="mdList">出力文字列が格納されたリスト</param>
-		/// <param name="dataStrs">文字列のテーブルオブジェクト</param>
+		/// <param name="outputStructTable">出力元のテーブル構造</param>
 		/// <returns>整形済みの文字列が入力された出力文字列リスト</returns>
-		protected override List<string> FormatTableData(List<string> mdList , StrTable strTable)
+		protected override List<string> FormatTableData(List<string> mdList , OutputStructTable outputStructTable)
 		{
 			throw new NotImplementedException();
 		}

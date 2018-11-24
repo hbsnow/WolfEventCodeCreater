@@ -65,17 +65,25 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 			switch (itemConfig.SettingType)
 			{
 				case ItemConfig.SpecialSettingType.NotUse:
+					{
 					// No Operation
 					break;
+					}
 				case ItemConfig.SpecialSettingType.ReadFile:
+					{
 					itemConfigSubTableHeader.AddRange(new List<string>() { "フォルダパス", "保存時はフォルダ名を省くか" });
 					break;
+					}
 				case ItemConfig.SpecialSettingType.ReferenceDatabase:
-					itemConfigSubTableHeader.AddRange(new List<string>() { "DatabaseType", "TypeID", "AppendItemEnable", "-1", "-2", "-3" });
-					break;
+					{
+						itemConfigSubTableHeader.AddRange(new List<string>() { "DatabaseType", "TypeID", "AppendItemEnable", "-1", "-2", "-3" });
+						break;
+					}
 				case ItemConfig.SpecialSettingType.ManuallyGenerateBranch:
+					{
 					itemConfigSubTableHeader.AddRange(new List<string>() { "選択肢の内部値", "表示文字列" });
 					break;
+					}
 			}
 			return itemConfigSubTableHeader;
 		}
@@ -87,13 +95,19 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 			switch (itemConfig.SettingType)
 			{
 				case ItemConfig.SpecialSettingType.NotUse:
+					{
 					itemConfigSubTableData.Add(new List<string>() { });
+					// No Operation
 					break;
+					}
 				case ItemConfig.SpecialSettingType.ReadFile:
+					{
 					itemConfigSubTableData.Add(new List<string>() {
 						Utils.String.Trim(itemConfig.FolderPath), itemConfig.OmitFolderNameEnable.ToString() });
 					break;
+					}
 				case ItemConfig.SpecialSettingType.ReferenceDatabase:
+					{
 					itemConfigSubTableData.Add(new List<string>() {
 						Utils.WodiKs.ConvertDatabaseCategoryToName(itemConfig.DatabaseType),
 						itemConfig.TypeID.ToString(), itemConfig.AppendItemEnable.ToString(),
@@ -101,14 +115,17 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 						Utils.String.Trim(itemConfig.AppendItemNames[1]),
 						Utils.String.Trim(itemConfig.AppendItemNames[2])});
 					break;
-				case ItemConfig.SpecialSettingType.ManuallyGenerateBranch:
-					foreach(ItemConfigBranch branch in itemConfig.BranchData)
-					{
-						List<string> record = 
-							new List<string>() { branch.InternalValue.ToString(), Utils.String.Trim(branch.DisplayString) };
-						itemConfigSubTableData.Add(record);
 					}
+				case ItemConfig.SpecialSettingType.ManuallyGenerateBranch:
+					{
+						foreach(ItemConfigBranch branch in itemConfig.BranchData)
+						{
+							List<string> record = 
+								new List<string>() { branch.InternalValue.ToString(), Utils.String.Trim(branch.DisplayString) };
+							itemConfigSubTableData.Add(record);
+						}
 					break;
+					}
 			}
 			return itemConfigSubTableData;
 		}

@@ -1,11 +1,32 @@
-﻿namespace WolfEventCodeCreater.Model
+﻿using System.Diagnostics;
+using System.Reflection;
+
+namespace WolfEventCodeCreater.Model
 {
-    public class UserSetting
-    {
+	public class UserSetting
+	{
+		public UserSetting()
+		{
+			FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
+			AppName = fileVersionInfo.ProductName;
+			Version = fileVersionInfo.FileVersion;
+		}
+
+		///<summary>アプリ名</summary>
+		public string AppName { get; set; }
+
+		///<summary>バージョン</summary>
+		public string Version { get; set; }
+		
 		/// <summary>
 		/// ルートパス
 		/// </summary>
 		public string ProjectRoot = "";
+
+		/// <summary>
+		/// 出力処理実行時の日時
+		/// </summary>
+		public string DateTime = "";
 
 		/// <summary>
 		/// 出力するディレクトリ名
@@ -53,9 +74,27 @@
 		/// 
 		public string CommentOut = "//";
 
-        /// <summary>
-        /// 出力のときファイル名にコモン番号をつけるかどうか
-        /// </summary>
-        public bool IsOutputCommonNumber = false;
+		/// <summary>
+		/// 出力フォルダに出力日時の接尾辞をつけるかどうか
+		/// </summary>
+		public bool IsAdditionalDateTimeToOutputDirNameSuffiix = false;
+
+		/// <summary>
+		/// 出力のときファイル名にコモン番号をつけるかどうか
+		/// </summary>
+		public bool IsOutputCommonNumber = false;
+
+		///<summary>settings.xmlを上書きし、新たなConfigインスタンスを生成する</summary>
+		public Config OverWriteUserSettingFile(string projectRoot, string dateTime)
+		{
+			ProjectRoot = projectRoot;
+			DateTime = dateTime;
+
+			Utils.File.WriteUserSetting(this);
+
+			Config config = new Model.Config(this);
+
+			return config;
+		}
     }
 }

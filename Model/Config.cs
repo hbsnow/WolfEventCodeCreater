@@ -7,70 +7,79 @@ namespace WolfEventCodeCreater.Model
 	/// </summary>
 	public class Config
     {
+		private UserSetting userSetting;
+
 		/// <summary>
 		/// 対象ウディタのルートパス
 		/// </summary>
 		public string ProjectRoot;
 
 		/// <summary>
+		/// 出力処理実行時の日時
+		/// </summary>
+		public string DateTime;
+
+		/// <summary>
 		/// 出力するディレクトリへのフルパス
 		/// </summary>
-		public string DumpDirPath;
+		public string DumpDirPath { get {
+				return RootPathCombine(userSetting.OutputDirName + (userSetting.IsAdditionalDateTimeToOutputDirNameSuffiix ? $"_{DateTime}" : "") , "");
+			} }
 
 		/// <summary>
 		/// コモンイベントを出力するディレクトリへのフルパス
 		/// </summary>
-		public string CEvDumpDirPath;
+		public string CEvDumpDirPath { get { return Path.Combine(DumpDirPath , "CEv"); } }
 
 		/// <summary>
 		/// CDBを出力するディレクトリへのフルパス
 		/// </summary>
-		public string CDBDumpDirPath;
+		public string CDBDumpDirPath { get { return Path.Combine(DumpDirPath , "CDB"); } }
 
 		/// <summary>
 		/// UDBを出力するディレクトリへのフルパス
 		/// </summary>
-		public string UDBDumpDirPath;
+		public string UDBDumpDirPath { get { return Path.Combine(DumpDirPath , "UDB"); } }
 
 		/// <summary>
 		/// SDBを出力するディレクトリへのフルパス
 		/// </summary>
-		public string SDBDumpDirPath;
+		public string SDBDumpDirPath { get { return Path.Combine(DumpDirPath , "SDB"); } }
 
 		/// <summary>
 		/// コモンイベントの定義ファイル(dat)へのフルパス
 		/// </summary>
-		public string CommonEventPath;
+		public string CommonEventPath { get { return RootPathCombine(userSetting.CommonEventPath , "CommonEvent.dat"); } }
 
 		/// <summary>
 		/// 可変DBの定義ファイル(project)へのフルパス
 		/// </summary>
-		public string CDBProjrctFilePath;
+		public string CDBProjrctFilePath { get { return RootPathCombine(userSetting.CDBProjrctFilePath , "CDataBase.project"); } }
 
 		/// <summary>
 		/// 可変DBの定義ファイル(dat)へのフルパス
 		/// </summary>
-		public string CDBDatFilePath;
+		public string CDBDatFilePath { get { return RootPathCombine(userSetting.CDBDatFilePath , "CDataBase.dat"); } }
 
 		/// <summary>
 		/// ユーザーDBの定義ファイル(project)へのフルパス
 		/// </summary>
-		public string UDBProjrctFilePath;
+		public string UDBProjrctFilePath { get { return RootPathCombine(userSetting.UDBProjrctFilePath , "DataBase.project"); } }
 
 		/// <summary>
 		/// ユーザーDBの定義ファイル(dat)へのフルパス
 		/// </summary>
-		public string UDBDatFilePath;
+		public string UDBDatFilePath { get { return RootPathCombine(userSetting.UDBDatFilePath , "DataBase.dat"); } }
 
 		/// <summary>
 		/// システムDBの定義ファイル(project)へのフルパス
 		/// </summary>
-		public string SDBProjrctFilePath;
+		public string SDBProjrctFilePath { get { return RootPathCombine(userSetting.SDBProjrctFilePath , "SysDataBase.project"); } }
 
 		/// <summary>
 		/// システムDBの定義ファイル(dat)へのフルパス
 		/// </summary>
-		public string SDBDatFilePath;
+		public string SDBDatFilePath { get { return RootPathCombine(userSetting.SDBDatFilePath , "SysDataBase.dat"); } }
 
 		/// <summary>
 		/// 出力しないコメントアウト形式へのフルパス
@@ -86,9 +95,12 @@ namespace WolfEventCodeCreater.Model
 
 		public Config(UserSetting userSetting)
         {
+			this.userSetting = userSetting;
+
 			ProjectRoot = userSetting.ProjectRoot;
 			System.Diagnostics.Debug.WriteLine(ProjectRoot , "ProjectRoot");
-			PathChangeWithRootChanged(userSetting);
+
+			DateTime = userSetting.DateTime;
 
 			CommentOut = userSetting.CommentOut;
 
@@ -98,22 +110,6 @@ namespace WolfEventCodeCreater.Model
 		private string RootPathCombine(string path1, string path2)
 		{
 			return Path.Combine(ProjectRoot , path1, path2);
-		}
-
-		///<summary>ルートパスに依存するパスの書き換え</summary>
-		public void PathChangeWithRootChanged(UserSetting userSetting) { 
-			DumpDirPath = RootPathCombine(userSetting.OutputDirName,"");
-			CEvDumpDirPath = Path.Combine(DumpDirPath, "CEv");
-			CDBDumpDirPath = Path.Combine(DumpDirPath, "CDB");
-			UDBDumpDirPath = Path.Combine(DumpDirPath, "UDB");
-			SDBDumpDirPath = Path.Combine(DumpDirPath, "SDB");
-			CommonEventPath = RootPathCombine(userSetting.CommonEventPath, "CommonEvent.dat");
-			CDBProjrctFilePath = RootPathCombine(userSetting.CDBProjrctFilePath, "CDataBase.project");
-			CDBDatFilePath = RootPathCombine(userSetting.CDBDatFilePath , "CDataBase.dat");
-			UDBProjrctFilePath = RootPathCombine(userSetting.UDBProjrctFilePath , "DataBase.project");
-			UDBDatFilePath = RootPathCombine(userSetting.UDBDatFilePath , "DataBase.dat");
-			SDBProjrctFilePath = RootPathCombine(userSetting.SDBProjrctFilePath , "SysDataBase.project");
-			SDBDatFilePath = RootPathCombine(userSetting.SDBDatFilePath , "SysDataBase.dat");
 		}
 
 		///<summary>ウディタの定義ファイルの存在を確認する</summary>

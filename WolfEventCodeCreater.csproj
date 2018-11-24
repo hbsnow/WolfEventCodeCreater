@@ -68,7 +68,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CodeCreater.cs" />
     <Compile Include="AppMesOpp.cs" />
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
@@ -79,11 +78,14 @@
     <Compile Include="Model\OutputDriver.cs" />
     <Compile Include="Model\OutputStruct\OutputStructSentence.cs" />
     <Compile Include="Model\OutputStruct\OutputStructBase.cs" />
+    <Compile Include="Model\OutputStruct\OutputStructSentences.cs" />
     <Compile Include="Model\OutputStruct\OutputStructTable.cs" />
+    <Compile Include="Model\OutputStruct\OutputStructTables.cs" />
+    <Compile Include="Model\WoditerStr\CommonEventStr.cs" />
     <Compile Include="Model\WoditerStr\DatabaseItemConfigStr.cs" />
     <Compile Include="Model\WoditerStr\DatabaseItemStr.cs" />
     <Compile Include="Model\WoditerStr\DatabaseTypeStr.cs" />
-    <Compile Include="Model\WoditerStr\DatabaseDataIDStr.cs" />
+    <Compile Include="Model\WoditerStr\DatabaseDataStr.cs" />
     <Compile Include="Model\WoditerInfo.cs" />
     <Compile Include="Model\WoditerStr\WoditerInfoStr.cs" />
     <Compile Include="Program.cs" />
@@ -98,9 +100,6 @@
     <Compile Include="Model\UserSetting.cs" />
     <Compile Include="StrFormat\MdFormat.cs" />
     <Compile Include="StrFormat\StrFormatBase.cs" />
-    <Compile Include="StrFormat\StrTable.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="StrFormat\TxtFormat.cs" />
     <Compile Include="Utils\File.cs" />
     <Compile Include="Utils\String.cs" />

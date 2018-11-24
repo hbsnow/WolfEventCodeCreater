@@ -7,8 +7,6 @@ namespace WolfEventCodeCreater.Model
 {
 	public class WoditerInfo
 	{
-		//private enum DBCategory { CDB, UDB, SDB }
-
 		public CommonEventManager CEvMgr { get; private set; }
 
 		public Database CDB { get; private set; }
@@ -21,22 +19,36 @@ namespace WolfEventCodeCreater.Model
 
 		public WoditerInfo(Config config)
 		{
+			CEvMgr = null;
 			CDB = null;
 			UDB = null;
 			SDB = null;
 			this.Config = config;
 
-			CommonEventRead();
+			CEvMgr = CommonEventRead();
 			CDB = DatabaseRead(Database.DatabaseCategory.Changeable);
 			UDB = DatabaseRead(Database.DatabaseCategory.User);
 			SDB = DatabaseRead(Database.DatabaseCategory.System);
 		}
 
-		//TODO:コモンイベント読み込み実装
 		///<summary>コモンイベントを読込</summary>
-		private void CommonEventRead()
-		{
+		private CommonEventManager CommonEventRead() {
+			CommonEventManager commonEventManager = null;
 
+			// 定義ファイルの存在チェック
+			if(Utils.File.CheckFileExist(Config.CommonEventPath , $"コモンイベント管理データの定義ファイル"))
+			{
+				var commonEventDatReader = new CommonEventDatReader();
+				commonEventManager = commonEventDatReader.ReadFile(Config.CommonEventPath);
+			}
+
+			// 読込エラー処理
+			if(commonEventManager == null)
+			{
+				AppMesOpp.AddAppMessge("コモンイベントの読込に失敗しました。");
+			}
+
+			return commonEventManager;
 		}
 
 		///<summary>DBを読込</summary>
@@ -86,9 +98,6 @@ namespace WolfEventCodeCreater.Model
 
 			if (isProjectFileExist && isDatFileExist)
 			{
-				/* WodiKs.dll ver0.40にて以下のバグが発生
-				 * System.OverflowException: 算術演算の結果オーバーフローが発生しました。
-				*/
 				DatabaseFileReader dfr = new DatabaseFileReader(projectFilePath , datFilePath);
 				database = dfr.GetReadData();
 			}
@@ -102,5 +111,31 @@ namespace WolfEventCodeCreater.Model
 			return database;
 		}
 
+		///<summary>パラメータのdatabaseCategoryごとに対応するWoditerInfoクラスのDatabase型プロパティを返す</summary>
+		public Database GetDatabaseSource(Database.DatabaseCategory databaseCategory)
+		{
+			switch (databaseCategory)
+			{
+				case Database.DatabaseCategory.Changeable:
+					{
+						return CDB;
+					}
+				case Database.DatabaseCategory.User:
+					{
+						return UDB;
+					}
+				case Database.DatabaseCategory.System:
+					{
+						return SDB;
+					}
+				case Database.DatabaseCategory.CommonEvent:
+					{
+						System.Diagnostics.Debug.WriteLine("WoditerInfo.GetDatabaseSource()のNULLエラー");
+						return null;
+					}
+				default:
+					return null;
+			}
+		}
 	}
 }

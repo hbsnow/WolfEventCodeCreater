@@ -50,23 +50,23 @@ namespace WolfEventCodeCreater
 
 			try
             {
-				userSetting.ProjectRoot = Config.ProjectRoot;
 				// settings.xmlの上書き
-				Utils.File.WriteUserSetting(userSetting);
+				Config = userSetting.OverWriteUserSettingFile(Config.ProjectRoot, now);
 
-				Config = new Model.Config(userSetting);
+				// ウディタ情報を取得
+				var outputDriver = new Model.OutputDriver(Config);
 
-				var CommonEventReader = new CommonEventDatReader(Config.CommonEventPath);
+				// ファイル出力処理
+				outputDriver.Output();
 
-                var CodeCreater = new CodeCreater(Config, CommonEventReader);
-
-				// 出力処理
-				CodeCreater.Write();
-            }
+				System.Diagnostics.Debug.WriteLine($"------出力処理正常終了------");
+			}
             catch(Exception err)
             {
 				AppMesOpp.AddAppMessge(err.ToString());
-            }
+
+				System.Diagnostics.Debug.WriteLine($"------出力処理異常終了------");
+			}
 
 			// settings.xmlを出力先ディレクトリに出力
 			Utils.File.WriteUserSetting(userSetting, Config.DumpDirPath, $"_{ now }");
@@ -107,7 +107,6 @@ namespace WolfEventCodeCreater
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
 			Config.ProjectRoot = textBox1.Text;
-			Config.PathChangeWithRootChanged(userSetting);
 			button2.Enabled = Config.IsWoditerDefineFiles();
         }
 	}
