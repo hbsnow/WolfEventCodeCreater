@@ -39,7 +39,7 @@ namespace WolfEventCodeCreater.Model
 			UDB = DatabaseRead(Database.DatabaseCategory.User);
 			SDB = DatabaseRead(Database.DatabaseCategory.System);
 			MapDataList = MapDataListRead();
-			//MapTree = MapTreeRead();
+			MapTree = MapTreeRead();
 			//TileMgr = TileSetRead();
 		}
 

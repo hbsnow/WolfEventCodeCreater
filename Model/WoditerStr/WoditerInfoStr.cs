@@ -30,7 +30,7 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 		public List<MapDataStr> MapDataStrs { get; private set; }
 
 		///<summary>文字列化したマップツリー情報</summary>
-		//public MapTreeStr MapTreeStr { get; private set; }
+		public MapTreeStr MapTreeStr { get; private set; }
 
 		///<summary>文字列化したタイルセット情報</summary>
 		//public TileSetStr TileMgrStr { get; private set; }
@@ -47,7 +47,7 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 			UDBStrs = null;
 			SDBStrs = null;
 			MapDataStrs = null;
-			//MapTreeStr = null;
+			MapTreeStr = null;
 			//TileMgrStr = null;
 
 			if (woditerInfo.CEvMgr != null)
@@ -73,6 +73,11 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 			if(woditerInfo.MapDataList.Count != 0)
 			{
 				MapDataStrs = SetMapDataStrs(woditerInfo.MapDataList);
+			}
+
+			if(woditerInfo.MapTree != null)
+			{
+				MapTreeStr = SeMapTreeStrs(woditerInfo.MapTree);
 			}
 		}
 
@@ -124,6 +129,21 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 				mapDataStrs.Add(new MapDataStr(mapData.Value, mapData.Key, Source, this));
 			}
 			return mapDataStrs;
+		}
+
+		private MapTreeStr SeMapTreeStrs(MapTree mapTree)
+		{
+			foreach (var node in mapTree.Nodes)
+			{
+				System.Diagnostics.Debug.WriteLine(node.MapID, "node.MapID");
+				if(node.ParentNode != null)
+					System.Diagnostics.Debug.WriteLine(node.ParentNode.MapID, "node.ParentNode.MapID");
+				if(node.ChildNodes != null)
+					System.Diagnostics.Debug.WriteLine(node.ChildNodes.Count.ToString(), "node.ChildNodes.Count.ToString()");
+				System.Diagnostics.Debug.WriteLine("---------Debug Trap---------");
+			}
+
+			return new MapTreeStr(mapTree, Source, this);
 		}
 	}
 }
