@@ -133,7 +133,7 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 
 		private MapTreeStr SeMapTreeStrs(MapTree mapTree)
 		{
-			foreach (var node in mapTree.Nodes)
+			/*foreach (var node in mapTree.Nodes)
 			{
 				System.Diagnostics.Debug.WriteLine(node.MapID, "node.MapID");
 				if(node.ParentNode != null)
@@ -141,7 +141,7 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 				if(node.ChildNodes != null)
 					System.Diagnostics.Debug.WriteLine(node.ChildNodes.Count.ToString(), "node.ChildNodes.Count.ToString()");
 				System.Diagnostics.Debug.WriteLine("---------Debug Trap---------");
-			}
+			}*/
 
 			return new MapTreeStr(mapTree, Source, this);
 		}

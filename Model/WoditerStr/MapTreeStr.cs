@@ -34,7 +34,6 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 
 		private List<OutputStructTreeNode<MapTreeNodeStr>> SetParentAndChildrenOnMapTreeStrs(List<OutputStructTreeNode<MapTreeNodeStr>> mapTreeNodesStrs)
 		{
-			System.Diagnostics.Debug.WriteLine(mapTreeNodesStrs.Count.ToString(), "mapTreeNodesStrs.Count.ToString()");
 			for (int nodeIndex = 0; nodeIndex < mapTreeNodesStrs.Count; nodeIndex++)
 			{
 				var outputStructTreeNode = mapTreeNodesStrs[nodeIndex];
@@ -46,8 +45,8 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 						mapTreeNodesStrs.Find(x => x.Original.MapID.Sentence == mapIDOfParentNode);
 
 					// 親ノードと子ノードを追加
-					outputStructTreeNode.ParentNode = parentMapTreeNodeStr.Original;
-					parentMapTreeNodeStr.ChildrenNode.Add(outputStructTreeNode.Original);
+					outputStructTreeNode.ParentNode = parentMapTreeNodeStr;
+					parentMapTreeNodeStr.ChildrenNode.Add(outputStructTreeNode);
 				}
 				else
 				{
@@ -60,7 +59,7 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 
 	public class MapTreeNodeStr
 	{
-		public MapTreeStr ParentTree { get; private set; }
+		public MapTreeStr Tree { get; private set; }
 		public OutputStructSentence MapID { get; private set; }
 		public OutputStructSentence MapName { get; private set; }
 		public OutputStructSentence IsExpanded { get; private set; }
@@ -68,7 +67,7 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 
 		public MapTreeNodeStr(MapTreeNode mapTreeNode, MapTreeStr mapTreeStr)
 		{
-			ParentTree = mapTreeStr;
+			Tree = mapTreeStr;
 			MapID = new OutputStructSentence("マップID", mapTreeNode.MapID.ToString());
 			MapName = new OutputStructSentence("マップ名", SetMapName(mapTreeNode.MapID));
 			IsExpanded = new OutputStructSentence("子ノード群が展開されているか", mapTreeNode.IsExpanded.ToString());
@@ -78,9 +77,9 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 		private string SetMapName(int mapID)
 		{
 			// マップIDに該当するDatabaseDataStrをシステムDBから取得（\sdb[0]に対応するDatabaseDataStr.DataIDはマップIDを示す）
-			if(ParentTree.SourceStr.SDBStrs != null)
+			if(Tree.SourceStr.SDBStrs != null)
 			{
-				return ParentTree.SourceStr.SDBStrs[0].DataList[mapID].DataName.Sentence;
+				return Tree.SourceStr.SDBStrs[0].DataList[mapID].DataName.Sentence;
 			}
 			else
 			{
