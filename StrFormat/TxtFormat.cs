@@ -14,6 +14,9 @@ namespace WolfEventCodeCreater.StrFormat
 		{
 			columnDelimiter = "|";                                  // 列同士の区切り文字
 			betweenHeaderAndDataDelimiter = "---";      // ヘッダ部とデータ部の区切り文字
+			vBarRuledLine = "│";
+			branchRuledLine = "├";
+			branchWithLastItemRuledLine = "└";
 		}
 
 		/// <summary>
@@ -68,7 +71,7 @@ namespace WolfEventCodeCreater.StrFormat
 		}
 
 		/// <summary>
-		/// テーブル構造（ヘッダ部とデータ部とフッタ部）を作成し整形する【Txtファイル】
+		/// テーブル構造（ヘッダ部とデータ部とフッタ部）を整形する【Txtファイル】
 		/// </summary>
 		/// <param name="mdList">出力文字列が格納されたリスト</param>
 		/// <param name="outputStructTable">出力元のテーブル構造</param>
@@ -141,6 +144,18 @@ namespace WolfEventCodeCreater.StrFormat
 		{
 			mdList.Add(inputStr);
 			return mdList;
+		}
+
+		/// <summary>
+		/// ツリー構造のノードを整形する【Txtファイル】
+		/// </summary>
+		/// <typeparam name="T">クラス</typeparam>
+		/// <param name="mdList">出力文字列が格納されたリスト</param>
+		/// <param name="outputStructTree">出力元のTree構造</param>
+		/// <returns>整形済みの文字列が入力された出力文字列リスト</returns>
+		public override List<string> FormatTree<T>(List<string> mdList, OutputStructTree<T> outputStructTree)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

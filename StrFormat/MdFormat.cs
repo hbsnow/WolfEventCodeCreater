@@ -12,8 +12,11 @@ namespace WolfEventCodeCreater.StrFormat
 		internal MdFormat()
 		{
 			columnDelimiter = "|";									// 列同士の区切り文字
-			betweenHeaderAndDataDelimiter = "---";		// ヘッダ部とデータ部の区切り文字
-	}
+			betweenHeaderAndDataDelimiter = "---";      // ヘッダ部とデータ部の区切り文字
+			vBarRuledLine = "│";
+			branchRuledLine = "├";
+			branchWithLastItemRuledLine = "└";
+		}
 
 
 		/// <summary>
@@ -70,7 +73,7 @@ namespace WolfEventCodeCreater.StrFormat
 		}
 
 		/// <summary>
-		/// テーブル構造（ヘッダ部とデータ部とフッタ部）を作成し整形する【MDファイル】
+		/// テーブル構造（ヘッダ部とデータ部とフッタ部）を整形する【MDファイル】
 		/// </summary>
 		/// <param name="mdList">出力文字列が格納されたリスト</param>
 		/// <param name="outputStructTable">出力元のテーブル構造</param>
@@ -235,6 +238,72 @@ namespace WolfEventCodeCreater.StrFormat
 			OutputStructTable newlyWrappedOutputStructTable = new OutputStructTable(sourceTable.EntryName , newlyHeader, newlyData, false);
 
 			return newlyWrappedOutputStructTable;
+		}
+
+		/// <summary>
+		/// ツリー構造のノードを整形する【MDファイル】
+		/// </summary>
+		/// <typeparam name="T">クラス</typeparam>
+		/// <param name="mdList">出力文字列が格納されたリスト</param>
+		/// <param name="outputStructTree">出力元のTree構造</param>
+		/// <returns>整形済みの文字列が入力された出力文字列リスト</returns>
+		public override List<string> FormatTree<T>(List<string> mdList, OutputStructTree<T> outputStructTree)
+		{
+			string ruledLine = "";		// ツリー図の罫線
+			int prevIndent = 0;
+
+			if(outputStructTree.Nodes.Count < 1)
+			{
+				return mdList;
+			}
+
+			var treeStrs = new List<string>();
+			foreach (var node in outputStructTree.Nodes)
+			{
+				ruledLine = CreateRuledLine(node, prevIndent, ref ruledLine, 4);
+				treeStrs.Add(ruledLine + node.Value);
+				prevIndent = node.Indent;
+			}
+			FormatCode(mdList, treeStrs);
+			return mdList;
+		}
+
+		///<summary>ツリー図の罫線を作成する</summary>
+		private string CreateRuledLine<T>(OutputStructTreeNode<T> outputStructTreeNode, int prevIndent, ref string sourceRuledLine, int indentLength = 4) where T: class
+		{
+			// 前回の項目と異なるノードグループ、かつ、子ノードでない場合
+			if (outputStructTreeNode.Indent < prevIndent)
+			{
+				sourceRuledLine.Substring(0, outputStructTreeNode.Indent * indentLength - 1);
+				return sourceRuledLine + SelectBranchRuledLine(outputStructTreeNode.IsLastItemInChildren);
+			}
+			// 前回の項目と同じノードグループの場合
+			else if (outputStructTreeNode.Indent == prevIndent)
+			{
+				return outputStructTreeNode.IsLastItemInChildren ? sourceRuledLine.Substring(0, sourceRuledLine.Length - 1) + branchWithLastItemRuledLine : sourceRuledLine;
+			}
+			// 前回の項目の子ノードの場合
+			else
+			{
+				// 親ノードがノードグループの最後尾の項目かどうかに応じて分岐罫線の箇所を置き換える
+				int strIndex = sourceRuledLine.Length - indentLength - 1;
+				string replaceedChar = outputStructTreeNode.ParentNode.IsLastItemInChildren ? " " : vBarRuledLine;
+				sourceRuledLine = sourceRuledLine.Remove(strIndex, 1).Insert(strIndex, replaceedChar);
+
+				// インデント文字を追加
+				for (int cnt = 1; cnt < indentLength; cnt++)
+				{
+					sourceRuledLine += " ";
+				}
+				sourceRuledLine += SelectBranchRuledLine(outputStructTreeNode.IsLastItemInChildren);
+				return sourceRuledLine;
+			}
+		}
+
+		///<summary>ノードグループ内の最後尾の項目かに応じて分岐罫線を選択する</summary>
+		private string SelectBranchRuledLine(bool isLastItemInChildren)
+		{
+			return isLastItemInChildren ? branchWithLastItemRuledLine : branchRuledLine;
 		}
 	}
 }

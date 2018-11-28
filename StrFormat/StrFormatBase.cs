@@ -11,6 +11,9 @@ namespace WolfEventCodeCreater.StrFormat
 	{
 		protected string columnDelimiter;         // 列同士の区切り文字
 		protected string betweenHeaderAndDataDelimiter;           // ヘッダ部とデータ部の区切り文字
+		protected string vBarRuledLine;      // 垂直文字の罫線
+		protected string branchRuledLine;        // 分岐文字の罫線
+		protected string branchWithLastItemRuledLine;       // グループ内最後尾項目の分岐文字の罫線
 
 		/// <summary>
 		/// 見出しの文字列に整形する
@@ -40,7 +43,7 @@ namespace WolfEventCodeCreater.StrFormat
 		public abstract List<string> FormatCode(List<string> mdList, List<string> inputStrs);
 
 		/// <summary>
-		/// テーブル構造（ヘッダ部とデータ部とフッタ部）を作成し整形する
+		/// テーブル構造（ヘッダ部とデータ部とフッタ部）を整形する
 		/// </summary>
 		/// <param name="mdList">出力文字列が格納されたリスト</param>
 		/// <param name="outputStructTable">出力元のテーブル構造</param>
@@ -73,5 +76,14 @@ namespace WolfEventCodeCreater.StrFormat
 		/// <param name="inputStr">整形対象の文字列</param>
 		/// <returns>整形済みの文字列が入力された出力文字列リスト</returns>
 		protected abstract List<string> FormatTableFooter(List<string> mdList , string inputStr);
+
+		/// <summary>
+		/// ツリー構造のノードを整形する
+		/// </summary>
+		/// <typeparam name="T">クラス</typeparam>
+		/// <param name="mdList">出力文字列が格納されたリスト</param>
+		/// <param name="outputStructTree">出力元のTree構造</param>
+		/// <returns>整形済みの文字列が入力された出力文字列リスト</returns>
+		public abstract List<string> FormatTree<T>(List<string> mdList, OutputStructTree<T> outputStructTree) where T : class;
 	}
 }

@@ -79,14 +79,18 @@ namespace WolfEventCodeCreater.Model.OutputStruct
 	public class OutputStructTreeNode<T> where T : class
 	{
 		public T Original { get; private set; }
+		public string Value { get; private set; }
+		public bool IsExpanded { get; private set; }
 		public OutputStructTreeNode<T> ParentNode { get; set; }
 		public List<OutputStructTreeNode<T>> ChildrenNode { get; set; }
 		public int Indent { get; private set; }
 		public bool IsLastItemInChildren { get; private set; }
 
-		public OutputStructTreeNode(T original)
+		public OutputStructTreeNode(T original, string itemValue, bool isExpanded)
 		{
 			Original = original;
+			Value = itemValue;
+			IsExpanded = isExpanded;
 			ParentNode = null;
 			ChildrenNode = new List<OutputStructTreeNode<T>>();
 			Indent = 0;

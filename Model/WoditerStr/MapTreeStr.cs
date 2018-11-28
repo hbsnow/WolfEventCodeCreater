@@ -25,7 +25,8 @@ namespace WolfEventCodeCreater.Model.WoditerStr
 			foreach (var mapTreeNode in mapTree.Nodes)
 			{
 				MapTreeNodeStr mapTreeNodeStr = new MapTreeNodeStr(mapTreeNode, this);
-				mapTreeNodesStrs.Add(new OutputStructTreeNode<MapTreeNodeStr>(mapTreeNodeStr));
+				mapTreeNodesStrs.Add(new OutputStructTreeNode<MapTreeNodeStr>
+					(mapTreeNodeStr, $"{mapTreeNodeStr.MapID.Sentence}:{mapTreeNodeStr.MapName.Sentence}", mapTreeNode.IsExpanded));
 			}
 			mapTreeNodesStrs = SetParentAndChildrenOnMapTreeStrs(mapTreeNodesStrs);
 
