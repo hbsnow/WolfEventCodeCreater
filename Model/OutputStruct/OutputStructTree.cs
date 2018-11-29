@@ -15,7 +15,7 @@ namespace WolfEventCodeCreater.Model.OutputStruct
 			: base(entryName, OutputStructType.Tree)
 		{
 			Nodes = SetTreeNode(nodeList);
-			foreach(var node in Nodes)
+			/*foreach(var node in Nodes)
 			{
 				if(typeof(T) == typeof(WoditerStr.MapTreeNodeStr))
 				{
@@ -24,7 +24,7 @@ namespace WolfEventCodeCreater.Model.OutputStruct
 					System.Diagnostics.Debug.WriteLine(node.Indent.ToString(), "Indent");
 					System.Diagnostics.Debug.WriteLine(node.IsLastItemInChildren.ToString(), "IsLastItemInChildren");
 				}
-			}
+			}*/
 		}
 
 		private List<OutputStructTreeNode<T>> SetTreeNode(List<OutputStructTreeNode<T>> nodeList)

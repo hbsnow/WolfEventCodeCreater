@@ -271,14 +271,22 @@ namespace WolfEventCodeCreater.StrFormat
 		///<summary>ツリー図の罫線を作成する</summary>
 		private string CreateRuledLine<T>(OutputStructTreeNode<T> outputStructTreeNode, int prevIndent, ref string sourceRuledLine, int indentLength = 4) where T: class
 		{
-			// 前回の項目と異なるノードグループ、かつ、子ノードでない場合
-			if (outputStructTreeNode.Indent < prevIndent)
+			int nowIndent = outputStructTreeNode.Indent;
+
+			// 項目がルートの場合、ツリー図の罫線はなし
+			if (nowIndent == 0)
 			{
-				sourceRuledLine.Substring(0, outputStructTreeNode.Indent * indentLength - 1);
+				return "";
+			}
+			
+			// 前回の項目と異なるノードグループ、かつ、子ノードでない場合
+			if (nowIndent < prevIndent)
+			{
+				sourceRuledLine.Substring(0, nowIndent * indentLength - 1);
 				return sourceRuledLine + SelectBranchRuledLine(outputStructTreeNode.IsLastItemInChildren);
 			}
 			// 前回の項目と同じノードグループの場合
-			else if (outputStructTreeNode.Indent == prevIndent)
+			else if (nowIndent == prevIndent)
 			{
 				return outputStructTreeNode.IsLastItemInChildren ? sourceRuledLine.Substring(0, sourceRuledLine.Length - 1) + branchWithLastItemRuledLine : sourceRuledLine;
 			}
@@ -286,9 +294,12 @@ namespace WolfEventCodeCreater.StrFormat
 			else
 			{
 				// 親ノードがノードグループの最後尾の項目かどうかに応じて分岐罫線の箇所を置き換える
-				int strIndex = sourceRuledLine.Length - indentLength - 1;
-				string replaceedChar = outputStructTreeNode.ParentNode.IsLastItemInChildren ? " " : vBarRuledLine;
-				sourceRuledLine = sourceRuledLine.Remove(strIndex, 1).Insert(strIndex, replaceedChar);
+				if(0 < sourceRuledLine.Length)
+				{
+					int strIndex = sourceRuledLine.Length - indentLength - 1;
+					string replaceedChar = outputStructTreeNode.ParentNode.IsLastItemInChildren ? " " : vBarRuledLine;
+					sourceRuledLine = sourceRuledLine.Remove(strIndex, 1).Insert(strIndex, replaceedChar);
+				}
 
 				// インデント文字を追加
 				for (int cnt = 1; cnt < indentLength; cnt++)

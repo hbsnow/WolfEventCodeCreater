@@ -44,6 +44,11 @@ namespace WolfEventCodeCreater.Model
 			{
 				CreateOutputStrsMap(woditerInfoStr.MapDataStrs, format);
 			}
+
+			if(woditerInfoStr.MapTreeStr != null)
+			{
+				CreateOutputStrsMapTree(woditerInfoStr.MapTreeStr, format);
+			}
 		}
 
 		///<summary>出力先ディレクトリの存在確認（存在しない場合は新たに作成）</summary>
@@ -435,5 +440,33 @@ namespace WolfEventCodeCreater.Model
 		}
 
 		#endregion マップ
+
+		#region マップツリー
+
+		private void CreateOutputStrsMapTree<Format>(MapTreeStr mapTreeStr, Format format) where Format : StrFormatBase
+		{
+			int count = 0;
+
+			// 出力先ディレクトリ確認と作成
+			MakeOutputDir(WoditerInfo.WoditerInfoCategory.MapTree);
+
+			List<string> outputStrs = new List<string>();
+
+			/*    マップツリー    */
+			outputStrs = format.FormatHeadline(outputStrs, mapTreeStr.MapTreeStrs.EntryName, 1);
+			outputStrs = format.FormatTree(outputStrs, mapTreeStr.MapTreeStrs);
+
+			// 出力先ファイルパスの設定
+			string outputFileName = "MapTree";
+			string outputFilePath = ForamtToOutputFilePath(WoditerInfo.WoditerInfoCategory.MapTree, outputFileName);
+
+			// 出力
+			File.WriteAllLines(outputFilePath, outputStrs);
+			count++;
+
+			AppMesOpp.AddAppMessge($"{ count }件のマップツリーのMarkdownを出力しました。");
+		}
+
+		#endregion
 	}
 }
