@@ -93,6 +93,8 @@
     <Compile Include="Model\WoditerStr\MapEventPageStr.cs" />
     <Compile Include="Model\WoditerStr\MapEventStr.cs" />
     <Compile Include="Model\WoditerStr\MapTreeStr.cs" />
+    <Compile Include="Model\WoditerStr\TileChipStr.cs" />
+    <Compile Include="Model\WoditerStr\TileSetStr.cs" />
     <Compile Include="Model\WoditerStr\WoditerInfoStr.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

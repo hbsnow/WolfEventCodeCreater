@@ -40,7 +40,7 @@ namespace WolfEventCodeCreater.Model
 			SDB = DatabaseRead(Database.DatabaseCategory.System);
 			MapDataList = MapDataListRead();
 			MapTree = MapTreeRead();
-			//TileMgr = TileSetRead();
+			TileMgr = TileSetRead();
 		}
 
 		///<summary>コモンイベントを読込</summary>
