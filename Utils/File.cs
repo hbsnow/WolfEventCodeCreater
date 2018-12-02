@@ -2,6 +2,8 @@
 using System.Linq;
 using System.IO;
 using System.Text;
+using System.Diagnostics;
+using System.Reflection;
 
 namespace WolfEventCodeCreater.Utils
 {
@@ -21,19 +23,34 @@ namespace WolfEventCodeCreater.Utils
             // ユーザー設定ファイルがない場合にはデフォルト設定ファイルを出力
             if (!System.IO.File.Exists(settingFile))
             {
-                var userSetting = new Model.UserSetting();
-                WriteUserSetting(userSetting);
-
-                return userSetting;
+                return MakeNewUserSettingFile();
             }
-            
-            using (var streamReader = new StreamReader(settingFile, new UTF8Encoding(false)))
+
+			// このアプリのアプリ名とバージョンを取得
+			FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
+			string thisAppName = fileVersionInfo.ProductName;
+			string thisVersion = fileVersionInfo.FileVersion;
+			Model.UserSetting userSetting;
+
+			using (var streamReader = new StreamReader(settingFile, new UTF8Encoding(false)))
             {
                 var serializer = new System.Xml.Serialization.XmlSerializer(typeof(Model.UserSetting));
-
-                return (Model.UserSetting)serializer.Deserialize(streamReader);
+				userSetting = (Model.UserSetting)serializer.Deserialize(streamReader);
             }
+			// 読み込んだユーザ設定ファイルのアプリ名とバージョンを比較し、合致していない場合は新規にユーザ設定ファイルを作成
+			return (userSetting.AppName == thisAppName && userSetting.Version == thisVersion) ? userSetting : MakeNewUserSettingFile();
         }
+
+
+
+		///<summary>新規にユーザ設定ファイルを作成する</summary>
+		private static Model.UserSetting MakeNewUserSettingFile()
+		{
+			var userSetting = new Model.UserSetting();
+			WriteUserSetting(userSetting);
+			AppMesOpp.AddAppMessge("新規にユーザ設定ファイルを作成しました。");
+			return userSetting;
+		}
 
 
 

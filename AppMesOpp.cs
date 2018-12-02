@@ -20,6 +20,10 @@ namespace WolfEventCodeCreater
 			get { return APP_MES_SEPARATOR; }
 		}
 
+
+		///<summary>現在のアプリメッセージの数</summary>
+		public static int AppMesCount { get { return appMesList.Count; } }
+
 		///<summary>
 		///アプリのメッセージを追加設定する
 		///</summary>

@@ -16,6 +16,10 @@ namespace WolfEventCodeCreater
 			userSetting = Utils.File.LoadUserSetting();
 			Config = new Model.Config(userSetting);
 
+			if(0 < AppMesOpp.AppMesCount)
+			{
+				textBox2.Text = AppMesOpp.ReturnAppMessge();
+			}
 			textBox1.Text = userSetting.ProjectRoot;
 		}
 
