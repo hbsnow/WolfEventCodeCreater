@@ -21,6 +21,8 @@ namespace WolfEventCodeCreater.Model
 		///<summary>ウディタ情報をファイル出力</summary>
 		public void Output()
 		{
+			AddBlankAppMesWhenHasAlreadyAppMes();
+
 			MdFormat format = new MdFormat();
 
 			if (woditerInfoStr.CEvStrs != null)
@@ -53,6 +55,15 @@ namespace WolfEventCodeCreater.Model
 			if(woditerInfoStr.TileMgrStr != null)
 			{
 				CreateOutputStrsTileSet(woditerInfoStr.TileMgrStr, format);
+			}
+		}
+
+		///<summary>すでにアプリメッセージ(エラー内容)が存在する場合に空白を挟む</summary>
+		private void AddBlankAppMesWhenHasAlreadyAppMes()
+		{
+			if(0 < AppMesOpp.AppMesCount)
+			{
+				AppMesOpp.AddAppMessgeBlank();
 			}
 		}
 

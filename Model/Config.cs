@@ -171,7 +171,7 @@ namespace WolfEventCodeCreater.Model
 		{
 			bool tmpFlg = true;
 
-			tmpFlg = IsCDBFileExist(isAddAppMes) & IsCDBFileExist(isAddAppMes) & IsUDBFileExist(isAddAppMes) & IsSDBFileExist(isAddAppMes)
+			tmpFlg = IsCEvFileExist(isAddAppMes) & IsCDBFileExist(isAddAppMes) & IsUDBFileExist(isAddAppMes) & IsSDBFileExist(isAddAppMes)
 				& IsMapFileExist(isAddAppMes) & IsTileFileExist(isAddAppMes);
 
 			if (tmpFlg)

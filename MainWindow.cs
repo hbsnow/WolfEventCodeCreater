@@ -16,18 +16,21 @@ namespace WolfEventCodeCreater
 			userSetting = Utils.File.LoadUserSetting();
 			Config = new Model.Config(userSetting);
 
+			textBox1.Text = Config.ProjectRoot;
 			if(0 < AppMesOpp.AppMesCount)
 			{
-				textBox2.Text = AppMesOpp.ReturnAppMessge();
+				AppMesOpp.AddEnclosedSeparatorAppMessge();
+				textBox2.Text = AppMesOpp.ReturnAppMessge() + textBox2.Text;
 			}
-			textBox1.Text = Config.ProjectRoot;
 		}
 
 
 
         private void selectProject(object sender, EventArgs e)
         {
-            var fbd = new FolderBrowserDialog();
+			AppMesOpp.ClearAppMessge();
+
+			var fbd = new FolderBrowserDialog();
             fbd.Description = "プロジェクトのルートディレクトリを選択してください。";
             fbd.ShowNewFolderButton = false;
 
@@ -36,7 +39,8 @@ namespace WolfEventCodeCreater
 				textBox1.Text = fbd.SelectedPath;
 				if (!button2.Enabled)
 				{
-					textBox2.Text = "ウディタ定義ファイルが見つかりません。" + "\r\n" + textBox2.Text;
+					AppMesOpp.AddEnclosedSeparatorAppMessge();
+					textBox2.Text = AppMesOpp.ReturnAppMessge() + textBox2.Text;
 				}
             }
         }
@@ -49,7 +53,7 @@ namespace WolfEventCodeCreater
 
 			string now = DateTime.Now.ToString("yyyyMMdd_HHmmss");
 			string headMessage = ($"------出力実行({ now })------");
-			AppMesOpp.AddAppMessge(headMessage);
+			AppMesOpp.AddAppMessge(headMessage, false, false);
 			System.Diagnostics.Debug.WriteLine(headMessage);
 
 			try
@@ -67,7 +71,7 @@ namespace WolfEventCodeCreater
 			}
             catch(Exception err)
             {
-				AppMesOpp.AddAppMessge(err.ToString());
+				AppMesOpp.AddAppMessge(err.ToString(), true, false);
 
 				System.Diagnostics.Debug.WriteLine($"------出力処理異常終了------");
 			}
@@ -110,8 +114,9 @@ namespace WolfEventCodeCreater
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
+			AppMesOpp.ClearAppMessge();
 			Config.ProjectRoot = textBox1.Text;
 			button2.Enabled = Config.IsWoditerDefineFiles();
-        }
+		}
 	}
 }
