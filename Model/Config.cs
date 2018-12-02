@@ -8,6 +8,8 @@ namespace WolfEventCodeCreater.Model
 	public class Config
     {
 		private UserSetting userSetting;
+		private UserSetting.WoditorSettingsInfo woditorSettings;
+		private UserSetting.OutputSettingsInfo outputSettings;
 
 		/// <summary>
 		/// 対象ウディタのルートパス
@@ -24,7 +26,7 @@ namespace WolfEventCodeCreater.Model
 		/// 出力するディレクトリへのフルパス
 		/// </summary>
 		public string DumpDirPath { get {
-				return RootPathCombine(userSetting.OutputDirName + (userSetting.IsAdditionalDateTimeToOutputDirNameSuffiix ? $"_{DateTime}" : "") , "");
+				return RootPathCombine(outputSettings.OutputDirName + (outputSettings.IsAdditionalDateTimeToOutputDirNameSuffiix ? $"_{DateTime}" : "") , "");
 			} }
 
 		/// <summary>
@@ -67,57 +69,57 @@ namespace WolfEventCodeCreater.Model
 		/// <summary>
 		/// コモンイベントの定義ファイル(dat)へのフルパス
 		/// </summary>
-		public string CommonEventPath { get { return RootPathCombine(userSetting.CommonEventDir , @"CommonEvent.dat"); } }
+		public string CommonEventPath { get { return RootPathCombine(woditorSettings.CommonEventDir, woditorSettings.CommonEventFileName); } }
 
 		/// <summary>
 		/// 可変DBの定義ファイル(project)へのフルパス
 		/// </summary>
-		public string CDBProjrctFilePath { get { return RootPathCombine(userSetting.CDBProjrctFileDir , @"CDataBase.project"); } }
+		public string CDBProjrctFilePath { get { return RootPathCombine(woditorSettings.CDBProjrctFileDir , woditorSettings.CDBProjrctFileFileName); } }
 
 		/// <summary>
 		/// 可変DBの定義ファイル(dat)へのフルパス
 		/// </summary>
-		public string CDBDatFilePath { get { return RootPathCombine(userSetting.CDBDatFileDir , @"CDataBase.dat"); } }
+		public string CDBDatFilePath { get { return RootPathCombine(woditorSettings.CDBDatFileDir , woditorSettings.CDBDatFileFileName); } }
 
 		/// <summary>
 		/// ユーザーDBの定義ファイル(project)へのフルパス
 		/// </summary>
-		public string UDBProjrctFilePath { get { return RootPathCombine(userSetting.UDBProjrctFileDir , @"DataBase.project"); } }
+		public string UDBProjrctFilePath { get { return RootPathCombine(woditorSettings.UDBProjrctFileDir , woditorSettings.UDBProjrctFileName); } }
 
 		/// <summary>
 		/// ユーザーDBの定義ファイル(dat)へのフルパス
 		/// </summary>
-		public string UDBDatFilePath { get { return RootPathCombine(userSetting.UDBDatFileDir , @"DataBase.dat"); } }
+		public string UDBDatFilePath { get { return RootPathCombine(woditorSettings.UDBDatFileDir , woditorSettings.UDBDatFileName); } }
 
 		/// <summary>
 		/// システムDBの定義ファイル(project)へのフルパス
 		/// </summary>
-		public string SDBProjrctFilePath { get { return RootPathCombine(userSetting.SDBProjrctFileDir , @"SysDataBase.project"); } }
+		public string SDBProjrctFilePath { get { return RootPathCombine(woditorSettings.SDBProjrctFileDir , woditorSettings.SDBProjrctFileName); } }
 
 		/// <summary>
 		/// システムDBの定義ファイル(dat)へのフルパス
 		/// </summary>
-		public string SDBDatFilePath { get { return RootPathCombine(userSetting.SDBDatFileDir , @"SysDataBase.dat"); } }
+		public string SDBDatFilePath { get { return RootPathCombine(woditorSettings.SDBDatFileDir , woditorSettings.SDBDatFileName); } }
 
 		/// <summary>
 		/// マップの定義ファイル(map)が格納されたディレクトリのフルパス
 		/// </summary>
-		public string MapDataDir { get { return RootPathCombine(userSetting.MapDataDir , ""); } }
+		public string MapDataDir { get { return RootPathCombine(woditorSettings.MapDataDir , ""); } }
 
 		/// <summary>
 		///マップツリーの定義ファイル(dat)へのフルパス
 		/// </summary>
-		public string MapTreeFilePath { get { return RootPathCombine(userSetting.MapTreeDir , @"MapTree.dat"); } }
+		public string MapTreeFilePath { get { return RootPathCombine(woditorSettings.MapTreeDir , woditorSettings.MapTreeFileName); } }
 
 		/// <summary>
 		///マップツリー展開状態の定義ファイル(dat)へのフルパス
 		/// </summary>
-		public string MapTreeOpenStatusFilePath { get { return RootPathCombine(userSetting.MapTreeOpenStatusDir , @"MapTreeOpenStatus.dat"); } }
+		public string MapTreeOpenStatusFilePath { get { return RootPathCombine(woditorSettings.MapTreeOpenStatusDir , woditorSettings.MapTreeOpenStatusFileName); } }
 
 		/// <summary>
 		///タイルセットの定義ファイル(dat)へのフルパス
 		/// </summary>
-		public string TileSetDataFilePath { get { return RootPathCombine(userSetting.TileSetDataDir , @"TileSetData.dat"); } }
+		public string TileSetDataFilePath { get { return RootPathCombine(woditorSettings.TileSetDataDir , woditorSettings.TileSetDataFileName); } }
 		#endregion
 
 		/// <summary>
@@ -135,15 +137,15 @@ namespace WolfEventCodeCreater.Model
 		public Config(UserSetting userSetting)
         {
 			this.userSetting = userSetting;
+			woditorSettings = userSetting.WoditorSettings;
+			outputSettings = userSetting.OutputSettings;
 
-			ProjectRoot = userSetting.ProjectRoot;
+			ProjectRoot = woditorSettings.ProjectRoot;
 			System.Diagnostics.Debug.WriteLine(ProjectRoot , "ProjectRoot");
 
-			DateTime = userSetting.DateTime;
-
-			CommentOut = userSetting.CommentOut;
-
-			IsOutputCommonNumber = userSetting.IsOutputCommonNumber;
+			DateTime = outputSettings.DateTime;
+			CommentOut = outputSettings.CommentOut;
+			IsOutputCommonNumber = outputSettings.IsOutputCommonNumber;
 		}
 
 		private string RootPathCombine(string path1, string path2)

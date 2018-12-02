@@ -38,7 +38,7 @@ namespace WolfEventCodeCreater.Utils
 				userSetting = (Model.UserSetting)serializer.Deserialize(streamReader);
             }
 			// 読み込んだユーザ設定ファイルのアプリ名とバージョンを比較し、合致していない場合は新規にユーザ設定ファイルを作成
-			return (userSetting.AppName == thisAppName && userSetting.Version == thisVersion) ? userSetting : MakeNewUserSettingFile();
+			return (userSetting.AppInfo.AppName == thisAppName && userSetting.AppInfo.Version == thisVersion) ? userSetting : MakeNewUserSettingFile();
         }
 
 
@@ -101,7 +101,7 @@ namespace WolfEventCodeCreater.Utils
 				if(appMesFileNameWhenNoFileExist != "")
 				{
 					AppMesOpp.AddAppMessge($"{appMesFileNameWhenNoFileExist} が\r\n" +
-						$"{filePath} に見つかりません。");
+						$"{filePath} に見つかりません。", true);
 				}
 				System.Diagnostics.Debug.WriteLine($"{filePath} is No Exist.");
 				return false;
@@ -138,7 +138,7 @@ namespace WolfEventCodeCreater.Utils
 					else
 					{
 						AppMesOpp.AddAppMessge($"{appMesDirectoryNameWhenNoFileExist} が\r\n" +
-						$"{filePath} に見つかりません。");
+						$"{filePath} に見つかりません。", true);
 					}
 
 					return false;

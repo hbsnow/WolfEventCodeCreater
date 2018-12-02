@@ -20,7 +20,7 @@ namespace WolfEventCodeCreater
 			{
 				textBox2.Text = AppMesOpp.ReturnAppMessge();
 			}
-			textBox1.Text = userSetting.ProjectRoot;
+			textBox1.Text = Config.ProjectRoot;
 		}
 
 
