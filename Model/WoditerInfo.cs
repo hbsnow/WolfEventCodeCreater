@@ -35,12 +35,28 @@ namespace WolfEventCodeCreater.Model
 			this.Config = config;
 
 			CEvMgr = CommonEventRead();
-			CDB = DatabaseRead(Database.DatabaseCategory.Changeable);
-			UDB = DatabaseRead(Database.DatabaseCategory.User);
-			SDB = DatabaseRead(Database.DatabaseCategory.System);
+			CDB = DatabaseRead(WoditerInfoCategory.CDB);
+			UDB = DatabaseRead(WoditerInfoCategory.UDB);
+			SDB = DatabaseRead(WoditerInfoCategory.SDB);
 			MapDataList = MapDataListRead();
 			MapTree = MapTreeRead();
 			TileMgr = TileSetRead();
+		}
+
+		/// <summary>読込結果を判定する</summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="checkObject">判定対象</param>
+		/// <param name="woditerInfoCategory"></param>
+		/// <returns>判定結果(true:読込成功, false:読込失敗)</returns>
+		private bool CheckReadResult<T>(T checkObject, WoditerInfoCategory woditerInfoCategory) where T: class
+		{
+			if(checkObject == null)
+			{
+				// アプリメッセージに読込失敗結果を追加
+				AppMesOpp.AddAppMessge($"{woditerInfoCategory.ToString()} の情報取得に失敗しました。", true);
+				return false;
+			}
+			return true;
 		}
 
 		///<summary>コモンイベントを読込</summary>
@@ -55,18 +71,15 @@ namespace WolfEventCodeCreater.Model
 				commonEventManager = commonEventDatReader.ReadFile(Config.CommonEventPath);
 			}
 
-			// 読込エラー処理
-			if (commonEventManager == null)
-			{
-				AppMesOpp.AddAppMessge("コモンイベントの読込に失敗しました。");
-			}
+			// 読込結果判定処理
+			CheckReadResult(commonEventManager, WoditerInfoCategory.CEv);
 
 			return commonEventManager;
 		}
 
 		///<summary>DBを読込</summary>
 		///<param name="db">読込対象のDB</param>
-		private Database DatabaseRead(Database.DatabaseCategory dbCategory)
+		private Database DatabaseRead(WoditerInfoCategory woditerInfoCategory_DB)
 		{
 			Database database = null;
 			string projectFilePath = "";
@@ -75,23 +88,23 @@ namespace WolfEventCodeCreater.Model
 			bool isProjectFileExist = false;
 			bool isDatFileExist = false;
 
-			switch (dbCategory)
+			switch (woditerInfoCategory_DB)
 			{
-				case Database.DatabaseCategory.Changeable:
+				case WoditerInfoCategory.CDB:
 					{
 						projectFilePath = Config.CDBProjrctFilePath;
 						datFilePath = Config.CDBDatFilePath;
 						dbName = "可変データベース";
 						break;
 					}
-				case Database.DatabaseCategory.User:
+				case WoditerInfoCategory.UDB:
 					{
 						projectFilePath = Config.UDBProjrctFilePath;
 						datFilePath = Config.UDBDatFilePath;
 						dbName = "ユーザーデータベース";
 						break;
 					}
-				case Database.DatabaseCategory.System:
+				case WoditerInfoCategory.SDB:
 					{
 						projectFilePath = Config.SDBProjrctFilePath;
 						datFilePath = Config.SDBDatFilePath;
@@ -115,11 +128,8 @@ namespace WolfEventCodeCreater.Model
 				database = dfr.GetReadData();
 			}
 
-			// DB読込エラー処理
-			if (database == null)
-			{
-				AppMesOpp.AddAppMessge($"{ dbName }の読込に失敗しました。");
-			}
+			// 読込結果判定処理
+			CheckReadResult(database, woditerInfoCategory_DB);
 
 			return database;
 		}
@@ -166,12 +176,8 @@ namespace WolfEventCodeCreater.Model
 					var mdr = new MapDataReader(mapFile);
 					MapData mapData = mdr.GetReadData();
 
-					// 読込エラー処理
-					if (mapData == null)
-					{
-						AppMesOpp.AddAppMessge($"{ Config.MapDataDir }のマップデータ読込に失敗しました。");
-					}
-					else
+					// 読込結果判定処理
+					if(CheckReadResult(mapData, WoditerInfoCategory.Map))
 					{
 						mapDataList.Add(mapFile, mapData);
 					}
@@ -194,11 +200,9 @@ namespace WolfEventCodeCreater.Model
 				mapTree = mapTreeReader.GetReadData();
 			}
 
-			// 読込エラー処理
-			if (mapTree == null)
-			{
-				AppMesOpp.AddAppMessge("マップツリーの読込に失敗しました。");
-			}
+			// 読込結果判定処理
+			//! WodiKs.dll ver0.75にMapTree読込エラーが有り
+			CheckReadResult(mapTree, WoditerInfoCategory.MapTree);
 
 			return mapTree;
 		}
@@ -215,11 +219,8 @@ namespace WolfEventCodeCreater.Model
 				tileSetManager = tileSetDataReader.GetReadData();
 			}
 
-			// 読込エラー処理
-			if (tileSetManager == null)
-			{
-				AppMesOpp.AddAppMessge("タイルセットの読込に失敗しました。");
-			}
+			// 読込結果判定処理
+			CheckReadResult(tileSetManager, WoditerInfoCategory.TileSet);
 
 			return tileSetManager;
 		}

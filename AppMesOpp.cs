@@ -23,9 +23,10 @@ namespace WolfEventCodeCreater
 		///<summary>
 		///アプリのメッセージを追加設定する
 		///</summary>
-		public static void AddAppMessge(string message)
+		public static void AddAppMessge(string message, bool isError = false)
 		{
-			appMesList.Add(message);
+			string prefix = !isError ? "- " : "Error: ";
+			appMesList.Add(prefix + message);
 		}
 
 		///<summary>

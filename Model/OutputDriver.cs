@@ -111,6 +111,15 @@ namespace WolfEventCodeCreater.Model
 			return outputFilePath = Path.Combine(outputFilePath, filename);
 		}
 
+		
+		/// <summary>アプリメッセージに出力結果を追加</summary>
+		/// <param name="count"></param>
+		/// <param name="woditerInfoCategory"></param>
+		private void AddResultMes(int outputCount, WoditerInfo.WoditerInfoCategory woditerInfoCategory)
+		{
+			AppMesOpp.AddAppMessge($"{woditerInfoCategory.ToString()} のMarkdownを出力しました({ outputCount }件)。");
+		}
+
 		#region コモンイベント
 
 		private void CreateOutputStrsCEv<Format>(List<CommonEventStr> CEvStrs, Format format) where Format : StrFormatBase
@@ -141,7 +150,7 @@ namespace WolfEventCodeCreater.Model
 				count++;
 			}
 
-			AppMesOpp.AddAppMessge($"{ count }件のコモンイベントのMarkdownを出力しました。");
+			AddResultMes(count, WoditerInfo.WoditerInfoCategory.CEv);
 		}
 
 		///<summary>コモンイベントの内容を出力文字列に整形</summary>
@@ -244,7 +253,7 @@ namespace WolfEventCodeCreater.Model
 				count++;
 			}
 
-			AppMesOpp.AddAppMessge($"{ count }件の{ woditerInfoCategory.ToString() }のMarkdownを出力しました。");
+			AddResultMes(count, woditerInfoCategory);
 		}
 
 		///<summary>DBの各内容を出力文字列に整形</summary>
@@ -328,7 +337,7 @@ namespace WolfEventCodeCreater.Model
 				count++;
 			}
 
-			AppMesOpp.AddAppMessge($"{ count }件のマップのMarkdownを出力しました。");
+			AddResultMes(count, WoditerInfo.WoditerInfoCategory.Map);
 		}
 
 		///<summary>マップデータの内容を出力文字列に整形</summary>
@@ -469,7 +478,7 @@ namespace WolfEventCodeCreater.Model
 			File.WriteAllLines(outputFilePath, outputStrs);
 			count++;
 
-			AppMesOpp.AddAppMessge($"{ count }件のマップツリーのMarkdownを出力しました。");
+			AddResultMes(count, WoditerInfo.WoditerInfoCategory.MapTree);
 		}
 
 		#endregion
@@ -504,7 +513,7 @@ namespace WolfEventCodeCreater.Model
 				count++;
 			}
 
-			AppMesOpp.AddAppMessge($"{ count }件のタイルセットのMarkdownを出力しました。");
+			AddResultMes(count, WoditerInfo.WoditerInfoCategory.TileSet);
 		}
 
 		///<summary>タイルセットの内容を出力文字列に整形</summary>
