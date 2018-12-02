@@ -111,8 +111,11 @@ namespace WolfEventCodeCreater.Model
 			/// <summary>出力処理実行時の日時</summary>
 			public string DateTime = "";
 
-			/// <summary>出力するディレクトリ名</summary>
+			/// <summary>出力するディレクトリ名(ルート直下)</summary>
 			public string OutputDirName = "Dump";
+
+			/// <summary>指定された出力ディレクトリパス(ルート外ディレクトリも指定可能であり、OutputDirNameよりも優先される)</summary>
+			public string SpecifiedOutputDirPath = "";
 
 			/// <summary>出力フォルダに出力日時の接尾辞をつけるかどうか</summary>
 			public bool IsAdditionalDateTimeToOutputDirNameSuffiix = false;

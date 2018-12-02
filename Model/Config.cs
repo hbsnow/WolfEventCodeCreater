@@ -26,8 +26,21 @@ namespace WolfEventCodeCreater.Model
 		/// 出力するディレクトリへのフルパス
 		/// </summary>
 		public string DumpDirPath { get {
-				return RootPathCombine(outputSettings.OutputDirName + (outputSettings.IsAdditionalDateTimeToOutputDirNameSuffiix ? $"_{DateTime}" : "") , "");
-			} }
+			string filenameSuffiix = outputSettings.IsAdditionalDateTimeToOutputDirNameSuffiix ? $"_{DateTime}" : "";
+			string dumpDir = "";
+
+			if(outputSettings.SpecifiedOutputDirPath == "")
+			{
+				dumpDir = RootPathCombine(outputSettings.OutputDirName, filenameSuffiix);
+			}
+			else
+			{
+				dumpDir = Path.Combine(outputSettings.SpecifiedOutputDirPath, outputSettings.OutputDirName);
+				Utils.File.CheckDirectoryExist(dumpDir, "出力先パス", true);
+			}
+
+			return dumpDir + filenameSuffiix;
+		} }
 
 		/// <summary>
 		/// コモンイベントを出力するディレクトリへのフルパス

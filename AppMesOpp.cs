@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace WolfEventCodeCreater
@@ -39,6 +40,12 @@ namespace WolfEventCodeCreater
 		public static void AddSeparatorAppMessge()
 		{
 			appMesList.Add(APP_MES_SEPARATOR);
+		}
+
+		///<summary>アプリの空白メッセージを追加設定する</summary>
+		public static void AddAppMessgeBlank()
+		{
+			appMesList.Add("");
 		}
 
 		///<summary>
