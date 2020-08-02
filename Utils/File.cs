@@ -26,59 +26,59 @@ namespace WolfEventCodeCreater.Utils
                 return MakeNewUserSettingFile();
             }
 
-			// このアプリのアプリ名とバージョンを取得
-			FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
-			string thisAppName = fileVersionInfo.ProductName;
-			string thisVersion = fileVersionInfo.FileVersion;
-			Model.UserSetting userSetting;
+            // このアプリのアプリ名とバージョンを取得
+            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
+            string thisAppName = fileVersionInfo.ProductName;
+            string thisVersion = fileVersionInfo.FileVersion;
+            Model.UserSetting userSetting;
 
-			using (var streamReader = new StreamReader(settingFile, new UTF8Encoding(false)))
+            using (var streamReader = new StreamReader(settingFile, new UTF8Encoding(false)))
             {
                 var serializer = new System.Xml.Serialization.XmlSerializer(typeof(Model.UserSetting));
-				userSetting = (Model.UserSetting)serializer.Deserialize(streamReader);
+                userSetting = (Model.UserSetting)serializer.Deserialize(streamReader);
             }
-			// 読み込んだユーザ設定ファイルのアプリ名とバージョンを比較し、合致していない場合は新規にユーザ設定ファイルを作成
-			return (userSetting.AppInfo.AppName == thisAppName && userSetting.AppInfo.Version == thisVersion) ? userSetting : MakeNewUserSettingFile();
+            // 読み込んだユーザ設定ファイルのアプリ名とバージョンを比較し、合致していない場合は新規にユーザ設定ファイルを作成
+            return (userSetting.AppInfo.AppName == thisAppName && userSetting.AppInfo.Version == thisVersion) ? userSetting : MakeNewUserSettingFile();
         }
 
 
 
-		///<summary>新規にユーザ設定ファイルを作成する</summary>
-		private static Model.UserSetting MakeNewUserSettingFile()
-		{
-			var userSetting = new Model.UserSetting();
-			WriteUserSetting(userSetting);
-			AppMesOpp.AddAppMessge("新規にユーザ設定ファイルを作成しました。");
-			return userSetting;
-		}
-
-
-
-		/// <summary>
-		/// <para>ユーザー設定の書き込み</para>
-		/// <para>パラメータ:directory="" の場合はカレントディレクトリを指定</para>
-		/// <para>パラメータ:filenameSufifxはファイル名に接尾語を追加</para>
-		/// </summary>
-		public static void WriteUserSetting(Model.UserSetting userSetting, string directory = "", string filenameSuffix = "")
+        ///<summary>新規にユーザ設定ファイルを作成する</summary>
+        private static Model.UserSetting MakeNewUserSettingFile()
         {
-			string settingFile = "";
-			string filename = SettingsFileName.Insert(SettingsFileName.Length - 4 , filenameSuffix);
+            var userSetting = new Model.UserSetting();
+            WriteUserSetting(userSetting);
+            AppMesOpp.AddAppMessge("新規にユーザ設定ファイルを作成しました。");
+            return userSetting;
+        }
 
-			if (directory == "")
-			{
-				settingFile = Path.Combine(Directory.GetCurrentDirectory() , filename);
-			}
-			else
-			{
-				if (Utils.File.CheckDirectoryExist(directory))
-				{
-					settingFile = Path.Combine(directory , filename);
-				}
-				else
-				{
-					return;
-				}
-			}
+
+
+        /// <summary>
+        /// <para>ユーザー設定の書き込み</para>
+        /// <para>パラメータ:directory="" の場合はカレントディレクトリを指定</para>
+        /// <para>パラメータ:filenameSufifxはファイル名に接尾語を追加</para>
+        /// </summary>
+        public static void WriteUserSetting(Model.UserSetting userSetting, string directory = "", string filenameSuffix = "")
+        {
+            string settingFile = "";
+            string filename = SettingsFileName.Insert(SettingsFileName.Length - 4 , filenameSuffix);
+
+            if (directory == "")
+            {
+                settingFile = Path.Combine(Directory.GetCurrentDirectory() , filename);
+            }
+            else
+            {
+                if (Utils.File.CheckDirectoryExist(directory))
+                {
+                    settingFile = Path.Combine(directory , filename);
+                }
+                else
+                {
+                    return;
+                }
+            }
 
             using (var streamWriter = new StreamWriter(settingFile, false, new UTF8Encoding(false)))
             {
@@ -89,91 +89,91 @@ namespace WolfEventCodeCreater.Utils
 
 
 
-		/// <summary>
-		/// ファイルの存在チェック
-		/// </summary>
-		/// <param name="appMesFileNameWhenNoFileExist">ファイルが存在しない場合にアプリメッセージへ追加するファイル名(""時は追加しない)</param>
-		/// <returns>ファイルが存在する場合はtrue</returns>
-		public static bool CheckFileExist(string filePath, string appMesFileNameWhenNoFileExist = "")
-		{
-			if (!System.IO.File.Exists(filePath))
-			{
-				if(appMesFileNameWhenNoFileExist != "")
-				{
-					AppMesOpp.AddAppMessge($"{appMesFileNameWhenNoFileExist} が\r\n" +
-						$"{filePath}\r\nに見つかりません。", true);
-				}
-				System.Diagnostics.Debug.WriteLine($"{filePath} is No Exist.");
-				return false;
-			}
-			return true;
-		}
+        /// <summary>
+        /// ファイルの存在チェック
+        /// </summary>
+        /// <param name="appMesFileNameWhenNoFileExist">ファイルが存在しない場合にアプリメッセージへ追加するファイル名(""時は追加しない)</param>
+        /// <returns>ファイルが存在する場合はtrue</returns>
+        public static bool CheckFileExist(string filePath, string appMesFileNameWhenNoFileExist = "")
+        {
+            if (!System.IO.File.Exists(filePath))
+            {
+                if(appMesFileNameWhenNoFileExist != "")
+                {
+                    AppMesOpp.AddAppMessge($"{appMesFileNameWhenNoFileExist} が\r\n" +
+                        $"{filePath}\r\nに見つかりません。", true);
+                }
+                System.Diagnostics.Debug.WriteLine($"{filePath} is No Exist.");
+                return false;
+            }
+            return true;
+        }
 
 
 
-		/// <summary>
-		/// ディレクトリの存在チェック
-		/// </summary>
-		/// <param name="appMesDirectoryNameWhenNoFileExist">ディレクトリが存在しない場合にアプリメッセージへ追加するディレクトリ名(""時は追加しない)</param>
-		/// <param name="isMakeDirectoryWhenNoFileExist">ディレクトリが存在しない場合にディレクトリを作成するか</param>
-		/// <returns>ファイルが存在する場合はtrue</returns>
-		public static bool CheckDirectoryExist(string filePath , string appMesDirectoryNameWhenNoFileExist = "" , bool isMakeDirectoryWhenNoFileExist = false)
-		{
-			if (!Directory.Exists(filePath))
-			{
-				System.Diagnostics.Debug.WriteLine($"{filePath} is No Exist.");
+        /// <summary>
+        /// ディレクトリの存在チェック
+        /// </summary>
+        /// <param name="appMesDirectoryNameWhenNoFileExist">ディレクトリが存在しない場合にアプリメッセージへ追加するディレクトリ名(""時は追加しない)</param>
+        /// <param name="isMakeDirectoryWhenNoFileExist">ディレクトリが存在しない場合にディレクトリを作成するか</param>
+        /// <returns>ファイルが存在する場合はtrue</returns>
+        public static bool CheckDirectoryExist(string filePath , string appMesDirectoryNameWhenNoFileExist = "" , bool isMakeDirectoryWhenNoFileExist = false)
+        {
+            if (!Directory.Exists(filePath))
+            {
+                System.Diagnostics.Debug.WriteLine($"{filePath} is No Exist.");
 
-				if (isMakeDirectoryWhenNoFileExist)
-				{
-					Directory.CreateDirectory(filePath);
-					System.Diagnostics.Debug.WriteLine($"{filePath} is created newly because of No Exist.");
-				}
-				if (appMesDirectoryNameWhenNoFileExist != "")
-				{
-					if (isMakeDirectoryWhenNoFileExist)
-					{
-						AppMesOpp.AddAppMessge($"{appMesDirectoryNameWhenNoFileExist} を\r\n" +
-						$"{filePath} に作成しました。");
-					}
-					else
-					{
-						AppMesOpp.AddAppMessge($"{appMesDirectoryNameWhenNoFileExist} が\r\n" +
-						$"{filePath} に見つかりません。", true);
-					}
-					AppMesOpp.AddAppMessgeBlank();
+                if (isMakeDirectoryWhenNoFileExist)
+                {
+                    Directory.CreateDirectory(filePath);
+                    System.Diagnostics.Debug.WriteLine($"{filePath} is created newly because of No Exist.");
+                }
+                if (appMesDirectoryNameWhenNoFileExist != "")
+                {
+                    if (isMakeDirectoryWhenNoFileExist)
+                    {
+                        AppMesOpp.AddAppMessge($"{appMesDirectoryNameWhenNoFileExist} を\r\n" +
+                        $"{filePath} に作成しました。");
+                    }
+                    else
+                    {
+                        AppMesOpp.AddAppMessge($"{appMesDirectoryNameWhenNoFileExist} が\r\n" +
+                        $"{filePath} に見つかりません。", true);
+                    }
+                    AppMesOpp.AddAppMessgeBlank();
 
-					return false;
-				}
-			}
+                    return false;
+                }
+            }
 
-			return true;
-		}
+            return true;
+        }
 
 
 
-		/// <summary>
-		/// ディレクトリ内のファイルパス取得
-		/// </summary>
-		/// <param name="directoryPath">探索対象のフォルダ(絶対パス)</param>
-		/// <param name="searchPatern">探索条件("*"時は全件抽出)</param>
-		/// <param name="isRecursiveSearch">サブフォルダを検索をするか</param>
-		/// <returns>探索結果のファイル絶対パス</returns>
-		public static List<string> GetFilesInDirectory(string directoryPath, string searchPatern = "*", bool isRecursiveSearch = true)
-		{
-			List<string> resultPathList = new List<string>();
+        /// <summary>
+        /// ディレクトリ内のファイルパス取得
+        /// </summary>
+        /// <param name="directoryPath">探索対象のフォルダ(絶対パス)</param>
+        /// <param name="searchPatern">探索条件("*"時は全件抽出)</param>
+        /// <param name="isRecursiveSearch">サブフォルダを検索をするか</param>
+        /// <returns>探索結果のファイル絶対パス</returns>
+        public static List<string> GetFilesInDirectory(string directoryPath, string searchPatern = "*", bool isRecursiveSearch = true)
+        {
+            List<string> resultPathList = new List<string>();
 
-			if (Directory.Exists(directoryPath))
-			{
-				var paths = Directory.GetFiles(directoryPath, searchPatern, isRecursiveSearch ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+            if (Directory.Exists(directoryPath))
+            {
+                var paths = Directory.GetFiles(directoryPath, searchPatern, isRecursiveSearch ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
 
-				resultPathList.AddRange(paths);
-			}
-			else
-			{
-				System.Diagnostics.Debug.WriteLine($"{directoryPath} is No Exist.");
-			}
+                resultPathList.AddRange(paths);
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine($"{directoryPath} is No Exist.");
+            }
 
-			return resultPathList;
-		}
-	}
+            return resultPathList;
+        }
+    }
 }

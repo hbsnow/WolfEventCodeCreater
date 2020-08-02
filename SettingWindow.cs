@@ -6,19 +6,19 @@ namespace WolfEventCodeCreater
 {
     public partial class SettingWindow : Form
     {
-		private UserSetting userSetting;
-		private UserSetting.WoditorSettingsInfo woditorSettings;
-		private UserSetting.OutputSettingsInfo outputSettings;
+        private UserSetting userSetting;
+        private UserSetting.WoditorSettingsInfo woditorSettings;
+        private UserSetting.OutputSettingsInfo outputSettings;
 
-		public SettingWindow(UserSetting userSetting)
+        public SettingWindow(UserSetting userSetting)
         {
             InitializeComponent();
 
             this.userSetting = userSetting;
-			woditorSettings = userSetting.WoditorSettings;
-			outputSettings = userSetting.OutputSettings;
+            woditorSettings = userSetting.WoditorSettings;
+            outputSettings = userSetting.OutputSettings;
 
-			textBox1.Text = outputSettings.OutputDirName;
+            textBox1.Text = outputSettings.OutputDirName;
             textBox2.Text = outputSettings.CommentOut;
             comboBox1.Items.Add("出力する");
             comboBox1.Items.Add("出力しない");
@@ -29,9 +29,9 @@ namespace WolfEventCodeCreater
 
         private void submit(object sender, EventArgs e)
         {
-			outputSettings.OutputDirName = textBox1.Text;
-			outputSettings.CommentOut = textBox2.Text;
-			outputSettings.IsOutputCommonNumber = comboBox1.SelectedIndex == 0 ? true : false;
+            outputSettings.OutputDirName = textBox1.Text;
+            outputSettings.CommentOut = textBox2.Text;
+            outputSettings.IsOutputCommonNumber = comboBox1.SelectedIndex == 0 ? true : false;
 
             Utils.File.WriteUserSetting(userSetting);
 
