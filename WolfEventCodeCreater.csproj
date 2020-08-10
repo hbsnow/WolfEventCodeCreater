@@ -78,6 +78,7 @@
     <Compile Include="Model\OutputDriver.cs" />
     <Compile Include="Model\OutputStruct\OutputStructSentence.cs" />
     <Compile Include="Model\OutputStruct\OutputStructBase.cs" />
+    <Compile Include="Model\OutputStruct\OutputStructTree.cs" />
     <Compile Include="Model\OutputStruct\OutputStructSentences.cs" />
     <Compile Include="Model\OutputStruct\OutputStructTable.cs" />
     <Compile Include="Model\OutputStruct\OutputStructTables.cs" />
@@ -87,6 +88,13 @@
     <Compile Include="Model\WoditerStr\DatabaseTypeStr.cs" />
     <Compile Include="Model\WoditerStr\DatabaseDataStr.cs" />
     <Compile Include="Model\WoditerInfo.cs" />
+    <Compile Include="Model\WoditerStr\EventCommandsStr.cs" />
+    <Compile Include="Model\WoditerStr\MapDataStr.cs" />
+    <Compile Include="Model\WoditerStr\MapEventPageStr.cs" />
+    <Compile Include="Model\WoditerStr\MapEventStr.cs" />
+    <Compile Include="Model\WoditerStr\MapTreeStr.cs" />
+    <Compile Include="Model\WoditerStr\TileChipStr.cs" />
+    <Compile Include="Model\WoditerStr\TileSetStr.cs" />
     <Compile Include="Model\WoditerStr\WoditerInfoStr.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
